@@ -3,6 +3,7 @@ import useSelector from "../redux/utils/useStoreSelector";
 import { productEnhancer, useProduct, EnhancedProductType } from "./product";
 import { useDispatch } from "react-redux";
 import { extendProducts } from "../redux/actionCreators/ProductActions";
+import { useMemoCompare } from "../utils/useMemoCompare";
 
 type EnhancedListing = {
   [key: string]: EnhancedProductType[];
@@ -34,9 +35,9 @@ export function useListings() {
     });
 
     return enhancedListings;
-  }, [product.all()]);
+  }, [product]);
 
-  const [lisitings, setListings] = React.useState(mappedListings);
+  const [listings, setListings] = React.useState(mappedListings);
 
   React.useEffect(() => {
     setListings(mappedListings);
@@ -49,7 +50,11 @@ export function useListings() {
     dispatch(extendProducts(products));
   }, [incomingListings]);
 
-  const all = () => lisitings;
+  const all = React.useCallback(() => listings, [listings]);
 
-  return { all };
+  const listingUtils = useMemoCompare({
+    all,
+  });
+
+  return listingUtils;
 }

@@ -21,12 +21,12 @@ export function transformFilter(filters: FilterKeyTypes | undefined) {
       let newAttr = attribute.map(({ key, value }) => ({
         key: key,
         value: value,
-        checked: false
+        checked: false,
       }));
 
       Object.defineProperty(newFilters, filterKey, {
         value: newAttr,
-        enumerable: true
+        enumerable: true,
       });
     }
     return newFilters;
@@ -49,7 +49,7 @@ export function insertOrEditQuery(prevQuery: string, newSubQuery: string) {
   let qsRe = /()/;
 
   if (re.test(newSubQuery)) {
-    const subQ = newSubQuery.split("&").map(s => {
+    const subQ = newSubQuery.split("&").map((s) => {
       let sub = s.split("=")[0].split(LOOKUPSEP);
       return `${sub[0]}${LOOKUPSEP}(?:${GTE}|${LTE})=[\\w]+`;
     });
@@ -85,9 +85,9 @@ export function getCategories(
         if (child.track_id === id) {
           newItems.concat(
             [{ name: child.name, track_id: child.track_id }],
-            child.children.map(grandChild => ({
+            child.children.map((grandChild) => ({
               name: grandChild.name,
-              track_id: grandChild.track_id
+              track_id: grandChild.track_id,
             }))
           );
           break;
@@ -97,8 +97,8 @@ export function getCategories(
               newItems.concat([
                 {
                   name: child.children[i].name,
-                  track_id: child.children[i].track_id
-                }
+                  track_id: child.children[i].track_id,
+                },
               ]);
               break;
             }
@@ -112,17 +112,3 @@ export function getCategories(
     return undefined;
   }
 }
-
-/**
- * hook will run after every re-render except for the initial render
- * @param callback effect callback
- * @param deps effect dependencies
- */
-export const useDidUpdate = (callback: () => any, deps?: readonly any[]) => {
-  const didMount = useRef(false);
-
-  useEffect(() => {
-    if (didMount.current) callback();
-    else didMount.current = true;
-  }, deps);
-};

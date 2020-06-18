@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 import { RootStoreState as IState } from "../redux/reducers/RootReducer";
 import { ProductType } from "../redux/actionCreators/ProductActions";
 import { toInt } from "../utils/toInt";
+import { useMemoCompare } from "../utils/useMemoCompare";
 
-
-export type EnhancedProductType =  ProductType & {
+export type EnhancedProductType = ProductType & {
   link?: string;
   href?: string;
   as?: string;
@@ -14,7 +14,7 @@ export type EnhancedProductType =  ProductType & {
   price: number;
   discount: number;
   percentageOff?: string;
-}
+};
 
 export type ProductEnhancerType = (
   products: Array<ProductType>,
@@ -26,9 +26,6 @@ export type SortFnType<T = EnhancedProductType> = (
 ) => void;
 
 export type FnType<T = void> = (id: number) => T;
-
-
-
 
 const products$ = new BehaviorSubject<Array<EnhancedProductType>>([]);
 
@@ -45,7 +42,7 @@ export const productEnhancer: ProductEnhancerType = (products, itemsInCart) => {
     return false;
   };
 
-  return products.map(product => {
+  return products.map((product) => {
     let discount = Number(product.discount);
     let price = Number(product.price);
 
@@ -57,7 +54,7 @@ export const productEnhancer: ProductEnhancerType = (products, itemsInCart) => {
       href: `/p/[slug]`,
       as: `/p/${product.name}?track_id=${product.id}`,
       inCart: setInCart(product),
-      percentageOff: `${getPercentageOff(discount, price)}% off`
+      percentageOff: `${getPercentageOff(discount, price)}% off`,
     };
   });
 };
@@ -92,7 +89,7 @@ export function useProduct() {
   }, [incomingProducts]);
 
   React.useEffect(() => {
-    products$.subscribe(val => setProducts(val));
+    products$.subscribe((val) => setProducts(val));
 
     return () => products$.unsubscribe();
   }, []);
@@ -101,71 +98,94 @@ export function useProduct() {
    *
    * @param cmpFn sorts the products
    */
-  const sort: SortFnType = cmpFn => {
-    products$.next(products.sort(cmpFn));
-  };
+  const sort: SortFnType = React.useCallback(
+    (cmpFn) => {
+      products$.next(products.sort(cmpFn));
+    },
+    [products]
+  );
 
-  const setInCart: FnType = id => {
-    productsInCart.current = [...productsInCart.current, id];
-    products$.next(
-      products.map(product => {
-        if (product.id === id) product["inCart"] = true;
-        return product;
-      })
-    );
-  };
+  const setInCart: FnType = React.useCallback(
+    (id) => {
+      productsInCart.current = [...productsInCart.current, id];
+      products$.next(
+        products.map((product) => {
+          if (product.id === id) product["inCart"] = true;
+          return product;
+        })
+      );
+    },
+    [productsInCart.current, products]
+  );
 
-  const unsetInCart: FnType = id => {
-    productsInCart.current = productsInCart.current.filter(
-      CartId => CartId !== id
-    );
-    products$.next(
-      products.map(product => {
-        if (product.id === id) product["inCart"] = false;
-        return product;
-      })
-    );
-  };
+  const unsetInCart: FnType = React.useCallback(
+    (id) => {
+      productsInCart.current = productsInCart.current.filter(
+        (CartId) => CartId !== id
+      );
+      products$.next(
+        products.map((product) => {
+          if (product.id === id) product["inCart"] = false;
+          return product;
+        })
+      );
+    },
+    [productsInCart.current, products]
+  );
 
   /**
    *
    * @param id gets a particular product
    */
-  const get = (id?: number | string) => {
-    return products.find(product => product.id === toInt(id));
-  };
+  const get = React.useCallback(
+    (id?: number | string) => {
+      return products.find((product) => product.id === toInt(id));
+    },
+    [products]
+  );
 
   /**
    *
    * @param id get images attached with product
    */
-  const getAttachments = (id?: number | string) => {
-    const attachment_re = /attachments_/i;
-    const product = get(toInt(id));
+  const getAttachments = React.useCallback(
+    (id?: number | string) => {
+      const attachment_re = /attachments_/i;
+      const product = get(toInt(id));
 
-    if (product) {
-      return Object.keys(product)
-        .filter(key => attachment_re.test(key))
-        .map(key => product[key] as string);
-    }
-  };
+      if (product) {
+        return Object.keys(product)
+          .filter((key) => attachment_re.test(key))
+          .map((key) => product[key] as string);
+      }
+    },
+    [products]
+  );
 
-  const getAttributes = (id?: number) => {
-    const product = get(toInt(id));
-    if (product) {
-      return incomingAttributes.filter(
-        attribute => attribute.product === product.id
-      );
-    }
-  };
+  const getAttributes = React.useCallback(
+    (id?: number) => {
+      const product = get(toInt(id));
+      if (product) {
+        return incomingAttributes.filter(
+          (attribute) => attribute.product === product.id
+        );
+      }
+    },
+    [incomingAttributes]
+  );
 
-  const getKeyfeatures = () => incomingMeta.key_features;
+  const getKeyfeatures = React.useCallback(() => incomingMeta.key_features, [
+    incomingMeta.key_features,
+  ]);
 
-  const getSpecifications = () => incomingMeta.specification;
+  const getSpecifications = React.useCallback(
+    () => incomingMeta.specification,
+    [incomingMeta.specification]
+  );
 
-  const all = () => products;
+  const all = React.useCallback(() => products, [products]);
 
-  return {
+  const productUtils = useMemoCompare({
     sort,
     setInCart,
     unsetInCart,
@@ -174,6 +194,9 @@ export function useProduct() {
     getAttributes,
     all,
     getKeyfeatures,
-    getSpecifications
-  };
+    getSpecifications,
+  });
+
+  return productUtils;
+
 }

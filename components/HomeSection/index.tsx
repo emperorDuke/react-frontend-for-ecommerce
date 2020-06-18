@@ -85,7 +85,7 @@ const HomeSection: React.ComponentType = () => {
       <Paper className={classes.cardMasterLayout}>
         <CardEnhancer
           appBar
-          appBarProps={{ text: "sponsored products", link: "/" }}
+          appBarProps={{ text: "Sponsored products", link: "/" }}
         >
           {ads.getSponsoredItems().products.map((product) => (
             <ModularCard {...product} key={product.id} />

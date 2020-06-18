@@ -6,6 +6,7 @@ import { productEnhancer, useProduct } from "./product";
 import { useDispatch } from "react-redux";
 import { extendProducts } from "../redux/actionCreators/ProductActions";
 import { extendStores } from "../redux/actionCreators/StoreActions";
+import { useMemoCompare } from "../utils/useMemoCompare";
 
 export function useAds() {
   const internalAds = useSelector(({ carousels }) => carousels.carousels);
@@ -42,7 +43,7 @@ export function useAds() {
     });
 
     return { products, shops };
-  }, [product.all()]);
+  }, [product]);
 
   const [sponsoredItems, setSponsoredItems] = React.useState(
     mappedSponsoredItems
@@ -60,16 +61,23 @@ export function useAds() {
     dispatch(extendStores(sponsoredStores));
   }, [sponsored]);
 
-  const getAdBlock = (param: PositionType) =>
-    internalAds.filter((ads) => ads.position === param);
+  const getAdBlock = React.useCallback(
+    (param: PositionType) =>
+      internalAds.filter((ads) => ads.position === param),
+    [internalAds]
+  );
 
-  const getSponsoredItems = () => sponsoredItems;
+  const getSponsoredItems = React.useCallback(() => sponsoredItems, [
+    sponsoredItems,
+  ]);
 
-  const all = () => internalAds;
+  const all = React.useCallback(() => internalAds, [internalAds]);
 
-  return {
+  const adsUtils = useMemoCompare({
     getAdBlock,
     getSponsoredItems,
     all,
-  };
+  });
+
+  return adsUtils;
 }
