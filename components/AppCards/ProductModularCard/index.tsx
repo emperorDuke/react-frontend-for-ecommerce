@@ -11,7 +11,7 @@ import Img from "../../Img";
 import Link from "../../Link";
 import CurrencyManager from "../../CurrencyManager";
 import Rating from "../../Rating";
-import { EnhancedProductType } from "../../../service/Product";
+import { EnhancedProductType } from "../../../services";
 import { AppCardProps } from "../@types";
 import useStyles from "../styles";
 import useTheme from "@material-ui/core/styles/useTheme";

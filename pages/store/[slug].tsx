@@ -6,7 +6,7 @@ import { productRequest } from "../../redux/actionCreators/ProductActions";
 import Header from "../../components/Header";
 import StoreSection from "../../components/StoreSection";
 import Footer from "../../components/Footer";
-import { urls } from "../../service/ApiUrls";
+import { apiUrl } from "../../services";
 
 const Store: NextPage<{storeId: string}> = props => {
   return (
@@ -24,8 +24,8 @@ Store.getInitialProps = async ({
 }: NextJSContext & NextPageContext) => {
   const ID = Array.isArray(query.storeId) ? query.storeId[0] : query.storeId;
 
-  store.dispatch(storeRequest(urls.getMerchantStore(ID)));
-  store.dispatch(productRequest(urls.getProduct(ID)));
+  store.dispatch(storeRequest(apiUrl("getMerchantStore", ID)));
+  store.dispatch(productRequest(apiUrl("getProduct", ID)));
 
   return {storeId: ID};
 };

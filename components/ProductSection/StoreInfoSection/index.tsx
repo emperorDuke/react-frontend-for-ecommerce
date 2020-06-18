@@ -5,7 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
-import { EnhancedMerchantStore } from "../../../service/MerchantStore/@types";
+import { EnhancedMerchantStore } from "../../../services";
 
 interface PropsType {
   store: EnhancedMerchantStore

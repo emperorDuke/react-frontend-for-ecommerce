@@ -46,8 +46,6 @@ export default makeStyles((theme: Theme) =>
     },
     slideWrapper: {
       transform: (val: StyleProps) => `translateX(${val.position}px)`,
-      width: "inherit",
-      height: "inherit",
       transition: (val: StyleProps) =>
         !val.shouldTransition ? "none" : "transform 500ms ease-in-out 20ms"
     },

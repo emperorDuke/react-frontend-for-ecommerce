@@ -1,20 +1,22 @@
 import {
   carouselRequest,
   carouselSuccess,
-  carouselFailure
+  carouselFailure,
 } from "../../CarouselActions";
 
 export enum carousel {
   CAROUSEL_REQUEST = "CAROUSEL_REQUEST",
   CAROUSEL_SUCCESS = "CAROUSEL_SUCCESS",
-  CAROUSEL_ERROR = "CAROUSEL_ERROR"
+  CAROUSEL_ERROR = "CAROUSEL_ERROR",
 }
+
+export type PositionType = "MAIN" | "CENTER" | "SIDE";
 
 export interface CarouselType {
   id?: number;
   name: string;
   attachment: string;
-  position: string;
+  position: PositionType;
   caption?: string;
   added_at: string;
 }

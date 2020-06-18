@@ -1,9 +1,9 @@
 import {
   StoreActionTypes,
   store,
-  StoreType
+  StoreType,
 } from "../../actionCreators/StoreActions/@types";
-import { FetchConst, FetchOperationType } from "../../../service/Fetch/@types";
+import { FetchConst, FetchOperationType } from "../../../utils/Fetch/@types";
 
 type StoreReducerState = {
   stores: Array<StoreType>;
@@ -17,9 +17,9 @@ const initialState: StoreReducerState = {
   operations: {
     fetchStores: {
       status: null,
-      error: null
-    }
-  }
+      error: null,
+    },
+  },
 };
 
 export default function StoreReducer(
@@ -33,9 +33,9 @@ export default function StoreReducer(
         operations: {
           fetchStores: {
             status: FetchConst.FETCH_IN_PROCESS,
-            error: null
-          }
-        }
+            error: null,
+          },
+        },
       };
     case store.STORE_SUCCESS:
       return {
@@ -44,9 +44,9 @@ export default function StoreReducer(
         operations: {
           fetchStores: {
             status: FetchConst.FETCH_SUCCESSFUL,
-            error: null
-          }
-        }
+            error: null,
+          },
+        },
       };
     case store.STORE_ERROR:
       return {
@@ -54,11 +54,29 @@ export default function StoreReducer(
         operations: {
           fetchStores: {
             status: FetchConst.FETCH_FAILED,
-            error: action.payload
-          }
-        }
+            error: action.payload,
+          },
+        },
+      };
+    case store.EXTEND_STORE:
+      return {
+        ...state,
+        stores: addToState(state, action.payload),
       };
     default:
       return state;
   }
+}
+
+function addToState(state = initialState, shops: StoreType[]) {
+  let nextShops: StoreType[] = [];
+
+  shops.forEach((shop) => {
+    const present = state.stores.find(
+      (prevShop) => prevShop.id === shop.id
+    );
+    if (!present) nextShops.push(shop);
+  });
+
+  return state.stores.concat(nextShops);
 }

@@ -3,7 +3,7 @@ import {
   PickupLocationActionTypes,
   PickupLocation
 } from "../../actionCreators/PickupLocations";
-import { FetchOperationType, FetchConst } from "../../../service/Fetch/@types";
+import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
 interface PickUpLocationsType {
   pickUpLocations: Array<PickupLocations>;

@@ -1,5 +1,5 @@
 import { ActionCreator } from 'redux';
-import { FilterFailure, FilterRequest, FilterSuccess, filter, FilterKeyTypes } from './@types'
+import { FilterFailure, FilterRequest, FilterSuccess, filter } from './@types'
 
 
 export const filterRequest:ActionCreator<FilterRequest> = (payload) => {

@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from "redux";
-import { RootStoreState } from '../reducers/RootReducer/@types';
+import { RootStoreState } from '../../reducers/RootReducer/@types';
 
 
 

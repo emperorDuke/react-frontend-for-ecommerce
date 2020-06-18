@@ -1,5 +1,5 @@
 import { FilterKeyTypes } from "../../../actionCreators/FilterActions/@types";
-import { FetchOperationType } from "../../../../service/Fetch/@types";
+import { FetchOperationType } from "../../../../utils/Fetch/@types";
 
 
 export type FilterReducertype = {

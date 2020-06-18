@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Filter from "../Filter";
-import useSelector from "../../redux/useStoreSelector";
+import useSelector from "../../redux/utils/useStoreSelector";
 import * as _ from "./utils";
 import { CategorySectionProps } from "./@types";
 import { useDispatch } from "react-redux";

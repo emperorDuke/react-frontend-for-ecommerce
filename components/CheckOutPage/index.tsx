@@ -6,8 +6,8 @@ import Divider from "@material-ui/core/Divider";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Typography from "@material-ui/core/Typography";
-import useSelector from "../../redux/useStoreSelector";
-import { useBuyer } from "../../service/Buyer";
+import useSelector from "../../redux/utils/useStoreSelector";
+import { useUser } from "../../services";
 import { useRouter } from "next/router";
 import { post } from "../../redux/actionCreators/PostActions";
 import { orderSuccess } from "../../redux/actionCreators/OrderActions";
@@ -20,7 +20,7 @@ function CheckOut() {
   const router = useRouter();
   const [postingState, setPostingState] = useState({});
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Pay now");
-  const buyer = useBuyer();
+  const buyer = useUser("buyer");
   const dispatch = useDispatch();
 
   const incomingPosts = useSelector(({ posts }) => posts);
@@ -106,7 +106,7 @@ function CheckOut() {
         {/**Ordered items */}
         <Grid item>
           <Grid container direction="column">
-            {buyer.orders.all()[0].items.map(item => (
+            {buyer.orders && buyer.orders.all()[0].items.map(item => (
               <Grid item>{item.name}</Grid>
             ))}
           </Grid>

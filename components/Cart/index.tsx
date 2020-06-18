@@ -22,8 +22,7 @@ import useStyles from "./styles";
 import CurrencyManager from "../CurrencyManager";
 import { CartProps } from "./@types";
 import { sum } from "./utils";
-import { useProduct } from "../../service/Product";
-import { useMerchantStore } from "../../service/MerchantStore";
+import { useProduct, useMerchantStore } from "../../services";
 
 export * from "./@types";
 export * from "./utils";

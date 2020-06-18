@@ -3,7 +3,7 @@ import {
   cart,
   CartType
 } from "../../actionCreators/CartActions";
-import { FetchOperationType, FetchConst } from "../../../service/Fetch/@types";
+import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
 interface CartState {
   cart: Array<CartType>;

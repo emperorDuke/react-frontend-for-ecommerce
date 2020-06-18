@@ -19,7 +19,7 @@ import Popover from "@material-ui/core/Popover";
 import useStyles from "./styles";
 import NavBar from "../NavBar";
 import { QueryTypes } from "../SearchBar/@types";
-import useStoreSelector from "../../redux/useStoreSelector";
+import useStoreSelector from "../../redux/utils/useStoreSelector";
 import { categoryRequest } from "../../redux/actionCreators/CategoryActions";
 import { LocationRequest } from "../../redux/actionCreators/LocationActions";
 import { useDispatch } from "react-redux";
@@ -27,9 +27,9 @@ import { Posting as Post } from "../../redux/actionCreators/PostActions";
 import LoginForm from "../Loginsection";
 import { CartType, loadCart } from "../../redux/actionCreators/CartActions";
 import { CART_STORAGE_KEY } from "../CartSection/utils";
-import { urls } from "../../service/ApiUrls";
+import { apiUrl }from "../../services";
 
-const Header: React.ComponentType<HeaderProps> = props => {
+const Header: React.ComponentType<HeaderProps> = (props) => {
   const cart = useStoreSelector(({ cart }) => cart.cart);
 
   const storeLocations = useStoreSelector(
@@ -51,7 +51,7 @@ const Header: React.ComponentType<HeaderProps> = props => {
   const [queryStrings, setQueryStrings] = useState<QueryTypes>({
     location: "Region",
     category: "All Categories",
-    query: ""
+    query: "",
   });
 
   useEffect(() => {
@@ -65,8 +65,8 @@ const Header: React.ComponentType<HeaderProps> = props => {
     }
 
     dispatch(loadCart(parsedCart));
-    dispatch(LocationRequest(urls.merchantStoresLocations));
-    dispatch(categoryRequest(urls.getCategories));
+    dispatch(LocationRequest(apiUrl("getMerchantStoresLocations")));
+    dispatch(categoryRequest(apiUrl("getCategories")));
   }, []);
 
   const postSearchQuery = useCallback(() => {
@@ -74,7 +74,7 @@ const Header: React.ComponentType<HeaderProps> = props => {
 
     dispatch(
       Post({
-        url: `/?search=${query}&?location=${location}&?category=${category}`
+        url: `/?search=${query}&?location=${location}&?category=${category}`,
       })
     );
   }, [queryStrings, dispatch]);
@@ -129,7 +129,7 @@ const Header: React.ComponentType<HeaderProps> = props => {
                         color="secondary"
                         classes={{ badge: classes.badge }}
                       >
-                        <ShoppingCartIcon className={classes.cartBtn}/>
+                        <ShoppingCartIcon className={classes.cartBtn} />
                       </Badge>
                       cart
                     </Link>
@@ -156,7 +156,7 @@ const Header: React.ComponentType<HeaderProps> = props => {
               </Button>
               {!props.disableCategoryButton && (
                 <Popover
-                  open={Boolean(anchorEl)}
+                  open={!!anchorEl}
                   onClose={() => setAnchorEl(null)}
                   anchorReference="anchorPosition"
                   anchorPosition={{
@@ -177,7 +177,7 @@ const Header: React.ComponentType<HeaderProps> = props => {
 
 Header.defaultProps = {
   disableSearch: false,
-  disableCategoryButton: false
+  disableCategoryButton: false,
 };
 
 export default Header;

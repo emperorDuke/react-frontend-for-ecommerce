@@ -6,7 +6,7 @@ import Footer from "../../components/Footer";
 import { productRequest } from "../../redux/actionCreators/ProductActions";
 import { Container } from "next/app";
 import { attributeRequest } from "../../redux/actionCreators/AttributeActions";
-import { urls } from "../../service/ApiUrls";
+import { apiUrl } from "../../services";
 import { metaRequest } from "../../redux/actionCreators/ProductMetaActions";
 
 const ProductPage: NextPage<{ id: string }> = ({ id }) => {
@@ -25,9 +25,9 @@ ProductPage.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
   
   const ID = Array.isArray(id) ? id[0] : id;
 
-  ctx.store.dispatch(productRequest(urls.getProduct(ID)));
-  ctx.store.dispatch(attributeRequest(urls.getAttributes(ID)));
-  ctx.store.dispatch(metaRequest(urls.getMetas(ID)));
+  ctx.store.dispatch(productRequest(apiUrl("getProduct", ID)));
+  ctx.store.dispatch(attributeRequest(apiUrl("getProductAttributes", ID)));
+  ctx.store.dispatch(metaRequest(apiUrl("getProductMetas", ID)));
 
   return { id: ID };
 };

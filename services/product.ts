@@ -1,22 +1,44 @@
 import React from "react";
 import { BehaviorSubject } from "rxjs";
 import { useSelector } from "react-redux";
-import { RootStoreState as IState } from "../../redux/reducers/RootReducer";
-import * as T from "./@types";
-import { ProductType } from "../../redux/actionCreators/ProductActions";
-import { toInt } from "../../utils/toInt";
+import { RootStoreState as IState } from "../redux/reducers/RootReducer";
+import { ProductType } from "../redux/actionCreators/ProductActions";
+import { toInt } from "../utils/toInt";
 
-export * from "./@types";
 
-const products$ = new BehaviorSubject<Array<T.EnhancedProductType>>([]);
+export type EnhancedProductType =  ProductType & {
+  link?: string;
+  href?: string;
+  as?: string;
+  inCart?: boolean;
+  price: number;
+  discount: number;
+  percentageOff?: string;
+}
+
+export type ProductEnhancerType = (
+  products: Array<ProductType>,
+  productsInCart?: Array<number>
+) => Array<EnhancedProductType>;
+
+export type SortFnType<T = EnhancedProductType> = (
+  cmpFn: (a: T, b: T) => number
+) => void;
+
+export type FnType<T = void> = (id: number) => T;
+
+
+
+
+const products$ = new BehaviorSubject<Array<EnhancedProductType>>([]);
 
 const getPercentageOff = (discount: number, price: number) => {
   return Math.round(100 - ((discount / price) * 100) / 1);
 };
 
-const productEnhancer: T.ProductEnhancerType = (products, productsInCart) => {
+export const productEnhancer: ProductEnhancerType = (products, itemsInCart) => {
   const setInCart = (product: ProductType) => {
-    if (productsInCart && product.id && productsInCart.includes(product.id)) {
+    if (itemsInCart && product.id && itemsInCart.includes(product.id)) {
       return true;
     }
 
@@ -24,18 +46,18 @@ const productEnhancer: T.ProductEnhancerType = (products, productsInCart) => {
   };
 
   return products.map(product => {
+    let discount = Number(product.discount);
+    let price = Number(product.price);
+
     return {
       ...product,
-      price: Number(product.price),
-      discount: Number(product.discount),
+      price: price,
+      discount: discount,
       link: `/p/${product.name}?track_id=${product.id}`,
       href: `/p/[slug]`,
       as: `/p/${product.name}?track_id=${product.id}`,
       inCart: setInCart(product),
-      percentageOff: `${getPercentageOff(
-        Number(product.discount),
-        Number(product.price)
-      )}% off`
+      percentageOff: `${getPercentageOff(discount, price)}% off`
     };
   });
 };
@@ -79,11 +101,11 @@ export function useProduct() {
    *
    * @param cmpFn sorts the products
    */
-  const sort: T.SortFnType = cmpFn => {
+  const sort: SortFnType = cmpFn => {
     products$.next(products.sort(cmpFn));
   };
 
-  const setInCart: T.FnType = id => {
+  const setInCart: FnType = id => {
     productsInCart.current = [...productsInCart.current, id];
     products$.next(
       products.map(product => {
@@ -93,7 +115,7 @@ export function useProduct() {
     );
   };
 
-  const unsetInCart: T.FnType = id => {
+  const unsetInCart: FnType = id => {
     productsInCart.current = productsInCart.current.filter(
       CartId => CartId !== id
     );

@@ -1,5 +1,5 @@
 import * as T from "../../actionCreators/UserActions";
-import { FetchOperationType, FetchConst } from "../../../service/Fetch/@types";
+import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
 interface UserState {
   user: T.UserType;

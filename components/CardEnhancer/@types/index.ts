@@ -1,18 +1,16 @@
+import React from "react";
 
-import React from 'react';
-
-
-export type SizeTypes = 'md' | 'sm' | 'lg' ;
+export type SizeTypes = "md" | "sm" | "lg";
 
 export interface CardEnhancerProps {
-    size?: SizeTypes;
+  size?: SizeTypes;
+  disableToggler?: boolean;
+  appBar?: boolean;
+  appBarProps?: {
+    text?: string;
     disableToggler?: boolean;
-    withAppBar?: boolean;
-    appBarProps?: {
-        text?: string;
-        disableToggler?: boolean;
-        link?: string;
-    };
-    children: React.ReactNodeArray;
-    cardType?: 'list' | 'module'
+    link?: string;
+  };
+  children: React.ReactNodeArray;
+  cardType?: "list" | "module";
 }

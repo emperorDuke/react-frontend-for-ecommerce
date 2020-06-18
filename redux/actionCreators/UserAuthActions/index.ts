@@ -3,7 +3,7 @@ import { setCookie, removeCookie } from "../../../cookie";
 import { ThunkAction } from "redux-thunk";
 import { RootStoreState } from "../../reducers/RootReducer";
 import { AnyAction } from "redux";
-import post, { REQ } from "../../../service/Post";
+import post, { REQ } from "../../../utils/Post";
 
 
 

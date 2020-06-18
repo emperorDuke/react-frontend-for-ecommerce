@@ -1,6 +1,6 @@
-import { EnhancedProductType } from "../../../../service/Product";
+import { EnhancedProductType } from "../../../../services";
 import { AttributeType } from "../../../../redux/actionCreators/AttributeActions";
-import { EnhancedMerchantStore } from "../../../../service/MerchantStore/@types";
+import { EnhancedMerchantStore } from "../../../../services";
 
 
 export interface PropsType {

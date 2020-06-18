@@ -3,7 +3,7 @@ import {
   OrderActionType,
   order
 } from "../../actionCreators/OrderActions";
-import { FetchOperationType, FetchConst } from "../../../service/Fetch/@types";
+import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
 interface OrderState {
   orders: Array<OrderType>;

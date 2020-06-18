@@ -22,7 +22,7 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
 
   return (
     <div
-      onClick={e => handleClick(e)}
+      onClick={handleClick}
       className={clsx(props.className, classes.base)}
       ref={ref}
       aria-label={`slide-${props.__index}`}

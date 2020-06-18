@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import { getCookie } from "../cookie";
 import { restoreState } from "../redux/actionCreators/UserAuthActions";
 import { orderRequest } from "../redux/actionCreators/OrderActions";
-import { urls } from "../service/ApiUrls";
+import { apiUrl } from "../services";
 import { userRequest } from "../redux/actionCreators/UserActions";
 import { requestAddress } from "../redux/actionCreators/AddressActions";
 import { requestPickupLocations } from "../redux/actionCreators/PickupLocations";
@@ -29,10 +29,10 @@ Checkout.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
     const token = getCookie("token", ctx.req);
     if (token) {
       ctx.store.dispatch(restoreState(token));
-      ctx.store.dispatch(orderRequest(urls.getOrder(order as string)));
-      ctx.store.dispatch(userRequest(urls.getUser(user as string)));
-      ctx.store.dispatch(requestAddress(urls.addressBook));
-      ctx.store.dispatch(requestPickupLocations(urls.getPickupLocation));
+      ctx.store.dispatch(orderRequest(apiUrl("getOrder", order as string)));
+      ctx.store.dispatch(userRequest(apiUrl("getUser", user as string)));
+      ctx.store.dispatch(requestAddress(apiUrl("addressBook")));
+      ctx.store.dispatch(requestPickupLocations(apiUrl("getPickupLocation")));
     }
   }
   return {};

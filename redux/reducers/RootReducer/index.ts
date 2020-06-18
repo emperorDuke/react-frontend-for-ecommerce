@@ -16,6 +16,8 @@ import AttributeReducer from "../AttributeReducer";
 import MetaReducer from "../ProductMetaReducer";
 import UserReducer from "../UserReducer";
 import orderReducer from "../OrderReducer";
+import SponsoredReducer from "../SponsoredReducer";
+import { listingReducer } from "../ProductListingReducer";
 
 export * from "./@types";
 
@@ -36,4 +38,6 @@ export default combineReducers({
   productMetas: MetaReducer,
   user: UserReducer,
   orders: orderReducer,
+  sponsoredItems: SponsoredReducer,
+  listings: listingReducer
 });

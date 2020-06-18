@@ -12,9 +12,9 @@ import {
   CartType
 } from "../../redux/actionCreators/CartActions";
 import Cart from "../Cart";
-import useSelector from "../../redux/useStoreSelector";
+import useSelector from "../../redux/utils/useStoreSelector";
 import { CART_STORAGE_KEY } from "./utils";
-import { useProduct } from "../../service/Product";
+import { useProduct } from "../../services";
 import useStyles from "./styles";
 
 export default function CartSection() {

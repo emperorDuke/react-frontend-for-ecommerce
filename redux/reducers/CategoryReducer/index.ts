@@ -1,5 +1,5 @@
 import { CategoryActionTypes, category, CategoryTypes  } from "../../actionCreators/CategoryActions/@types";
-import { FetchOperationType, FetchConst } from '../../../service/Fetch/@types'
+import { FetchOperationType, FetchConst } from '../../../utils/Fetch/@types'
 
 
 type CategoryReducertype = {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Formik, ErrorMessage } from "formik";
 import yup from "yup";
 import { useDispatch } from "react-redux";
@@ -13,16 +13,15 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
-import { useBuyer } from "../../service/Buyer";
+import { useUser, apiUrl } from "../../services";
 import { Posting } from "../../redux/actionCreators/PostActions";
-import { urls } from "../../service/ApiUrls";
 
 function AddressSection() {
   const [openForm, setOpenForm] = useState(false);
   const [openAddressChangeForm, setAddressChangeForm] = useState(false);
-  const buyer = useBuyer();
+  const buyer = useUser("buyer");
   const dispatch = useDispatch();
-  const defaultAddress = buyer.addressBook.getDefault();
+  const defaultAddress = buyer.addressBook && buyer.addressBook.getDefault();
 
   const initialValues = {
     first_name: "",
@@ -33,16 +32,16 @@ function AddressSection() {
     country: "Nigeria",
     city: "",
     state: "",
-    zip_code: ""
+    zip_code: "",
   };
 
   const handleAddressForm = (values: typeof initialValues) => {
     dispatch(
       Posting({
-        url: urls.postAttributes,
+        url: apiUrl("postAttributes"),
         body: JSON.stringify(values),
         reqAuth: true,
-        config: { "Content-type": "application/json" }
+        config: { "Content-type": "application/json" },
       })
     );
   };
@@ -70,8 +69,8 @@ function AddressSection() {
         <Grid item>
           {defaultAddress &&
             Object.keys(defaultAddress)
-              .filter(key => key !== "id")
-              .map(key => (
+              .filter((key) => key !== "id")
+              .map((key) => (
                 <TextField
                   id={key}
                   name={key}
@@ -104,27 +103,28 @@ function AddressSection() {
         <DialogContent>
           <Divider />
           <Grid container direction="column">
-            {buyer.addressBook.all().map(address => (
-              <Grid item>
-                <Grid container direction="column">
-                  {Object.keys(address)
-                    .filter(key => key !== "id")
-                    .map(key => (
-                      <Grid item>
-                        <TextField
-                          id={key}
-                          name={key}
-                          type="text"
-                          label={key}
-                          value={address[key]}
-                          disabled
-                          variant="outlined"
-                        />
-                      </Grid>
-                    ))}
+            {buyer.addressBook &&
+              buyer.addressBook.all().map((address) => (
+                <Grid item>
+                  <Grid container direction="column">
+                    {Object.keys(address)
+                      .filter((key) => key !== "id")
+                      .map((key) => (
+                        <Grid item>
+                          <TextField
+                            id={key}
+                            name={key}
+                            type="text"
+                            label={key}
+                            value={address[key]}
+                            disabled
+                            variant="outlined"
+                          />
+                        </Grid>
+                      ))}
+                  </Grid>
                 </Grid>
-              </Grid>
-            ))}
+              ))}
           </Grid>
         </DialogContent>
       </Dialog>
@@ -147,7 +147,7 @@ function AddressSection() {
         <DialogContent>
           <Formik
             initialValues={initialValues}
-            onSubmit={values => handleAddressForm(values)}
+            onSubmit={(values) => handleAddressForm(values)}
             validationSchema={yup.object().shape({
               first_name: yup
                 .string()
@@ -169,12 +169,12 @@ function AddressSection() {
               country: yup.string().required("country is required !"),
               city: yup.string().required("city is required !"),
               state: yup.string().required("state is required !"),
-              zip_code: yup.string().notRequired()
+              zip_code: yup.string().notRequired(),
             })}
           >
-            {props => (
+            {(props) => (
               <form onSubmit={props.handleSubmit} onReset={props.handleReset}>
-                {Object.keys(initialValues).map(key => (
+                {Object.keys(initialValues).map((key) => (
                   <React.Fragment>
                     <TextField
                       id={key}

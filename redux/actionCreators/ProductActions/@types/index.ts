@@ -1,6 +1,6 @@
 import { Action } from "redux";
 
-export interface RatingType {
+export type RatingType = {
   [key: string]: string | number;
   average_rating: string;
   n_one_star_votes: number;
@@ -15,7 +15,7 @@ export interface ProductRatingType extends RatingType {
   product: number;
 };
 
-export interface ProductType {
+export type ProductType = {
   [key: string]: string | undefined | number | ProductRatingType | boolean;
   id?: number;
   store: number;
@@ -39,7 +39,8 @@ export interface ProductType {
 export enum product {
   PRODUCT_REQUEST = "PRODUCT_REQUEST",
   PRODUCT_SUCCESS = "PRODUCT_SUCCESS",
-  PRODUCT_ERROR = "PRODUCT_ERROR"
+  PRODUCT_ERROR = "PRODUCT_ERROR",
+  EXTEND_PRODUCTS = "extend products"
 }
 
 export interface ProductSuccess extends Action {
@@ -57,7 +58,13 @@ export interface ProductRequest extends Action {
   payload: string;
 }
 
+export interface ExtendProducts extends Action {
+  type: product.EXTEND_PRODUCTS;
+  payload: ProductType[];
+}
+
 export type ProductActionType =
   | ProductRequest
   | ProductSuccess
+  | ExtendProducts
   | ProductFailure;

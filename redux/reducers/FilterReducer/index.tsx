@@ -4,7 +4,7 @@ import {
 } from "../../actionCreators/FilterActions/@types";
 import { Reducer } from "redux";
 import { FilterReducertype } from "./@types";
-import { FetchConst } from "../../../service/Fetch/@types";
+import { FetchConst } from "../../../utils/Fetch/@types";
 
 const initialState: FilterReducertype = {
   filters: {},

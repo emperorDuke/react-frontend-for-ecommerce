@@ -29,9 +29,9 @@ function Slider(props: SliderProps) {
 
   const CLONE = 2;
 
-  const width = props.width || 0;
+  const width = props.width ?? 0;
 
-  const height = props.height || 0;
+  const height = props.height ?? 0;
 
   const isThumbnails = props.type === "thumbnails";
 

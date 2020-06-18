@@ -1,6 +1,6 @@
 import { AttributeState } from "./@types";
 import * as T from "../../actionCreators/AttributeActions/@types";
-import { FetchConst } from "../../../service/Fetch/@types";
+import { FetchConst } from "../../../utils/Fetch/@types";
 
 const initialState: AttributeState = {
   attributes: [],

@@ -70,9 +70,9 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
   };
 
   const renderCards = () => {
-    const { children, withAppBar, disableToggler, size, cardType } = props;
+    const { children, appBar, disableToggler, size, cardType } = props;
 
-    const wrap = withAppBar || !disableToggler ? "nowrap" : "wrap";
+    const wrap = appBar || !disableToggler ? "nowrap" : "wrap";
 
     const direction = cardType && cardType === "list" ? "column" : "row";
 
@@ -104,9 +104,9 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
   };
 
   const propsSorter = () => {
-    const { withAppBar, appBarProps, disableToggler } = props;
+    const { appBar, appBarProps, disableToggler } = props;
 
-    if (!disableToggler && !withAppBar) {
+    if (!disableToggler && !appBar) {
       return (
         <div style={{ position: "relative" }}>
           {renderCards()}
@@ -122,7 +122,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
           </Paper>
         </div>
       );
-    } else if (withAppBar) {
+    } else if (appBar) {
       return (
         <Grid container direction="column">
           <Grid item>
@@ -185,7 +185,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
 CardEnhancer.defaultProps = {
   size: "lg",
   disableToggler: false,
-  withAppBar: false,
+  appBar: false,
   appBarProps: {
     text: "",
     disableToggler: false,

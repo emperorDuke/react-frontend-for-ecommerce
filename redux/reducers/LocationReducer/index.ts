@@ -1,8 +1,7 @@
-
 import { Reducer } from 'redux';
 import { LocationReducerType } from './@types'
 import { LocationActionTypes, location } from "../../actionCreators/LocationActions/@types";
-import { FetchConst } from '../../../service/Fetch/@types';
+import { FetchConst } from '../../../utils/Fetch/@types';
 
 
 const initialState = {

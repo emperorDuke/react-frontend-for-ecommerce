@@ -10,7 +10,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import styles from "./styles";
-import { EnhancedProductType } from "../../service/Product";
+import { EnhancedProductType } from "../../services";
 import {
   SpecificationType,
   KeyFeatureType

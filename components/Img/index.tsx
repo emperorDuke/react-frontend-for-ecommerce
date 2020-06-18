@@ -1,5 +1,5 @@
 import React from "react";
-import withFetch from "../../service/withFetch";
+import withFetch from "../../utils/withFetch";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import { ImgProps } from "./@types";

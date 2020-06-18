@@ -7,9 +7,8 @@ import Grid from "@material-ui/core/Grid";
 import Rating from "../../Rating";
 import Img from "../../Img";
 import Link from "../../Link";
-import { EnhancedProductType } from "../../../service/Product";
 import useStyles from "../styles";
-import { useMerchantStore } from "../../../service/MerchantStore";
+import { useMerchantStore, EnhancedProductType } from "../../../services";
 
 const ListCard: React.ComponentType<EnhancedProductType> = product => {
   const classes = useStyles();

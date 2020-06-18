@@ -1,6 +1,6 @@
 import { MetaStateType } from "./@types";
 import { MetaActionType, meta } from "../../actionCreators/ProductMetaActions";
-import { FetchConst } from "../../../service/Fetch/@types";
+import { FetchConst } from "../../../utils/Fetch/@types";
 
 const initialState: MetaStateType = {
   productMeta: {

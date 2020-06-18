@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Rating from "../Rating";
 import Link from "../Link";
 import Img from "../Img";
-import { EnhancedMerchantStore } from "../../service/MerchantStore";
+import { EnhancedMerchantStore } from "../../services";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

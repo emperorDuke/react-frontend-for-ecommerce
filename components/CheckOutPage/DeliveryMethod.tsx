@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import NativeSelect from "@material-ui/core/NativeSelect";
@@ -13,7 +13,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
-import useSelector from "../../redux/useStoreSelector";
+import useSelector from "../../redux/utils/useStoreSelector";
 
 type Delivery = "pickupStation" | "doorDelivery";
 
@@ -33,6 +33,16 @@ function DeliveryMethod() {
     });
   }, [pickupState]);
 
+  const handleDeliveryType = useCallback(
+    (arg: Delivery) => () => setDeliveryType(arg),
+    [deliveryType]
+  );
+
+  const handleOpenPickupStation = useCallback(
+    (arg: typeof openPickupStation) => () => setOpenPickupStation(arg),
+    [openPickupStation]
+  );
+
   const deliveryMethodJSX = (
     <React.Fragment>
       <Typography variant="h4">Delivery Method</Typography>
@@ -42,7 +52,7 @@ function DeliveryMethod() {
           <FormControlLabel
             control={<Radio />}
             value={deliveryType}
-            onChange={() => setDeliveryType("doorDelivery")}
+            onChange={handleDeliveryType("doorDelivery")}
             label={<Typography variant="h6">Door Delivery</Typography>}
           />
         </Grid>
@@ -52,14 +62,14 @@ function DeliveryMethod() {
               <FormControlLabel
                 control={<Radio />}
                 value={deliveryType}
-                onChange={() => setDeliveryType("pickupStation")}
+                onChange={handleDeliveryType("pickupStation")}
                 label={<Typography variant="h6">Pickup station</Typography>}
               />
             </Grid>
             {deliveryType === "pickupStation" && (
               <Grid item>
                 <Button
-                  onClick={() => setOpenPickupStation(true)}
+                  onClick={handleOpenPickupStation(true)}
                   color="secondary"
                 >
                   Pickup station
@@ -107,7 +117,7 @@ function DeliveryMethod() {
       {deliveryMethodJSX}
       <Dialog
         open={openPickupStation}
-        onClose={() => setOpenPickupStation(false)}
+        onClose={handleOpenPickupStation(false)}
         aria-labelledby="dialog-for-pickup-location"
       >
         <DialogContent>
@@ -121,7 +131,7 @@ function DeliveryMethod() {
           <DialogActions>
             <Button
               startIcon={<CloseIcon />}
-              onClick={() => setOpenPickupStation(false)}
+              onClick={handleOpenPickupStation(false)}
               color="secondary"
             >
               close

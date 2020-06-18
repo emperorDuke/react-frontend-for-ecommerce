@@ -9,29 +9,29 @@ import {
   filter,
   debounceTime,
   takeWhile,
-  mergeAll
+  mergeAll,
 } from "rxjs/operators";
 import { of, from, iif, merge, EMPTY, forkJoin, Observable } from "rxjs";
 import { RootStoreState } from "../../reducers/RootReducer";
 import { isOfType } from "typesafe-actions";
 import { EpicDepenciesType } from "../../../store";
 import { CartActionTypes, CartType } from "../../actionCreators/CartActions";
-import { urls } from "../../../service/ApiUrls";
+import { apiUrl } from "../../../services";
 import { CART_STORAGE_KEY } from "../../../components/CartSection/utils";
 import {
   StoreActionTypes,
   StoreType,
-  storeSuccess
+  storeSuccess,
 } from "../../actionCreators/StoreActions";
 import {
   AttributeActionType,
   AttributeType,
-  attributeSuccess
+  attributeSuccess,
 } from "../../actionCreators/AttributeActions";
 import {
   ProductActionType,
   ProductType,
-  productSuccess
+  productSuccess,
 } from "../../actionCreators/ProductActions";
 
 type CartEpic = Epic<
@@ -40,95 +40,6 @@ type CartEpic = Epic<
   RootStoreState,
   EpicDepenciesType
 >;
-
-const removeIndex = (cart: actions.CartType) => {
-  delete cart["index"];
-  return cart;
-};
-
-const storageStream = (state$: StateObservable<RootStoreState>) =>
-  EMPTY.pipe(
-    withLatestFrom(state$),
-    map(([, state]) => JSON.stringify(state.cart.cart)),
-    map(cart => localStorage.setItem(CART_STORAGE_KEY, cart)),
-    catchError(err => of(console.log(err)))
-  );
-
-const addToCartEpic: CartEpic = (action$, state$, { http }) =>
-  action$.pipe(
-    filter(isOfType(actions.cart.ADD_ITEM)),
-    map(({ payload }) => removeIndex(payload)),
-    withLatestFrom(state$),
-    switchMap(([payload, state]) =>
-      iif(
-        () => state.userAuth.isLoggedIn,
-        http
-          .post(urls.updateCart(payload.id), JSON.stringify(payload), {
-            "Authorization": `JWT ${state.userAuth.token}`,
-            "Content-type": "application/json"
-          })
-          .pipe(catchError(() => EMPTY)),
-        storageStream(state$)
-      )
-    ),
-    ignoreElements()
-  );
-
-const fetchCartEpic: CartEpic = (action$, state$, { http }) =>
-  action$.pipe(
-    filter(isOfType(actions.cart.REQUEST)),
-    withLatestFrom(state$),
-    takeWhile(([, state]) => state.userAuth.isLoggedIn),
-    switchMap(([, state]) =>
-      http
-        .getJSON<Array<CartType>>(urls.getCarts, {
-          "Authorization": `JWT ${state.userAuth.token}`
-        })
-        .pipe(
-          map(cart => actions.cartRequestSuccessful(cart)),
-          catchError(err => of(actions.cartRequestFailed(err.response)))
-        )
-    )
-  );
-
-const updateCartEpics: CartEpic = (action$, state$, { http }) =>
-  action$.pipe(
-    filter(isOfType(actions.cart.UPDATE_CART)),
-    map(({ payload }) => removeIndex(payload)),
-    debounceTime(2000),
-    withLatestFrom(state$),
-    switchMap(([payload, state]) =>
-      iif(
-        () => state.userAuth.isLoggedIn,
-        http
-          .post(urls.updateCart(payload.id), JSON.stringify(payload), {
-            "Authorization": `JWT ${state.userAuth.token}`,
-            "Content-type": "application/json"
-          })
-          .pipe(catchError(() => EMPTY)),
-        storageStream(state$)
-      )
-    ),
-    ignoreElements()
-  );
-
-const removeFromCartEpic: CartEpic = (action$, state$, { http }) =>
-  action$.pipe(
-    filter(isOfType(actions.cart.REMOVE_ITEM)),
-    withLatestFrom(state$),
-    switchMap(([{ payload }, state]) =>
-      iif(
-        () => state.userAuth.isLoggedIn,
-        http
-          .delete(urls.updateCart(payload.id), {
-            "Authorization": `JWT ${state.userAuth.token}`
-          })
-          .pipe(catchError(() => EMPTY)),
-        storageStream(state$)
-      )
-    ),
-    ignoreElements()
-  );
 
 type InputType =
   | actions.CartActionTypes
@@ -145,6 +56,96 @@ type CartDepenciesEpic = Epic<
   EpicDepenciesType
 >;
 
+
+const removeIndex = (cart: actions.CartType) => {
+  delete cart["index"];
+  return cart;
+};
+
+const storageStream = (state$: StateObservable<RootStoreState>) =>
+  EMPTY.pipe(
+    withLatestFrom(state$),
+    map(([, state]) => JSON.stringify(state.cart.cart)),
+    map((cart) => localStorage.setItem(CART_STORAGE_KEY, cart)),
+    catchError((err) => of(console.log(err)))
+  );
+
+const addToCartEpic: CartEpic = (action$, state$, { http }) =>
+  action$.pipe(
+    filter(isOfType(actions.cart.ADD_ITEM)),
+    map(({ payload }) => removeIndex(payload)),
+    withLatestFrom(state$),
+    switchMap(([payload, state]) =>
+      iif(
+        () => state.userAuth.isLoggedIn,
+        http
+          .post(urlType("updateCart", payload.id), JSON.stringify(payload), {
+            Authorization: `JWT ${state.userAuth.token}`,
+            "Content-type": "application/json",
+          })
+          .pipe(catchError(() => EMPTY)),
+        storageStream(state$)
+      )
+    ),
+    ignoreElements()
+  );
+
+const fetchCartEpic: CartEpic = (action$, state$, { http }) =>
+  action$.pipe(
+    filter(isOfType(actions.cart.REQUEST)),
+    withLatestFrom(state$),
+    takeWhile(([, state]) => state.userAuth.isLoggedIn),
+    switchMap(([, state]) =>
+      http
+        .getJSON<Array<CartType>>(urlType("getCarts"), {
+          Authorization: `JWT ${state.userAuth.token}`,
+        })
+        .pipe(
+          map((cart) => actions.cartRequestSuccessful(cart)),
+          catchError((err) => of(actions.cartRequestFailed(err.response)))
+        )
+    )
+  );
+
+const updateCartEpics: CartEpic = (action$, state$, { http }) =>
+  action$.pipe(
+    filter(isOfType(actions.cart.UPDATE_CART)),
+    map(({ payload }) => removeIndex(payload)),
+    debounceTime(2000),
+    withLatestFrom(state$),
+    switchMap(([payload, state]) =>
+      iif(
+        () => state.userAuth.isLoggedIn,
+        http
+          .post(urlType("updateCart", payload.id), JSON.stringify(payload), {
+            Authorization: `JWT ${state.userAuth.token}`,
+            "Content-type": "application/json",
+          })
+          .pipe(catchError(() => EMPTY)),
+        storageStream(state$)
+      )
+    ),
+    ignoreElements()
+  );
+
+const removeFromCartEpic: CartEpic = (action$, state$, { http }) =>
+  action$.pipe(
+    filter(isOfType(actions.cart.REMOVE_ITEM)),
+    withLatestFrom(state$),
+    switchMap(([{ payload }, state]) =>
+      iif(
+        () => state.userAuth.isLoggedIn,
+        http
+          .delete(urlType("updateCart", payload.id), {
+            Authorization: `JWT ${state.userAuth.token}`,
+          })
+          .pipe(catchError(() => EMPTY)),
+        storageStream(state$)
+      )
+    ),
+    ignoreElements()
+  );
+
 const getCartDepencies: CartDepenciesEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.LOAD_CART)),
@@ -155,36 +156,38 @@ const getCartDepencies: CartDepenciesEpic = (action$, state$, { http }) =>
           cart.map(
             ({ product }): Observable<ProductType> =>
               http
-                .getJSON<ProductType>(urls.getProduct(product))
+                .getJSON<ProductType>(urlType("getProduct", product))
                 .pipe(catchError(() => EMPTY))
           )
-        ).pipe(switchMap(products => of(productSuccess(products)))),
+        ).pipe(switchMap((products) => of(productSuccess(products)))),
         forkJoin(
           cart.map(
             ({ product }): Observable<Array<AttributeType>> =>
               http
-                .getJSON<Array<AttributeType>>(urls.getAttributes(product))
+                .getJSON<Array<AttributeType>>(
+                  urlType("getProductAttributes", product)
+                )
                 .pipe(catchError(() => EMPTY))
           )
         ).pipe(
-          map(attributes => attributes.reduce((a, b) => a.concat(b))),
-          switchMap(attributes => of(attributeSuccess(attributes)))
+          map((attributes) => attributes.reduce((a, b) => a.concat(b))),
+          switchMap((attributes) => of(attributeSuccess(attributes)))
         ),
         EMPTY.pipe(
           withLatestFrom(state$),
           takeWhile(([, { products }]) => products.products.length > 0),
           map(([, state]) => state.products.products),
-          switchMap(products =>
+          switchMap((products) =>
             forkJoin(
               products.map(
                 ({ store }): Observable<StoreType> =>
                   http
-                    .getJSON<StoreType>(urls.getMerchantStore(store))
+                    .getJSON<StoreType>(urlType("getMerchantStore", store))
                     .pipe(catchError(() => EMPTY))
               )
-            ).pipe(switchMap(stores => of(storeSuccess(stores))))
+            ).pipe(switchMap((stores) => of(storeSuccess(stores))))
           )
-        )
+        ),
       ]).pipe(mergeAll())
     )
   );

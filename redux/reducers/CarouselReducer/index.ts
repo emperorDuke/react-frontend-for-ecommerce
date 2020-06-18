@@ -3,7 +3,7 @@ import {
   carousel,
   CarouselActionTypes
 } from "../../actionCreators/CarouselActions/@types";
-import { FetchOperationType, FetchConst } from "../../../service/Fetch/@types";
+import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
 export type CarouselReducerState = {
   carousels: Array<CarouselType>;

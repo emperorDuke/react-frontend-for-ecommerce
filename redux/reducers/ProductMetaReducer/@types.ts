@@ -1,5 +1,5 @@
 import { MetaType } from "../../actionCreators/ProductMetaActions";
-import { FetchOperationType } from "../../../service/Fetch/@types";
+import { FetchOperationType } from "../../../utils/Fetch/@types";
 
 export interface MetaStateType {
   productMeta: MetaType;

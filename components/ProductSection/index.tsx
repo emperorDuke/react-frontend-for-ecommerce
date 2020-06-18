@@ -5,14 +5,14 @@ import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import StoreInfoSection from "./StoreInfoSection";
-import { useProduct } from "../../service/Product";
 import Slider from "../Slider";
 import Slide from "../Slider/Slide";
 import Img from "../Img";
 import {
   useMerchantStore,
-  EnhancedMerchantStore
-} from "../../service/MerchantStore";
+  EnhancedMerchantStore,
+  useProduct
+} from "../../services";
 import { AttributeType } from "../../redux/actionCreators/AttributeActions";
 import {
   SpecificationType,

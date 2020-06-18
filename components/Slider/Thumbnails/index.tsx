@@ -10,7 +10,7 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 export * from "./@types";
 
 function Thumbnails(props: ThumbnailsProps) {
-  const noThumbsPerView = props.noThumbsPerView || 4;
+  const noThumbsPerView = props.noThumbsPerView ?? 4;
   const offsetX = props.sliderDimension.width / noThumbsPerView;
 
   let offsetY = 0;

@@ -7,7 +7,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import ListCard from "../AppCards/ProductListCard";
 import ViewModuleIcon from "@material-ui/icons/ViewModuleOutlined";
 import ViewListIcon from "@material-ui/icons/ViewListOutlined";
-import { useProduct } from "../../service/Product";
+import { useProduct } from "../../services";
 import ModularCard from "../AppCards/ProductModularCard";
 import { sortParameters } from "./utils";
 import CardEnhancer from "../CardEnhancer";

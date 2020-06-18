@@ -26,7 +26,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
   const classes = useStyles();
 
   const setBrand = useCallback(
-    () => (e: React.ChangeEvent<HTMLInputElement>) => setBrands(e.target.value),
+    (e: React.ChangeEvent<HTMLInputElement>) => setBrands(e.target.value),
     []
   );
 
@@ -88,7 +88,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
                 name="brand"
                 placeholder="search for brand"
                 value={brand}
-                onChange={setBrand()}
+                onChange={setBrand}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton onClick={() => postQuery(brand)}>

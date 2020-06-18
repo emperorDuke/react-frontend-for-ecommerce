@@ -1,13 +1,28 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootStoreState as IState } from "../../redux/reducers/RootReducer";
-import * as T from "./@types";
+import { RootStoreState as IState } from "../redux/reducers/RootReducer";
 import { BehaviorSubject } from "rxjs";
-import { toInt } from "../../utils/toInt";
+import { toInt } from "../utils/toInt";
+import { StoreType } from "../redux/actionCreators/StoreActions";
 
-const merchantStore$ = new BehaviorSubject<Array<T.EnhancedMerchantStore>>([]);
+export interface EnhancedMerchantStore extends StoreType {
+  link?: string;
+  href?: string;
+  as?: string;
+}
 
-const merchantStoreEnhancer: T.MerchantStoreEnhancer = stores => {
+export type MerchantStoreEnhancer = (
+  stores: Array<StoreType>
+) => Array<EnhancedMerchantStore>;
+
+export interface MerchantStoreReturnType<T = EnhancedMerchantStore> {
+  merchantStores: Array<T>;
+  getMerchantStore: (id: number) => T | undefined;
+}
+
+const merchantStore$ = new BehaviorSubject<Array<EnhancedMerchantStore>>([]);
+
+export const merchantStoreEnhancer: MerchantStoreEnhancer = stores => {
   return stores.map(store => {
     return {
       ...store,
@@ -59,5 +74,3 @@ export function useMerchantStore() {
     getAds,
   };
 }
-
-export * from "./@types";

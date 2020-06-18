@@ -22,3 +22,11 @@ export function storeFailure(payload: string): T.StoreFailureType {
     payload
   };
 }
+
+
+export function extendStores(payload: T.StoreType[]): T.ExtendStores {
+  return {
+    type: T.store.EXTEND_STORE,
+    payload
+  }
+}

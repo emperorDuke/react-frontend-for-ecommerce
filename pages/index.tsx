@@ -5,8 +5,8 @@ import { Container } from "next/app";
 import HomeMainSection from "../components/HomeSection";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import fetch from "../service/Fetch";
-import { urls } from "../service/ApiUrls";
+import fetch from "../utils/Fetch";
+import { apiUrl } from "../services";
 import {
   productSuccess,
   productFailure,
@@ -25,19 +25,19 @@ class Index extends React.Component {
     await fetch(
       store.dispatch,
       { success: productSuccess, failure: productFailure },
-      urls.products
+      apiUrl("getProducts")
     );
 
     await fetch(
       store.dispatch,
       { success: storeSuccess, failure: storeFailure },
-      urls.merchantStores
+      apiUrl("getMerchantStores")
     );
 
     await fetch(
       store.dispatch,
       { success: carouselSuccess, failure: carouselFailure },
-      urls.internalAds
+      apiUrl("getInternalAds")
     );
     return {};
   }
