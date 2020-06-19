@@ -1,5 +1,5 @@
-import { RatingType } from "../../ProductActions";
-import { AddressType } from "../../AddressActions";
+import { RatingType } from "../ProductActions";
+import { AddressType } from "../AddressActions";
 import { Action } from "redux";
 
 export interface AdvertType {
@@ -21,6 +21,7 @@ export interface StoreType {
     | StoreRatingType
     | number
     | Array<AdvertType>
+    | boolean
     | AddressType;
   id?: number;
   name: string;
@@ -29,6 +30,7 @@ export interface StoreType {
   merchant: number;
   address: AddressType;
   adverts?: Array<AdvertType>;
+  verified: boolean;
 }
 
 export enum store {

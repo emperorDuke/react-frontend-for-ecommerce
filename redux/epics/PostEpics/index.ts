@@ -7,15 +7,17 @@ import {
   mergeMap,
   switchMap,
   catchError,
-  withLatestFrom
+  withLatestFrom,
+  concatAll,
 } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import {
   postingSuccess,
-  postingFailed
+  postingFailed,
 } from "../../actionCreators/PostActions";
-import { of, iif, concat } from "rxjs";
+import { of, iif, concat, from } from "rxjs";
 import { authenticate } from "../../actionCreators/UserAuthActions";
+import { BEARER } from "../../utils/bearer-constant";
 
 type PostEpic = Epic<
   PostActionTypes | ReturnType<typeof authenticate>,
@@ -33,15 +35,15 @@ const postEpic: PostEpic = (action$, state$, { http }) =>
     filter(isOfType(post.POST_ITEM)),
     withLatestFrom(state$),
     switchMap(([{ payload }, state]) => {
-      let headers: Header = Object.create(Object.prototype);
+      let headers: Header = {};
 
       if (payload.reqAuth && state.userAuth.token) {
-        headers["Authorization"] = `JWT ${state.userAuth.token}`;
+        headers["Authorization"] = `${BEARER} ${state.userAuth.token}`;
       } else if (payload.config) {
         for (let configKey in payload.config) {
           Object.defineProperty(headers, configKey, {
             value: payload.config[configKey],
-            enumerable: true
+            enumerable: true,
           });
         }
       } else {
@@ -49,20 +51,20 @@ const postEpic: PostEpic = (action$, state$, { http }) =>
       }
 
       return http.post(payload.url, payload.body, headers).pipe(
-        mergeMap(res =>
+        mergeMap((res) =>
           iif(
             () =>
               Object.prototype.hasOwnProperty.call(res.response, "token") &&
               res.response["token"] !== null &&
               res.response["token"] !== undefined,
-            concat(
+            from([
               of(authenticate(res.response["token"])),
-              of(postingSuccess(res.response))
-            ),
+              of(postingSuccess(res.response)),
+            ]).pipe(concatAll()),
             of(postingSuccess(res.response))
           )
         ),
-        catchError(err => of(postingFailed(err.response)))
+        catchError((err) => of(postingFailed(err.response)))
       );
     })
   );

@@ -2,7 +2,7 @@ import {
   StoreActionTypes,
   store,
   StoreType,
-} from "../../actionCreators/StoreActions/@types";
+} from "../../actionCreators/StoreActions";
 import { FetchConst, FetchOperationType } from "../../../utils/Fetch/@types";
 
 type StoreReducerState = {

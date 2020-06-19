@@ -4,7 +4,7 @@ import {
   addressSuccessful,
   addressFailed,
   address,
-  ShippingDetailType
+  ShippingDetailType,
 } from "../../actionCreators/AddressActions";
 import { RootStoreState } from "../../reducers/RootReducer";
 import { EpicDepenciesType } from "../../../store";
@@ -13,10 +13,11 @@ import {
   map,
   switchMap,
   catchError,
-  withLatestFrom
+  withLatestFrom,
 } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
+import { BEARER } from "../../utils/bearer-constant";
 
 type AddressEpic = Epic<
   AddressActionTypes,
@@ -31,16 +32,19 @@ const DeliveryAddressEpic: AddressEpic = (action$, state$, { http }) =>
     withLatestFrom(state$),
     switchMap(([action, { userAuth: { token } }]) =>
       http
-        .getJSON<Array<ShippingDetailType> | ShippingDetailType>(action.payload, {
-          Authorization: token
-        })
+        .getJSON<Array<ShippingDetailType> | ShippingDetailType>(
+          action.payload,
+          {
+            Authorization: `${BEARER} ${token}`,
+          }
+        )
         .pipe(
-          map(res =>
+          map((res) =>
             Array.isArray(res)
               ? addressSuccessful(res)
               : addressSuccessful([res])
           ),
-          catchError(err => of(addressFailed(err.response)))
+          catchError((err) => of(addressFailed(err.response)))
         )
     )
   );

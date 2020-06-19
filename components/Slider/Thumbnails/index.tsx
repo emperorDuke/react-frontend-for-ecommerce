@@ -153,7 +153,8 @@ function Thumbnails(props: ThumbnailsProps) {
                     React.cloneElement(child, {
                       __showCaption: false,
                       __index: i,
-                      __setIndex: props.setIndex
+                      __setIndex: props.setIndex,
+                      __isThumbnails: props.standalone
                     })}
                 </div>
               </div>

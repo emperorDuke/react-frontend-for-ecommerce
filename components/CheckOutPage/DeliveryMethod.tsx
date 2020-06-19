@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import NativeSelect from "@material-ui/core/NativeSelect";
@@ -28,20 +28,15 @@ function DeliveryMethod() {
   );
 
   const fiteredLocation = useMemo(() => {
-    return pickupLocations.filter(location => {
+    return pickupLocations.filter((location) => {
       return location.state === pickupState;
     });
   }, [pickupState]);
 
-  const handleDeliveryType = useCallback(
-    (arg: Delivery) => () => setDeliveryType(arg),
-    [deliveryType]
-  );
+  const handleDeliveryType = (arg: Delivery) => () => setDeliveryType(arg);
 
-  const handleOpenPickupStation = useCallback(
-    (arg: typeof openPickupStation) => () => setOpenPickupStation(arg),
-    [openPickupStation]
-  );
+  const handleOpenPickupStation = (arg: typeof openPickupStation) => () =>
+    setOpenPickupStation(arg);
 
   const deliveryMethodJSX = (
     <React.Fragment>
@@ -88,9 +83,9 @@ function DeliveryMethod() {
         <NativeSelect
           name="pickup-state"
           value={pickupState}
-          onChange={e => setPickupState(e.target.value)}
+          onChange={(e) => setPickupState(e.target.value)}
         >
-          {pickupLocations.map(location => (
+          {pickupLocations.map((location) => (
             <option value={location.state}>{location.state}</option>
           ))}
         </NativeSelect>
@@ -102,9 +97,9 @@ function DeliveryMethod() {
         <NativeSelect
           name="pickup-cities"
           value={pickupCity}
-          onChange={e => setPickupCity(e.target.value)}
+          onChange={(e) => setPickupCity(e.target.value)}
         >
-          {fiteredLocation.map(location => (
+          {fiteredLocation.map((location) => (
             <option value={location.city}>{location.city}</option>
           ))}
         </NativeSelect>

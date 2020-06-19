@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import { SideBarProps } from "./@types";
-import Link from "next/link";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import ListSubHeader from "@material-ui/core/ListSubheader";
@@ -10,6 +9,7 @@ import Popover from "@material-ui/core/Popover";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
+import Link from "../Link";
 
 function SideBar(props: SideBarProps) {
   const [index, setIndex] = useState<string | null>(null);
@@ -45,7 +45,7 @@ function SideBar(props: SideBarProps) {
               <ListItemText
                 primary={name}
                 classes={{
-                  primary: classes.fonts
+                  primary: classes.fonts,
                 }}
               />
               <ChevronRight />
@@ -57,12 +57,12 @@ function SideBar(props: SideBarProps) {
               anchorEl={anchorEl}
               anchorOrigin={{
                 vertical: "top",
-                horizontal: "right"
+                horizontal: "right",
               }}
             >
               <div className={classes.navHeader} />
               <Grid container>
-                {children.map(child => (
+                {children.map((child) => (
                   <Grid item>
                     <List key={child.name} dense disablePadding>
                       <ListSubHeader disableSticky className={classes.fonts}>
@@ -72,27 +72,23 @@ function SideBar(props: SideBarProps) {
                             child.track_id
                           }`}
                         >
-                          <a>{child.name}</a>
+                          {child.name}
                         </Link>
                       </ListSubHeader>
-                      {child.children.map(grandChild => (
+                      {child.children.map((grandChild) => (
                         <ListItem key={grandChild.name}>
                           <Link
-                            href={{
-                              pathname: `items/${grandChild.name
-                                .split(" ")
-                                .join("-")}`,
-                              query: { id: grandChild.track_id }
-                            }}
+                            href="/items/[slug]"
+                            as={`/items/${grandChild.name
+                              .split(" ")
+                              .join("-")}?id=${grandChild.track_id}`}
                           >
-                            <a>
-                              <ListItemText
-                                primary={grandChild.name}
-                                classes={{
-                                  primary: classes.fonts
-                                }}
-                              />
-                            </a>
+                            <ListItemText
+                              primary={grandChild.name}
+                              classes={{
+                                primary: classes.fonts,
+                              }}
+                            />
                           </Link>
                         </ListItem>
                       ))}

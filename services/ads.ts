@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { extendProducts } from "../redux/actionCreators/ProductActions";
 import { extendStores } from "../redux/actionCreators/StoreActions";
 import { useMemoCompare } from "../utils/useMemoCompare";
+import { useDidUpdate } from "../utils/useDidUpdate";
 
 export function useAds() {
   const internalAds = useSelector(({ carousels }) => carousels.carousels);
@@ -49,7 +50,7 @@ export function useAds() {
     mappedSponsoredItems
   );
 
-  React.useEffect(() => {
+  useDidUpdate(() => {
     setSponsoredItems(mappedSponsoredItems);
   }, [mappedSponsoredItems]);
 

@@ -4,7 +4,7 @@ import {
   store,
   storeSuccess,
   storeFailure,
-  StoreType
+  StoreType,
 } from "../../actionCreators/StoreActions";
 import { EpicDepenciesType } from "../../../store";
 import { filter, map, catchError, switchMap } from "rxjs/operators";
@@ -19,12 +19,10 @@ const storesEpic = (
     filter(isOfType(store.STORE_REQUEST)),
     switchMap(({ payload }) =>
       http.getJSON<Array<StoreType> | StoreType>(payload).pipe(
-        map(stores =>
-          stores instanceof Array
-            ? storeSuccess(stores)
-            : storeSuccess([stores])
+        map((stores) =>
+          Array.isArray(stores) ? storeSuccess(stores) : storeSuccess([stores])
         ),
-        catchError(err => of(storeFailure(err.response)))
+        catchError((err) => of(storeFailure(err.response)))
       )
     )
   );

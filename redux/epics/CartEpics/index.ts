@@ -1,5 +1,6 @@
 import * as actions from "../../actionCreators/CartActions";
-import { Epic, StateObservable, ActionsObservable } from "redux-observable";
+import * as T from "./@types";
+import { StateObservable, ActionsObservable } from "redux-observable";
 import {
   map,
   switchMap,
@@ -9,7 +10,8 @@ import {
   filter,
   debounceTime,
   takeWhile,
-  mergeAll,
+  flatMap,
+  concatAll,
 } from "rxjs/operators";
 import { of, from, iif, merge, EMPTY, forkJoin, Observable } from "rxjs";
 import { RootStoreState } from "../../reducers/RootReducer";
@@ -18,44 +20,16 @@ import { EpicDepenciesType } from "../../../store";
 import { CartActionTypes, CartType } from "../../actionCreators/CartActions";
 import { apiUrl } from "../../../services";
 import { CART_STORAGE_KEY } from "../../../components/CartSection/utils";
+import { StoreType, storeSuccess } from "../../actionCreators/StoreActions";
 import {
-  StoreActionTypes,
-  StoreType,
-  storeSuccess,
-} from "../../actionCreators/StoreActions";
-import {
-  AttributeActionType,
   AttributeType,
   attributeSuccess,
 } from "../../actionCreators/AttributeActions";
 import {
-  ProductActionType,
   ProductType,
   productSuccess,
 } from "../../actionCreators/ProductActions";
-
-type CartEpic = Epic<
-  actions.CartActionTypes,
-  actions.CartActionTypes,
-  RootStoreState,
-  EpicDepenciesType
->;
-
-type InputType =
-  | actions.CartActionTypes
-  | StoreActionTypes
-  | AttributeActionType
-  | ProductActionType;
-
-type OutputType = InputType;
-
-type CartDepenciesEpic = Epic<
-  InputType,
-  OutputType,
-  RootStoreState,
-  EpicDepenciesType
->;
-
+import { BEARER } from "../../utils/bearer-constant";
 
 const removeIndex = (cart: actions.CartType) => {
   delete cart["index"];
@@ -70,7 +44,7 @@ const storageStream = (state$: StateObservable<RootStoreState>) =>
     catchError((err) => of(console.log(err)))
   );
 
-const addToCartEpic: CartEpic = (action$, state$, { http }) =>
+const addToCartEpic: T.CartEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.ADD_ITEM)),
     map(({ payload }) => removeIndex(payload)),
@@ -79,8 +53,8 @@ const addToCartEpic: CartEpic = (action$, state$, { http }) =>
       iif(
         () => state.userAuth.isLoggedIn,
         http
-          .post(urlType("updateCart", payload.id), JSON.stringify(payload), {
-            Authorization: `JWT ${state.userAuth.token}`,
+          .post(apiUrl("updateCart", payload.id), JSON.stringify(payload), {
+            Authorization: `${BEARER} ${state.userAuth.token}`,
             "Content-type": "application/json",
           })
           .pipe(catchError(() => EMPTY)),
@@ -90,15 +64,15 @@ const addToCartEpic: CartEpic = (action$, state$, { http }) =>
     ignoreElements()
   );
 
-const fetchCartEpic: CartEpic = (action$, state$, { http }) =>
+const fetchCartEpic: T.CartEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.REQUEST)),
     withLatestFrom(state$),
     takeWhile(([, state]) => state.userAuth.isLoggedIn),
     switchMap(([, state]) =>
       http
-        .getJSON<Array<CartType>>(urlType("getCarts"), {
-          Authorization: `JWT ${state.userAuth.token}`,
+        .getJSON<Array<CartType>>(apiUrl("getCarts"), {
+          Authorization: `${BEARER} ${state.userAuth.token}`,
         })
         .pipe(
           map((cart) => actions.cartRequestSuccessful(cart)),
@@ -107,7 +81,7 @@ const fetchCartEpic: CartEpic = (action$, state$, { http }) =>
     )
   );
 
-const updateCartEpics: CartEpic = (action$, state$, { http }) =>
+const updateCartEpics: T.CartEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.UPDATE_CART)),
     map(({ payload }) => removeIndex(payload)),
@@ -117,8 +91,8 @@ const updateCartEpics: CartEpic = (action$, state$, { http }) =>
       iif(
         () => state.userAuth.isLoggedIn,
         http
-          .post(urlType("updateCart", payload.id), JSON.stringify(payload), {
-            Authorization: `JWT ${state.userAuth.token}`,
+          .post(apiUrl("updateCart", payload.id), JSON.stringify(payload), {
+            Authorization: `${BEARER} ${state.userAuth.token}`,
             "Content-type": "application/json",
           })
           .pipe(catchError(() => EMPTY)),
@@ -128,7 +102,7 @@ const updateCartEpics: CartEpic = (action$, state$, { http }) =>
     ignoreElements()
   );
 
-const removeFromCartEpic: CartEpic = (action$, state$, { http }) =>
+const removeFromCartEpic: T.CartEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.REMOVE_ITEM)),
     withLatestFrom(state$),
@@ -136,8 +110,8 @@ const removeFromCartEpic: CartEpic = (action$, state$, { http }) =>
       iif(
         () => state.userAuth.isLoggedIn,
         http
-          .delete(urlType("updateCart", payload.id), {
-            Authorization: `JWT ${state.userAuth.token}`,
+          .delete(apiUrl("updateCart", payload.id), {
+            Authorization: `${BEARER} ${state.userAuth.token}`,
           })
           .pipe(catchError(() => EMPTY)),
         storageStream(state$)
@@ -146,7 +120,7 @@ const removeFromCartEpic: CartEpic = (action$, state$, { http }) =>
     ignoreElements()
   );
 
-const getCartDepencies: CartDepenciesEpic = (action$, state$, { http }) =>
+const getCartDepencies: T.CartDepenciesEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.LOAD_CART)),
     withLatestFrom(state$),
@@ -156,7 +130,7 @@ const getCartDepencies: CartDepenciesEpic = (action$, state$, { http }) =>
           cart.map(
             ({ product }): Observable<ProductType> =>
               http
-                .getJSON<ProductType>(urlType("getProduct", product))
+                .getJSON<ProductType>(apiUrl("getProduct", product))
                 .pipe(catchError(() => EMPTY))
           )
         ).pipe(switchMap((products) => of(productSuccess(products)))),
@@ -165,12 +139,12 @@ const getCartDepencies: CartDepenciesEpic = (action$, state$, { http }) =>
             ({ product }): Observable<Array<AttributeType>> =>
               http
                 .getJSON<Array<AttributeType>>(
-                  urlType("getProductAttributes", product)
+                  apiUrl("getProductAttributes", product)
                 )
                 .pipe(catchError(() => EMPTY))
           )
         ).pipe(
-          map((attributes) => attributes.reduce((a, b) => a.concat(b))),
+          flatMap((attributes) => attributes),
           switchMap((attributes) => of(attributeSuccess(attributes)))
         ),
         EMPTY.pipe(
@@ -182,13 +156,13 @@ const getCartDepencies: CartDepenciesEpic = (action$, state$, { http }) =>
               products.map(
                 ({ store }): Observable<StoreType> =>
                   http
-                    .getJSON<StoreType>(urlType("getMerchantStore", store))
+                    .getJSON<StoreType>(apiUrl("getMerchantStore", store))
                     .pipe(catchError(() => EMPTY))
               )
             ).pipe(switchMap((stores) => of(storeSuccess(stores))))
           )
         ),
-      ]).pipe(mergeAll())
+      ]).pipe(concatAll())
     )
   );
 

@@ -4,6 +4,8 @@ import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
 import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import Paper from "@material-ui/core/Paper";
 import CardEnhancer from "../CardEnhancer";
 import NavBar from "../NavBar";
@@ -13,15 +15,53 @@ import Slider from "../Slider";
 import Slide from "../Slider/Slide";
 import Img from "../Img";
 import useSelector from "../../redux/utils/useStoreSelector";
-import { useListings, useAds } from "../../services";
+import { useListings, useAds, useMerchantStore } from "../../services";
+import Link from "../Link";
+import data from "./text";
 
 const HomeSection: React.ComponentType = () => {
   const ads = useAds();
   const listings = useListings();
+  const merchantStore = useMerchantStore();
   const categories = useSelector(({ categories }) => categories.categories);
   const classes = useStyles();
   const centerAds = ads.getAdBlock("CENTER");
   const mainAds = ads.getAdBlock("MAIN");
+
+  const randomStores = merchantStore
+    .all()
+    .filter((store) => !store.verified)
+    .map((store) => (
+      <Grid item>
+        <Card>
+          <Link href={store.href} as={store.as}>
+            <CardContent>
+              <Grid container>
+                <Grid item>
+                  <Img src={store.logo} alt={store.name} />
+                </Grid>
+                <Grid item>
+                  <Typography variant="caption">{store.name}</Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Link>
+        </Card>
+      </Grid>
+    ));
+
+  const officialBrands = (
+    <Grid container spacing={1}>
+      {merchantStore
+        .all()
+        .filter((store) => store.verified)
+        .map((store) => (
+          <Grid item md={6}>
+            <Img src={store.logo} alt={store.name} />
+          </Grid>
+        ))}
+    </Grid>
+  );
 
   const sponsoredStores = ads.getSponsoredItems().shops.map((shop) => (
     <Grid item>
@@ -134,7 +174,7 @@ const HomeSection: React.ComponentType = () => {
         joggledComponents.push(sponsoredStores[i]);
       }
 
-      if (i === sponsoredStores.length) {
+      if (i === sponsoredStores.length - 1) {
         joggledComponents.push(listedProducts[i]);
       }
     }
@@ -170,7 +210,42 @@ const HomeSection: React.ComponentType = () => {
             </div>
           </Grid>
         </Grid>
+        <Grid item container spacing={1}>
+          <Grid item>
+            <Card>
+              <Link>
+                <CardContent>
+                  <Grid container>
+                    <Grid item>
+                      <img
+                        src="/static/midea_a95757a4cfec5b22202e7f9304481d50.jpg"
+                        alt="cards"
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="caption">Store locator</Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Link>
+            </Card>
+          </Grid>
+          {randomStores}
+        </Grid>
         {joggler()}
+        <Grid item>
+          <Paper className={classes.cardMasterLayout}>{officialBrands}</Paper>
+        </Grid>
+        <Grid item>
+          <Paper className={classes.cardMasterLayout}>
+            <Typography variant="h2" component="h2">
+              {data.heading}
+            </Typography>
+            <Typography variant="body1" component="p">
+              {data.body}
+            </Typography>
+          </Paper>
+        </Grid>
 
         {/* ///////////// spacer //////////////////// */}
         <Grid item />

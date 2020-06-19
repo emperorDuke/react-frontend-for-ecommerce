@@ -343,8 +343,6 @@ Slider.defaultProps = {
   type: "carousel",
   showThumbs: false,
   effectType: "slide",
-  width: 0,
-  height: 0
 };
 
 export default Slider;

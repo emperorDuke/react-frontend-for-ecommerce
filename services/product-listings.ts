@@ -5,10 +5,6 @@ import { useDispatch } from "react-redux";
 import { extendProducts } from "../redux/actionCreators/ProductActions";
 import { useMemoCompare } from "../utils/useMemoCompare";
 
-type EnhancedListing = {
-  [key: string]: EnhancedProductType[];
-};
-
 export function useListings() {
   const incomingListings = useSelector(({ listings }) => listings.listings);
   const dispatch = useDispatch();
@@ -16,7 +12,9 @@ export function useListings() {
 
   const mappedListings = React.useMemo(() => {
     const enhancedListings = incomingListings.map((listing) => {
-      let enhancedListing: EnhancedListing = {};
+      let enhancedListing: {
+        [key: string]: EnhancedProductType[];
+      } = {};
 
       Object.keys(listing).forEach((key) => {
         const products = listing[key].map((listingProduct) => {

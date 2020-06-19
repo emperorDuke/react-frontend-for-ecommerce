@@ -2,15 +2,15 @@
 import { NextJSContext } from "next-redux-wrapper";
 import { Container } from "next/app";
 import Header from "../components/Header";
-import CheckOut from "../components/CheckOutPage";
 import Footer from "../components/Footer";
 import { getCookie } from "../cookie";
 import { restoreState } from "../redux/actionCreators/UserAuthActions";
 import { orderRequest } from "../redux/actionCreators/OrderActions";
 import { apiUrl } from "../services";
 import { userRequest } from "../redux/actionCreators/UserActions";
-import { requestAddress } from "../redux/actionCreators/AddressActions";
+import { requestAddress } from "../redux/actionCreators/AddressActions/AddressActions";
 import { requestPickupLocations } from "../redux/actionCreators/PickupLocations";
+import CheckOut from "../components/CheckOutPage/CheckOut";
 
 const Checkout: NextPage = () => {
   return (
