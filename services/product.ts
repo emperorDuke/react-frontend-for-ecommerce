@@ -50,9 +50,9 @@ export const productEnhancer: ProductEnhancerType = (products, itemsInCart) => {
       ...product,
       price: price,
       discount: discount,
-      link: `/p/${product.name}?track_id=${product.id}`,
-      href: `/p/[slug]`,
-      as: `/p/${product.name}?track_id=${product.id}`,
+      link: `/p/${product.name}?id=${product.id}`,
+      href: "/p/[slug]",
+      as: `/p/${product.name}?id=${product.id}`,
       inCart: setInCart(product),
       percentageOff: `${getPercentageOff(discount, price)}% off`,
     };
@@ -185,7 +185,7 @@ export function useProduct() {
 
   const all = React.useCallback(() => products, [products]);
 
-  const productUtils = useMemoCompare({
+  return useMemoCompare({
     sort,
     setInCart,
     unsetInCart,
@@ -196,7 +196,4 @@ export function useProduct() {
     getKeyfeatures,
     getSpecifications,
   });
-
-  return productUtils;
-
 }

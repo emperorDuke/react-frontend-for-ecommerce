@@ -11,20 +11,20 @@ interface AnimatorProps {
 const useStyles = makeStyles(() =>
   createStyles({
     default: {
-      opacity: 0
+      opacity: 0,
     },
     highOpacity: {
       opacity: 1,
-      transition: "opacity 400ms ease-in-out 30ms"
+      transition: "opacity 400ms ease-in-out 30ms",
     },
     lowOpacity: {
       opacity: 0.5,
-      transition: "opacity 200ms ease-in"
-    }
+      transition: "opacity 200ms ease-in",
+    },
   })
 );
 
-const Animator: React.ComponentType<AnimatorProps> = props => {
+const Animator: React.ComponentType<AnimatorProps> = (props) => {
   const [push, setPush] = useState(false);
   const classes = useStyles();
   const slideRef = useRef<HTMLDivElement>(null);
@@ -61,8 +61,8 @@ const Animator: React.ComponentType<AnimatorProps> = props => {
           ref: slideRef,
           className: clsx(props.children.props.className, classes.default, {
             [classes.lowOpacity]: push,
-            [classes.highOpacity]: !push
-          })
+            [classes.highOpacity]: !push,
+          }),
         })}
     </React.Fragment>
   );

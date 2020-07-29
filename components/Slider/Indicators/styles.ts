@@ -17,8 +17,8 @@ export default makeStyles((theme: Theme) =>
       transitionProperty: "box-shadow, background-color"
     },
     dot: {
-      width: (val: StyleType) => `${val.width / 50}px`,
-      height: (val: StyleType) => `${val.width / 50}px`,
+      width: (val: StyleType) => `${val.width}px`,
+      height: (val: StyleType) => `${val.width}px`,
       marginLeft: theme.spacing(1),
       borderRadius: "50%",
       border: `1px solid ${theme.palette.grey[400]}`

@@ -5,11 +5,6 @@ import { SlideProps } from "./@types";
 
 const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
   const classes = useStyles();
-  const isThumbnails = props.__isThumbnails ?? true;
-
-  const inherit = {
-    [classes.base]: !isThumbnails,
-  };
 
   const captionEl = (
     <div className={classes.captionWrapper}>
@@ -28,7 +23,7 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
   return (
     <div
       onClick={handleClick}
-      className={clsx(props.className, inherit)}
+      className={clsx(classes.base, props.className)}
       ref={ref}
       aria-label={`slide-${props.__index}`}
       role="button"
@@ -36,7 +31,7 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
       {props.__showCaption && props.caption && captionEl}
       {React.isValidElement(props.children) &&
         React.cloneElement(props.children, {
-          className: clsx(props.children.props.className, inherit),
+          className: clsx(classes.base, props.children.props.className),
         })}
     </div>
   );

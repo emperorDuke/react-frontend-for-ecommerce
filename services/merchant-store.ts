@@ -75,11 +75,9 @@ export function useMerchantStore() {
     [merchantStores]
   );
 
-  const storeUtils = useMemoCompare({
+  return useMemoCompare({
     all,
     get,
     getAds,
   });
-
-  return storeUtils;
 }

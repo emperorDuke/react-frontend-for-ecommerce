@@ -41,7 +41,7 @@ const storageStream = (state$: StateObservable<RootStoreState>) =>
     withLatestFrom(state$),
     map(([, state]) => JSON.stringify(state.cart.cart)),
     map((cart) => localStorage.setItem(CART_STORAGE_KEY, cart)),
-    catchError((err) => of(console.log(err)))
+    catchError((err) => of(console.error(err)))
   );
 
 const addToCartEpic: T.CartEpic = (action$, state$, { http }) =>
@@ -54,7 +54,7 @@ const addToCartEpic: T.CartEpic = (action$, state$, { http }) =>
         () => state.userAuth.isLoggedIn,
         http
           .post(apiUrl("updateCart", payload.id), JSON.stringify(payload), {
-            Authorization: `${BEARER} ${state.userAuth.token}`,
+            "Authorization": `${BEARER} ${state.userAuth.token}`,
             "Content-type": "application/json",
           })
           .pipe(catchError(() => EMPTY)),
@@ -72,7 +72,7 @@ const fetchCartEpic: T.CartEpic = (action$, state$, { http }) =>
     switchMap(([, state]) =>
       http
         .getJSON<Array<CartType>>(apiUrl("getCarts"), {
-          Authorization: `${BEARER} ${state.userAuth.token}`,
+          "Authorization": `${BEARER} ${state.userAuth.token}`,
         })
         .pipe(
           map((cart) => actions.cartRequestSuccessful(cart)),
@@ -85,7 +85,7 @@ const updateCartEpics: T.CartEpic = (action$, state$, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.UPDATE_CART)),
     map(({ payload }) => removeIndex(payload)),
-    debounceTime(2000),
+    debounceTime(1000),
     withLatestFrom(state$),
     switchMap(([payload, state]) =>
       iif(

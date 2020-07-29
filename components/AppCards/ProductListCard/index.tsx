@@ -8,16 +8,17 @@ import Rating from "../../Rating";
 import Img from "../../Img";
 import Link from "../../Link";
 import useStyles from "../styles";
+import { AppCardProps } from "../@types"
 import { useMerchantStore, EnhancedProductType } from "../../../services";
 
-const ListCard: React.ComponentType<EnhancedProductType> = product => {
+const ListCard: React.ComponentType<EnhancedProductType & AppCardProps> = product => {
   const classes = useStyles();
   const store = useMerchantStore();
   const merchantStore = store.get(product.store);
 
   return (
     <Card>
-      <Link href={product.href} as={product.as} className={classes.linkClass}>
+      <Link href={product.href} as={product.as} className={classes.link}>
         <Grid container spacing={5}>
           <Grid item>
             <CardActions>

@@ -1,10 +1,8 @@
+import React from "react";
 
 export interface ImgProps {
     alt?:string;
     src?:string;
-    classes?: {
-        text?:string;
-        image?:string;
-    };
     className?: string;
+    style?: React.CSSProperties;
 }

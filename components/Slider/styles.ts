@@ -4,11 +4,32 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 
 type StyleProps = {
   position: number;
-  dummyIndex: number;
   height: number;
   width: number;
-  isThumbnails?: boolean;
-  shouldTransition: boolean;
+  transition: boolean;
+  thumbHeight: number;
+};
+
+type T = (val: StyleProps) => string;
+
+const getHeight: T = (val) => `${val.height - val.thumbHeight}px`;
+
+const getWidth: T = (val) => {
+  if (val.width === 0) {
+    return "100%";
+  } else {
+    return `${val.width}px`;
+  }
+};
+
+const getTransform: T = (val) => `translateX(${val.position}px)`;
+
+const getTransition: T = (val) => {
+  if (!val.transition) {
+    return "none";
+  } else {
+    return "transform 500ms ease-in-out 20ms";
+  }
 };
 
 export default makeStyles((theme: Theme) =>
@@ -18,21 +39,17 @@ export default makeStyles((theme: Theme) =>
       flexDirection: "column",
       flexWrap: "nowrap",
       borderRadius: theme.shape.borderRadius,
-      width: (val: StyleProps) => (val.width === 0 ? "100%" : `${val.width}px`),
       overflow: "hidden",
-      height: (val: StyleProps) => (val.isThumbnails ? "auto" : "100%")
+      width: getWidth,
     },
     slider: {
+      flex: 1,
       display: "flex",
+      flexDirection: "row",
       position: "relative",
       borderRadius: "inherit",
-      width: "inherit",
-      height: (val: StyleProps) =>
-        val.isThumbnails
-          ? "auto"
-          : val.height === 0
-          ? "calc(100% - 20%)"
-          : `${val.height}px`,
+      width: getWidth,
+      height: getHeight,
       "&:hover $btn": {
         opacity: 0.4,
         cursor: "pointer",
@@ -40,40 +57,31 @@ export default makeStyles((theme: Theme) =>
         "&:hover": {
           opacity: 0.9,
           cursor: "pointer",
-          transition: "opacity 500ms ease-in 50ms"
-        }
-      }
+          transition: "opacity 500ms ease-in 50ms",
+        },
+      },
     },
     slideWrapper: {
-      transform: (val: StyleProps) => `translateX(${val.position}px)`,
-      transition: (val: StyleProps) =>
-        !val.shouldTransition ? "none" : "transform 500ms ease-in-out 20ms"
+      transform: getTransform,
+      transition: getTransition,
     },
     btn: {
       backgroundColor: theme.palette.grey[300],
       position: "absolute",
       height: "100%",
       opacity: 0,
-      width: theme.spacing(8),
-      zIndex: 2
+      width: (val: StyleProps) => `${val.width / 10}px`,
+      zIndex: 2,
     },
     leftBtn: {
-      bottom: 0
+      bottom: "0%",
     },
     rightBtn: {
-      bottom: 0,
-      left: `calc(100% - ${theme.spacing(8)}px)`
+      bottom: "0%",
+      left: (val: StyleProps) => `calc(100% - ${val.width / 10}px)`,
     },
-    "@keyframes fadeIn": {
-      from: {
-        opacity: 0
-      },
-      to: {
-        opacity: 1
-      }
-    },
-    fade: {
-      animation: "$fadeIn 500ms ease-in-out 20ms"
+    disabledButton: {
+      display: "none"
     }
   })
 );

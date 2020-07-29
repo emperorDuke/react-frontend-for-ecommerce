@@ -1,4 +1,4 @@
-import React, { useState, useRef, Children, useMemo } from "react";
+import React, { useRef, Children, useReducer, useEffect } from "react";
 import clsx from "classnames";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
@@ -12,61 +12,89 @@ import Link from "../Link";
 import { CardEnhancerProps } from "./@types";
 import useStyles from "./styles";
 import useTheme from "@material-ui/core/styles/useTheme";
-import { useIsomorphicLayoutEffect } from "../../utils/useIsomorphicEffect";
+import { reducer, SIZES } from "./utils";
+import { useWidth } from "../../utils";
+import { fromEvent } from "rxjs";
+import { map, debounceTime } from "rxjs/operators";
 
-const sizes: { [key: string]: number } = { sm: 6, md: 5, lg: 4 };
-
-const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
-  const nCards = props.size ? sizes[props.size] : sizes.md;
+const CardEnhancer: React.ComponentType<CardEnhancerProps> = (props) => {
+  const CARD_SIZE = props.size || "md";
 
   const theme = useTheme();
 
-  const [value, setValue] = useState({ idx: nCards, position: 0 });
+  const viewport = useWidth();
 
-  const [parentElWidth, setParentElWidth] = useState(0);
-
-  const nChildren = useMemo(() => {
-    if (props.children) {
-      return Children.count(props.children);
-    }
-    return 0;
-  }, [props.children]);
-
-  const cardDims = parentElWidth / nCards;
-
-  const disableRightBtn = value.idx === nChildren;
-
-  const disableLeftBtn = value.idx === nCards;
-
-  const thisRef = useRef<HTMLDivElement>(null);
-
-  const classes = useStyles({
-    cardDims,
-    position: value.position
+  const [state, dispatch] = useReducer(reducer, {
+    activeIndex: SIZES[viewport][CARD_SIZE],
+    position: 0,
+    parentElWidth: 0,
+    numberOfCards: SIZES[viewport][CARD_SIZE],
+    nChildren: Children.count(props.children),
+    transition: true,
   });
 
-  useIsomorphicLayoutEffect(() => {
-    if (thisRef.current) {
-      const parentEl = thisRef.current.parentElement;
-      if (parentEl) {
-        setParentElWidth(parentEl.clientWidth);
-      }
-    }
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const numberOfCardsRef = useRef(SIZES[viewport][CARD_SIZE]);
+
+  const classes = useStyles({
+    cardWidth: state.parentElWidth / state.numberOfCards,
+    position: state.position,
+    transition: state.transition,
+  });
+
+  useEffect(() => {
+    numberOfCardsRef.current = SIZES[viewport][CARD_SIZE];
+  }, [viewport]);
+
+  useEffect(() => {
+    dispatch({
+      type: "update",
+      payload: {
+        activeIndex: SIZES[viewport][CARD_SIZE],
+        parentElWidth: getElWidth(),
+        numberOfCards: SIZES[viewport][CARD_SIZE],
+        transition: false,
+      },
+    });
+
+    const event = fromEvent(window, "resize")
+      .pipe(
+        debounceTime(250),
+        map(getElWidth),
+        map((width) => ({ width, nCards: numberOfCardsRef.current }))
+      )
+      .subscribe(({ width, nCards }) =>
+        dispatch({
+          type: "onResize",
+          payload: {
+            width,
+            nCards,
+          },
+        })
+      );
+
+    return event.unsubscribe;
   }, []);
 
+  const getElWidth = () => {
+    if (wrapperRef.current && wrapperRef.current.parentElement) {
+      return wrapperRef.current.parentElement.clientWidth;
+    } else {
+      return 0;
+    }
+  };
+
   const nextGroup = () => {
-    setValue(prev => ({
-      idx: prev.idx === nChildren ? prev.idx : prev.idx + 1,
-      position:
-        prev.idx === nChildren ? prev.position : prev.position + -cardDims
-    }));
+    dispatch({
+      type: "moveforward",
+    });
   };
 
   const previousGroup = () => {
-    setValue(prev => ({
-      idx: prev.idx === nCards ? nCards : prev.idx - 1,
-      position: prev.idx === nCards ? 0 : prev.position + cardDims
-    }));
+    dispatch({
+      type: "movebackward",
+    });
   };
 
   const renderCards = () => {
@@ -76,7 +104,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
 
     const direction = cardType && cardType === "list" ? "column" : "row";
 
-    let enhancedChildren: React.ReactNodeArray | undefined;
+    let enhancedChildren: JSX.Element[] | undefined | null;
 
     if (cardType && cardType === "list") {
       enhancedChildren = Children.map(children, (child, i) => (
@@ -90,7 +118,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
           {React.isValidElement(child) &&
             React.cloneElement(child, {
               classes: { img: classes.cardImage },
-              size: size
+              size: size,
             })}
         </Grid>
       ));
@@ -103,23 +131,44 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
     );
   };
 
-  const propsSorter = () => {
+  const buttonRight = (
+    <IconButton
+      onClick={nextGroup}
+      disabled={state.activeIndex === state.nChildren}
+    >
+      <ChevronRightIcon />
+    </IconButton>
+  );
+
+  const buttonLeft = (
+    <IconButton
+      onClick={previousGroup}
+      disabled={state.activeIndex === state.numberOfCards}
+    >
+      <ChevronLeftIcon />
+    </IconButton>
+  );
+
+  const enhancementType = () => {
     const { appBar, appBarProps, disableToggler } = props;
 
     if (!disableToggler && !appBar) {
       return (
         <div style={{ position: "relative" }}>
           {renderCards()}
-          <Paper className={clsx(classes.btn, classes.leftBtn)} elevation={5}>
-            <IconButton onClick={nextGroup} disabled={disableRightBtn}>
-              <ChevronRightIcon />
-            </IconButton>
-          </Paper>
-          <Paper className={clsx(classes.btn, classes.rightBtn)} elevation={5}>
-            <IconButton onClick={previousGroup} disabled={disableLeftBtn}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Paper>
+          {state.nChildren > state.numberOfCards && (
+            <Paper className={clsx(classes.btn, classes.leftBtn)} elevation={5}>
+              {buttonRight}
+            </Paper>
+          )}
+          {state.nChildren > state.numberOfCards && (
+            <Paper
+              className={clsx(classes.btn, classes.rightBtn)}
+              elevation={5}
+            >
+              {buttonLeft}
+            </Paper>
+          )}
         </div>
       );
     } else if (appBar) {
@@ -128,7 +177,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
           <Grid item>
             <div
               style={{
-                width: parentElWidth
+                width: state.parentElWidth,
               }}
             >
               <AppBar position="static" color="secondary">
@@ -139,7 +188,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
                   <div style={{ flexGrow: 1 }} />
                   <div style={{ paddingRight: theme.spacing(1) }}>
                     {appBarProps && appBarProps.link && (
-                      <Link href="/">
+                      <Link href={appBarProps.link}>
                         <Typography variant="subtitle1">View all</Typography>
                       </Link>
                     )}
@@ -149,18 +198,8 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
                     <div
                       style={{ display: "inline-flex", flexDirection: "row" }}
                     >
-                      <IconButton
-                        onClick={previousGroup}
-                        disabled={disableLeftBtn}
-                      >
-                        <ChevronLeftIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={nextGroup}
-                        disabled={disableRightBtn}
-                      >
-                        <ChevronRightIcon />
-                      </IconButton>
+                      {buttonLeft}
+                      {buttonRight}
                     </div>
                   )}
                 </Toolbar>
@@ -176,21 +215,24 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = props => {
   };
 
   return (
-    <div style={{ overflow: "hidden", maxWidth: parentElWidth }} ref={thisRef}>
-      {propsSorter()}
+    <div
+      style={{ overflow: "hidden", maxWidth: state.parentElWidth }}
+      ref={wrapperRef}
+    >
+      {enhancementType()}
     </div>
   );
 };
 
 CardEnhancer.defaultProps = {
-  size: "lg",
+  size: "md",
   disableToggler: false,
   appBar: false,
   appBarProps: {
     text: "",
     disableToggler: false,
-    link: ""
-  }
+    link: "/",
+  },
 };
 
 export default CardEnhancer;

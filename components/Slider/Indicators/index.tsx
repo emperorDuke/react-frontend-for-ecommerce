@@ -6,12 +6,16 @@ import { IndicatorProps } from "./@types";
 
 const Indicators: React.ComponentType<IndicatorProps> = props => {
   const [idx, setIdx] = useState(props.activeIndex);
-  const classes = useStyles({ ...props.sliderDimension });
+  const [dotDimension, setDotDimension] = useState(props.dotDimension);
+
+  const classes = useStyles({ ...dotDimension });
+
+  useEffect(() => setDotDimension(props.dotDimension), [props.dotDimension]);
 
   useEffect(() => setIdx(props.activeIndex), [props.activeIndex]);
 
   return (
-    <div className={classes.indicatorWrapper} aria-label="dots-wrapper">
+    <div className={classes.indicatorWrapper} aria-label="indicator">
       <div
         className={classes.dotsWrapper}
         role="button"

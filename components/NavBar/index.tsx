@@ -48,7 +48,6 @@ function SideBar(props: SideBarProps) {
                   primary: classes.fonts,
                 }}
               />
-              <ChevronRight />
             </ListItem>
             <Popover
               PaperProps={{ className: classes.paper }}
@@ -63,7 +62,7 @@ function SideBar(props: SideBarProps) {
               <div className={classes.navHeader} />
               <Grid container>
                 {children.map((child) => (
-                  <Grid item>
+                  <Grid item key={child.name}>
                     <List key={child.name} dense disablePadding>
                       <ListSubHeader disableSticky className={classes.fonts}>
                         <Link

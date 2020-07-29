@@ -8,17 +8,28 @@ import useStyles from "./styles";
 export * from "./@types";
 export * from "./styles";
 
-export default withFetch<ImgProps>(props => {
+export default withFetch<ImgProps>((props) => {
   const classes = useStyles();
 
   return (
     <React.Fragment>
       {props.isLoading ? (
-        <CircularProgress color="secondary" className={classes.spinner} />
+        <div className={props.className} style={props.style}>
+          <CircularProgress color="secondary" size={1} />
+        </div>
       ) : props.hasLoaded ? (
-        <img src={props.item} alt={props.alt} className={props.className} />
+        <img
+          src={props.item}
+          alt={props.alt}
+          className={props.className}
+          style={props.style}
+        />
       ) : (
-        <Typography variant="subtitle1" className={props.className}>
+        <Typography
+          variant="subtitle1"
+          className={props.className}
+          style={props.style}
+        >
           {props.alt}
         </Typography>
       )}

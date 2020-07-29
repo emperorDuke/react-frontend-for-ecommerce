@@ -12,10 +12,10 @@ export default makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       backgroundColor: theme.palette.background.paper,
-      width: theme.spacing(30)
+      flexGrow: 1
     },
     fonts: {
-      fontSize: theme.typography.fontSize
+      ...theme.typography.body1
     },
     navHeader: {
       display: "block",

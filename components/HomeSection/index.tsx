@@ -32,16 +32,28 @@ const HomeSection: React.ComponentType = () => {
     .all()
     .filter((store) => !store.verified)
     .map((store) => (
-      <Grid item>
+      <Grid item key={store.name} xs>
         <Card>
           <Link href={store.href} as={store.as}>
             <CardContent>
-              <Grid container>
-                <Grid item>
-                  <Img src={store.logo} alt={store.name} />
+              <Grid
+                container
+                alignItems="center"
+                justify="flex-start"
+                spacing={1}
+                wrap="nowrap"
+              >
+                <Grid item xs={4}>
+                  <Img
+                    src={store.logo}
+                    alt={store.name}
+                    style={{ width: "100%", height: "40px" }}
+                  />
                 </Grid>
-                <Grid item>
-                  <Typography variant="caption">{store.name}</Typography>
+                <Grid item xs={8}>
+                  <Typography variant="subtitle1" noWrap>
+                    {store.name}
+                  </Typography>
                 </Grid>
               </Grid>
             </CardContent>
@@ -56,7 +68,7 @@ const HomeSection: React.ComponentType = () => {
         .all()
         .filter((store) => store.verified)
         .map((store) => (
-          <Grid item md={6}>
+          <Grid item md={6} key={store.name}>
             <Img src={store.logo} alt={store.name} />
           </Grid>
         ))}
@@ -64,7 +76,7 @@ const HomeSection: React.ComponentType = () => {
   );
 
   const sponsoredStores = ads.getSponsoredItems().shops.map((shop) => (
-    <Grid item>
+    <Grid item key={shop.store.name}>
       <Paper className={classes.cardMasterLayout}>
         <CardEnhancer appBar appBarProps={{ text: shop.store.name, link: "/" }}>
           {shop.products.map((product) => (
@@ -84,8 +96,14 @@ const HomeSection: React.ComponentType = () => {
 
       if (nextIndex === centerAds.length) {
         mappedAds.push(
-          <Grid item container direction="row" spacing={1}>
-            <Grid item md={6}>
+          <Grid
+            item
+            container
+            direction="row"
+            spacing={1}
+            key={centerAds[i].name}
+          >
+            <Grid item md={12}>
               <Img
                 src={centerAds[i].attachment}
                 alt={centerAds[i].name}
@@ -96,7 +114,13 @@ const HomeSection: React.ComponentType = () => {
         );
       } else {
         mappedAds.push(
-          <Grid item container direction="row" spacing={1}>
+          <Grid
+            item
+            container
+            direction="row"
+            spacing={1}
+            key={`${centerAds[i].name}${centerAds[nextIndex].name}`}
+          >
             <Grid item md={6}>
               <Img
                 src={centerAds[i].attachment}
@@ -120,24 +144,24 @@ const HomeSection: React.ComponentType = () => {
     return mappedAds;
   };
 
-  const sponsoredProducts = (
-    <Grid item>
+  const sponsoredProducts = ads.getSponsoredItems().products.length > 0 && (
+    <Grid item key={9090}>
       <Paper className={classes.cardMasterLayout}>
         <CardEnhancer
           appBar
           appBarProps={{ text: "Sponsored products", link: "/" }}
         >
           {ads.getSponsoredItems().products.map((product) => (
-            <ModularCard {...product} key={product.id} />
+            <ModularCard {...product.product} key={product.id} />
           ))}
         </CardEnhancer>
       </Paper>
     </Grid>
   );
 
-  const listedProducts = listings.all().flatMap((listing) =>
-    Object.keys(listing).map((key) => (
-      <Grid item>
+  const listedProducts = listings.all().map((listing) =>
+    Object.keys(listing).map((key, i) => (
+      <Grid item key={`${key}${i}`} md sm xs>
         <Paper className={classes.cardMasterLayout}>
           <Typography variant="h5" className={classes.t}>
             {key}
@@ -155,6 +179,7 @@ const HomeSection: React.ComponentType = () => {
   const joggler = () => {
     const joggledComponents = [];
     const internalAds = getMappedAds();
+
     const range = Math.max(
       internalAds.length,
       sponsoredStores.length,
@@ -174,8 +199,8 @@ const HomeSection: React.ComponentType = () => {
         joggledComponents.push(sponsoredStores[i]);
       }
 
-      if (i === sponsoredStores.length - 1) {
-        joggledComponents.push(listedProducts[i]);
+      if (i >= sponsoredStores.length) {
+        joggledComponents.push(listedProducts[i][0]);
       }
     }
 
@@ -195,42 +220,54 @@ const HomeSection: React.ComponentType = () => {
           </Button>
         </Grid>
         <Grid item container spacing={1} wrap="nowrap">
-          <Grid item>
+          <Grid item sm={4} md={3} lg={3}>
             <NavBar navItems={categories} />
           </Grid>
-          <Grid item>
-            <div className={classes.sliderDim}>
-              <Slider autoplay showThumbs>
-                {mainAds.map((ad) => (
-                  <Slide caption={ad.caption} key={ad.id}>
-                    <Img src={ad.attachment} alt={ad.name} />
-                  </Slide>
-                ))}
-              </Slider>
-            </div>
+          <Grid item sm={8} md={6} lg={6}>
+            <Slider autoplay showThumbs infinite>
+              {mainAds.map((ad) => (
+                <Slide caption={ad.caption} key={ad.id}>
+                  <Img src={ad.attachment} alt={ad.name} />
+                </Slide>
+              ))}
+            </Slider>
           </Grid>
+          <Grid item xs={3} sm md lg/>
         </Grid>
         <Grid item container spacing={1}>
-          <Grid item>
-            <Card>
-              <Link>
-                <CardContent>
-                  <Grid container>
-                    <Grid item>
-                      <img
-                        src="/static/midea_a95757a4cfec5b22202e7f9304481d50.jpg"
-                        alt="cards"
-                      />
+          <Grid item xs={3} />
+          <Grid item container xs={6} spacing={1}>
+            <Grid item xs>
+              <Card>
+                <Link href="/">
+                  <CardContent>
+                    <Grid
+                      container
+                      alignItems="center"
+                      justify="flex-start"
+                      spacing={1}
+                      wrap="nowrap"
+                    >
+                      <Grid item xs={4}>
+                        <img
+                          src="/static/midea_a95757a4cfec5b22202e7f9304481d50.jpg"
+                          alt="cards"
+                          style={{ width: "100%", height: "40px" }}
+                        />
+                      </Grid>
+                      <Grid item xs={8}>
+                        <Typography variant="subtitle1" noWrap>
+                          Store locator
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item>
-                      <Typography variant="caption">Store locator</Typography>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Link>
-            </Card>
+                  </CardContent>
+                </Link>
+              </Card>
+            </Grid>
+            {randomStores}
           </Grid>
-          {randomStores}
+          <Grid item xs={3} />
         </Grid>
         {joggler()}
         <Grid item>
@@ -238,9 +275,7 @@ const HomeSection: React.ComponentType = () => {
         </Grid>
         <Grid item>
           <Paper className={classes.cardMasterLayout}>
-            <Typography variant="h2" component="h2">
-              {data.heading}
-            </Typography>
+            <Typography variant="h4">{data.heading}</Typography>
             <Typography variant="body1" component="p">
               {data.body}
             </Typography>

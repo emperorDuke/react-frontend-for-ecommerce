@@ -7,24 +7,16 @@ export default makeStyles((theme: Theme) =>
     cardMasterLayout: {
       flexGrow: 1
     },
-    sliderDim: {
-      width: theme.spacing(86),
-      height: theme.spacing(50),
-      [theme.breakpoints.down("md")]: {
-        width: theme.spacing(40),
-        height: theme.spacing(50),
-      },
-      [theme.breakpoints.down("sm")]: {
-        width: theme.spacing(30),
-        height: theme.spacing(40),
-      }
-    },
     image: {
       width: '100%',
-      height: theme.spacing(20)
+      height: theme.spacing(15)
     },
     t: {
-      padding: theme.spacing(1)
+      padding: theme.spacing(1),
+      textTransform: "capitalize"
+    },
+    slider:{
+      height: theme.spacing(20),
     }
   })
 );

@@ -1,4 +1,8 @@
 import useSelector from "../redux/utils/useStoreSelector";
+import { UserType } from "../redux/actionCreators/UserActions";
+import { CartType } from "../redux/actionCreators/CartActions";
+import { ShippingDetailType } from "../redux/actionCreators/AddressActions";
+import { OrderType } from "../redux/actionCreators/OrderActions";
 
 interface PaymentInformation {
   cardNo: number;
@@ -7,7 +11,32 @@ interface PaymentInformation {
   date: string;
 }
 
-export function useUser(userType: "seller" | "buyer") {
+interface Auth {
+  isLoggedIn: boolean;
+  token: any;
+}
+
+interface Seller {
+  profile: () => UserType;
+  auth: () => Auth;
+}
+
+interface Buyer {
+  profile: () => UserType;
+  auth: () => Auth;
+  cart: () => CartType[];
+  addressBook: {
+    all: () => ShippingDetailType[];
+    getDefault: () => ShippingDetailType | undefined;
+  }
+  orders: {
+    all: () => OrderType[];
+    get: (id: number) => OrderType | undefined;
+  }
+}
+
+
+export function useUser<T extends "seller" | "buyer">(userType: T) {
   const userAuth = useSelector(({ userAuth }) => userAuth);
   const incomingCart = useSelector(({ cart }) => cart.cart);
   const addressBook = useSelector(
@@ -20,27 +49,24 @@ export function useUser(userType: "seller" | "buyer") {
   const profile = () => user;
   const auth = () => userAuth;
 
-  switch (userType) {
-    case "seller":
-      return {
-        profile,
-        auth,
-      };
-    case "buyer":
-      return {
-        cart,
-        profile,
-        auth,
-        addressBook: {
-          all: () => addressBook,
-          getDefault: () => addressBook.find((a) => a.default === true),
-        },
-        orders: {
-          all: () => orders,
-          get: (id: number) => orders.find((o) => o.id === id),
-        },
-      };
-    default:
-      return {};
+  if (userType === "seller") {
+    return {
+      profile,
+      auth,
+    }
+  } else {
+    return {
+      cart,
+      profile,
+      auth,
+      addressBook: {
+        all: () => addressBook,
+        getDefault: () => addressBook.find((a) => a.default === true),
+      },
+      orders: {
+        all: () => orders,
+        get: (id: number) => orders.find((o) => o.id === id),
+      },
+    };
   }
 }

@@ -7,16 +7,22 @@ export default makeStyles((theme: Theme) =>
     flag: {
       backgroundColor: theme.palette.secondary.light,
       padding: theme.spacing(0, 1, 0, 1),
-      color: theme.palette.secondary.contrastText
+      color: theme.palette.secondary.contrastText,
     },
-    linkClass: {
+    link: {
+      color: "inherit",
       "&:hover": {
-        textDecoration: "none"
+        textDecoration: "none",
       },
-      color: "inherit"
     },
     text: {
-      textTransform: "capitalize"
-    }
+      textTransform: "capitalize",
+    },
+    action: {
+      display: "flex",
+      position: "absolute",
+      padding: theme.spacing(1),
+      width: "100%",
+    },
   })
 );

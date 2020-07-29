@@ -23,7 +23,7 @@ export default function CartSection() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const router = useRouter();
-  const globalProduct = useProduct();
+  const { get } = useProduct();
 
   const [localCart, setLocalCart] = useState(cart);
 
@@ -51,7 +51,7 @@ export default function CartSection() {
   const handleQtyChange = (qty: number, index?: number) => {
     const item = localCart.find(cart => cart.index === index);
     if (item) {
-      const product = globalProduct.get(item.product);
+      const product = get(item.product);
       item["quantity"] = qty;
       if (product) {
         const price = product.discount || product.price;

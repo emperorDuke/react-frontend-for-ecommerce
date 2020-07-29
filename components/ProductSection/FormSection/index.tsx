@@ -67,7 +67,7 @@ export default function ProductDetails(props: PropsType) {
             </label>
           </Grid>
           <Grid item> 
-            <Slider type="thumbnails" width={300} height={200}>
+            <Slider type="thumbnails">
               {attribute.variants.map(variant => (
                 <Slide onClick={() => handleVariantChange(variant)}>
                   <Tooltip

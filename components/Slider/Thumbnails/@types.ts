@@ -1,11 +1,10 @@
+import { Dimension } from "../types";
 
 export interface ThumbnailsProps {
   children: React.ReactNodeArray;
   activeIndex: number;
   setIndex?: (i:number) => void;
-  sliderDimension: { width: number; height: number };
+  thumbDimension: Dimension;
   className?: string;
-  heightFactor?: number;
-  noThumbsPerView?: number;
-  standalone?: boolean;
+  noOfVisibleThumbs?: number;
 }

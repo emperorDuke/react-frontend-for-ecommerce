@@ -20,10 +20,10 @@ function getMinAndMaxValue(items: SliderWithInputProps["items"]) {
   return [getValue(minRange, "min"), getValue(maxRange, "max")];
 }
 
-const SliderWithInput: React.ComponentType<SliderWithInputProps> = props => {
+const SliderWithInput: React.ComponentType<SliderWithInputProps> = (props) => {
   const [value, setValue] = useState({
     data: getMinAndMaxValue(props.items),
-    dummy: [0, 100]
+    dummy: [0, 100],
   });
 
   const classes = useStyles();
@@ -35,14 +35,14 @@ const SliderWithInput: React.ComponentType<SliderWithInputProps> = props => {
   ) => {
     const slideValue = Math.floor(parseInt(e.target.value) / getInterval());
     if (type === "min") {
-      setValue(prev => ({
+      setValue((prev) => ({
         data: [parseInt(e.target.value), prev.data[1]],
-        dummy: [slideValue, prev.dummy[1]]
+        dummy: [slideValue, prev.dummy[1]],
       }));
     } else {
-      setValue(prev => ({
+      setValue((prev) => ({
         data: [prev.data[0], parseInt(e.target.value)],
-        dummy: [prev.dummy[0], slideValue]
+        dummy: [prev.dummy[0], slideValue],
       }));
     }
   };
@@ -51,23 +51,19 @@ const SliderWithInput: React.ComponentType<SliderWithInputProps> = props => {
     return value.data[1] / value.dummy[1];
   };
 
-  const handleSlider = () => (
-    e: React.ChangeEvent<{}>,
-    val: Array<number> | number
-  ) => {
-    setValue(prev => ({
-      data:
-        Array.isArray(val)
-          ? [
-              Math.floor(val[0] * getInterval()),
-              Math.floor(val[1] * getInterval())
-            ]
-          : prev.data,
-      dummy: Array.isArray(val) ? val : prev.dummy
+  const handleSlider = (e: React.ChangeEvent<{}>, val: number[] | number) => {
+    setValue((prev) => ({
+      data: Array.isArray(val)
+        ? [
+            Math.floor(val[0] * getInterval()),
+            Math.floor(val[1] * getInterval()),
+          ]
+        : prev.data,
+      dummy: Array.isArray(val) ? val : prev.dummy,
     }));
   };
 
-  const handleSubmit = () => (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     props.postQuery(`price__gte=${value.data[0]}&price__lte=${value.data[1]}`);
   };
@@ -76,16 +72,16 @@ const SliderWithInput: React.ComponentType<SliderWithInputProps> = props => {
     <React.Fragment>
       <Slider
         value={value.dummy}
-        onChange={handleSlider()}
+        onChange={handleSlider}
         aria-labelledBy="range-slider"
         color="secondary"
       />
       <form
-        onSubmit={handleSubmit()}
+        onSubmit={handleSubmit}
         style={{
           display: "flex",
           flexWrap: "nowrap",
-          height: theme.spacing(4)
+          height: theme.spacing(4),
         }}
       >
         <FormControl>

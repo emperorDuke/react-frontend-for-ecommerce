@@ -20,7 +20,10 @@ export default makeStyles((theme: Theme) =>
     },
     inputRoot: {
       width: theme.spacing(40),
-      padding: "0px 0px 0px 10px"
+      padding: "0px 0px 0px 10px",
+      [theme.breakpoints.down("md")]: {
+        width: theme.spacing(30),
+      }
     },
     selectRootRight: {
       width: theme.spacing(16),

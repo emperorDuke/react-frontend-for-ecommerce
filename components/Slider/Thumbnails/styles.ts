@@ -7,6 +7,7 @@ interface StyleProps {
   thumbWidth: number;
   thumbHeight: number;
   thumbPosition: number;
+  transition: boolean;
 }
 
 export default makeStyles((theme: Theme) =>
@@ -15,20 +16,24 @@ export default makeStyles((theme: Theme) =>
       position: "relative",
       width: "100%",
       backgroundColor: theme.palette.grey[300],
+      flex: 1,
+      display: "flex",
       "&:hover $button": {
         opacity: 0.6,
         transition: "opacity 500ms ease-in-out 50ms",
         "&:hover": {
           cursor: "pointer",
-          opacity: 0.9
-        }
-      }
+          opacity: 0.9,
+        },
+      },
     },
     thumbnails: {
+      position: "relative",
       boxShadow: theme.shadows[1],
       borderRadius: theme.shape.borderRadius,
       transform: (val: StyleProps) => `translateX(${val.thumbPosition}px)`,
-      transition: "transform 300ms ease-in-out 50ms",
+      transition: (val: StyleProps) =>
+        val.transition ? "transform 300ms ease-in 50ms" : "none",
     },
     thumbWrapperContainer: {
       padding: "2px",
@@ -39,13 +44,13 @@ export default makeStyles((theme: Theme) =>
       backgroundColor: `${theme.palette.grey[800]}`,
       borderRadius: theme.shape.borderRadius,
       "&:hover": {
-        cursor: "pointer"
-      }
+        cursor: "pointer",
+      },
     },
     thumbWrapper: {
       height: "100%",
       width: "100%",
-      borderRadius: "inherit"
+      borderRadius: "inherit",
     },
     focuser: {
       position: "absolute",
@@ -54,7 +59,8 @@ export default makeStyles((theme: Theme) =>
       width: (val: StyleProps) => `${val.thumbWidth}px`,
       border: `2px solid ${theme.palette.secondary.main}`,
       transform: (val: StyleProps) => `translateX(${val.focuserPosition}px)`,
-      transition: "transform 600ms ease-in 10ms",
+      transition: (val: StyleProps) =>
+        val.transition ? "transform 600ms ease-in 10ms" : "none",
       borderRadius: theme.shape.borderRadius,
     },
     thumbsWrapper: {
@@ -79,6 +85,6 @@ export default makeStyles((theme: Theme) =>
     },
     disabledButton: {
       display: "none",
-    }
+    },
   })
 );

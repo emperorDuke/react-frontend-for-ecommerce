@@ -17,12 +17,12 @@ const CustomSearch: React.ComponentType<SearchBarProps> = ({
   const classes = useStyles();
 
   const LocationOptions = locations.map(location =>
-    <option value={location}>{location}</option>
+    <option value={location} key={location}>{location}</option>
   );
 
   const categoryOptions = categories.map(category =>
     category.children.map(child => (
-      <option value={child.name}>{child.name}</option>
+      <option value={child.name} key={child.name}>{child.name}</option>
     ))
   );
 

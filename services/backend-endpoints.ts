@@ -6,6 +6,7 @@ const paths = {
   postAttributes: `/products/attributes/`,
   getProductAttributes: (ID?: T) => `/products/${ID}/attributes/`,
   updateProductAttributes: (ID?: T) => `/products/attributes/${ID}/`,
+  getListings: '/products/listings',
   getProducts: `/products/`,
   getProduct: (ID?: T) => `/products/${ID}/`,
   getProductMetas: (ID?: T) => `/products/${ID}/meta/s/`,
@@ -24,6 +25,8 @@ const paths = {
   getPickupLocation: `/location/`,
   addressBook: `/buyer/users/addresses/`,
   getCategories: `/categories/`,
+  getSponsoredStores: '/sponsored/stores/',
+  getSponsoredProducts: '/sponsored/products/'
 };
 
 /**

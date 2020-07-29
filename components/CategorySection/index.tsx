@@ -14,11 +14,11 @@ import { useDidUpdate } from "../../utils/useDidUpdate";
 export * from "./utils";
 export * from "./@types";
 
-const CategorySection: React.ComponentType<CategorySectionProps> = props => {
+const CategorySection: React.ComponentType<CategorySectionProps> = (props) => {
   const query = `category-trackId=${props.trackId}`;
 
   const [stateQuery, setStateQuery] = useState(query);
-
+ 
   const filters = useSelector(({ filters }) => filters.filters);
 
   const categories = useSelector(({ categories }) => categories.categories);
@@ -29,12 +29,12 @@ const CategorySection: React.ComponentType<CategorySectionProps> = props => {
 
   useEffect(() => setStateQuery(query), [props.trackId]);
 
-  useDidUpdate(() => dispatch(productRequest(`/products/?${stateQuery}`)), [
-    query
-  ]);
+  useDidUpdate(() => {
+    dispatch(productRequest(`/products/?${stateQuery}`));
+  }, [query]);
 
   const transformedFilters = useMemo(() => _.transformFilter(filters), [
-    filters
+    filters,
   ]);
 
   const sortedCategories = useMemo(
@@ -43,7 +43,7 @@ const CategorySection: React.ComponentType<CategorySectionProps> = props => {
   );
 
   const postQuery = (newSubQuery: string) => {
-    setStateQuery(prevStateQuery =>
+    setStateQuery((prevStateQuery) =>
       _.insertOrEditQuery(prevStateQuery, newSubQuery)
     );
   };

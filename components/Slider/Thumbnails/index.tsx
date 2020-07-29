@@ -4,27 +4,22 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import useStyles from "./styles";
 import clsx from "classnames";
 import { ThumbnailsProps } from "./@types";
-import { jumpforward, jumpbackward } from "../utils";
+import { jumpforward as JF, jumpbackward as JB } from "../utils";
 import ButtonBase from "@material-ui/core/ButtonBase";
+import { useDidUpdate } from "../../../utils";
 
 export * from "./@types";
 
 function Thumbnails(props: ThumbnailsProps) {
-  const noThumbsPerView = props.noThumbsPerView ?? 4;
-  const offsetX = props.sliderDimension.width / noThumbsPerView;
-
-  let offsetY = 0;
-
-  if (props.heightFactor) {
-    offsetY = props.sliderDimension.height / props.heightFactor;
-  } else if (props.standalone) {
-    offsetY = props.sliderDimension.height;
-  }
+  const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
+  const offsetX = props.thumbDimension.width;
+  const offsetY = props.thumbDimension.height;
 
   const [value, setValue] = useState({
     activeIndex: props.activeIndex,
     focuserPosition: 0,
-    thumbPosition: 0
+    thumbPosition: 0,
+    transition: true,
   });
 
   const activeGroup = useRef(1);
@@ -34,7 +29,7 @@ function Thumbnails(props: ThumbnailsProps) {
   const classes = useStyles({
     ...value,
     thumbWidth: offsetX,
-    thumbHeight: offsetY
+    thumbHeight: offsetY,
   });
 
   useEffect(() => {
@@ -48,18 +43,18 @@ function Thumbnails(props: ThumbnailsProps) {
     // the number of groups are determined depending on the
     // number of thumbs per view
 
-    if (nChildren % noThumbsPerView > 0) {
-      nGroups = Math.floor(nChildren / noThumbsPerView) + 1;
+    if (nChildren % noOfVisibleThumbs > 0) {
+      nGroups = Math.floor(nChildren / noOfVisibleThumbs) + 1;
     } else {
-      nGroups = nChildren / noThumbsPerView;
+      nGroups = nChildren / noOfVisibleThumbs;
     }
 
     while (i < nGroups) {
       temp.push({
         start: j,
-        end: j + noThumbsPerView - 1
+        end: j + noOfVisibleThumbs - 1,
       });
-      j += noThumbsPerView;
+      j += noOfVisibleThumbs;
       i++;
     }
 
@@ -73,17 +68,10 @@ function Thumbnails(props: ThumbnailsProps) {
       if (props.activeIndex === 0) {
         return 0;
       } else if (props.activeIndex > prev.activeIndex) {
-        return jumpforward(prev.focuserPosition, offsetX, nTime);
+        return JF(prev.focuserPosition, offsetX, nTime);
       } else {
-        return jumpbackward(prev.focuserPosition, offsetX, nTime);
+        return JB(prev.focuserPosition, offsetX, nTime);
       }
-    };
-
-    const getGroupNumber = (idx: number) => {
-      let index = groups.current.findIndex(
-        group => idx >= group.start && idx <= group.end
-      );
-      return ++index;
     };
 
     const getThumbPosition = (prev: typeof value) => {
@@ -91,54 +79,93 @@ function Thumbnails(props: ThumbnailsProps) {
       const previousGroup = getGroupNumber(prev.activeIndex);
       const groupOffset = Math.abs(currentGroup - previousGroup);
       const isSameGroup = previousGroup === currentGroup;
-      const nTime = noThumbsPerView * groupOffset;
+      const nTime = noOfVisibleThumbs * groupOffset;
 
       if (activeGroup.current === currentGroup) {
         return prev.thumbPosition;
       } else if (props.activeIndex > prev.activeIndex && !isSameGroup) {
         activeGroup.current += groupOffset;
-        return jumpbackward(prev.thumbPosition, offsetX, nTime);
+        return JB(prev.thumbPosition, offsetX, nTime);
       } else if (props.activeIndex < prev.activeIndex && !isSameGroup) {
         activeGroup.current -= groupOffset;
-        return jumpforward(prev.thumbPosition, offsetX, nTime);
+        return JF(prev.thumbPosition, offsetX, nTime);
       }
 
       return prev.thumbPosition;
     };
 
-    setValue(prev => ({
+    setValue((prev) => ({
+      transition: true,
       activeIndex: props.activeIndex,
       thumbPosition: getThumbPosition(prev),
       focuserPosition: getFocuserPosition(prev)
     }));
   }, [props.activeIndex]);
 
+  useDidUpdate(() => {
+    const updateFocuser = ({ activeIndex }: typeof value) => {
+      return activeIndex === 0 ? 0 : JF(0, offsetX, activeIndex);
+    };
+
+    const updateThumb = ({ activeIndex }: typeof value) => {
+      let position = 0;
+      const currentGroup = getGroupNumber(activeIndex);
+
+      if (currentGroup > 1) {
+        const previousGroup = 1;
+        const groupOffset = Math.abs(previousGroup - currentGroup);
+        const nTime = noOfVisibleThumbs * groupOffset;
+        position = JB(0, offsetX, nTime);
+      }
+
+      return position;
+    };
+
+    setValue((prev) => ({
+      ...prev,
+      transition: false,
+      thumbPosition: updateThumb(prev),
+      focuserPosition: updateFocuser(prev),
+    }));
+  }, [props.thumbDimension])
+
+  const getGroupNumber = (idx: number) => {
+    let index = groups.current.findIndex(
+      (group) => idx >= group.start && idx <= group.end
+    );
+    return ++index;
+  };
+
   const nextGroup = () => {
     activeGroup.current += 1;
 
-    setValue(prev => ({
+    setValue((prev) => ({
+      ...prev,
+      transition: true,
       activeIndex: prev.activeIndex,
       focuserPosition: prev.focuserPosition,
-      thumbPosition: jumpbackward(prev.thumbPosition, offsetX, noThumbsPerView)
+      thumbPosition: JB(prev.thumbPosition, offsetX, noOfVisibleThumbs),
     }));
   };
 
   const prevGroup = () => {
     activeGroup.current -= 1;
 
-    setValue(prev => ({
+    setValue((prev) => ({
+      ...prev,
+      transition: true,
       activeIndex: prev.activeIndex,
       focuserPosition: prev.focuserPosition,
-      thumbPosition: jumpforward(prev.thumbPosition, offsetX, noThumbsPerView)
+      thumbPosition: JF(prev.thumbPosition, offsetX, noOfVisibleThumbs),
     }));
   };
 
   const hideRightButton = {
-    [classes.disabledButton]: activeGroup.current === groups.current.length
+    [classes.disabledButton]: activeGroup.current === groups.current.length,
   };
 
   const hideLeftButton = {
-    [classes.disabledButton]: activeGroup.current === 1
+    [classes.disabledButton]: activeGroup.current === 1,
   };
 
   return (
@@ -154,7 +181,6 @@ function Thumbnails(props: ThumbnailsProps) {
                       __showCaption: false,
                       __index: i,
                       __setIndex: props.setIndex,
-                      __isThumbnails: props.standalone
                     })}
                 </div>
               </div>
@@ -180,9 +206,7 @@ function Thumbnails(props: ThumbnailsProps) {
 }
 
 Thumbnails.defaultProps = {
-  heightFactor: 6,
-  noThumbsPerView: 4,
-  standalone: false
+  noOfVisibleThumbs: 4,
 };
 
 export default Thumbnails;

@@ -26,9 +26,12 @@ export default makeStyles((theme: Theme) =>
       }
     },
     caption: {
+      ...theme.typography.subtitle1,
       color: "white",
-      fontSize: theme.typography.fontSize * 2,
       margin: "2px"
+    },
+    f: {
+      border: "2px solid red"
     }
   })
 );

@@ -50,8 +50,6 @@ const ProductSection: React.ComponentType<{ id: string }> = props => {
                   disableButtons
                   disableIndicator
                   showThumbs
-                  width={565}
-                  height={400}
                 >
                   {images &&
                     images.map(image => (

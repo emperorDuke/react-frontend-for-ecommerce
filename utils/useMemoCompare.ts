@@ -4,8 +4,10 @@ export function shallowCompare<T>(previous: T, current: T): boolean {
   let isEqual = true;
 
   for (let key in current) {
-    let isSame = current[key] === previous[key];
-    if (!isSame) isEqual = false;
+    if (current[key] !== previous[key]) {
+      isEqual = false;
+      break
+    }
   }
 
   return isEqual;
@@ -18,9 +20,8 @@ export function shallowCompare<T>(previous: T, current: T): boolean {
  */
 export function useMemoCompare<T>(current: T, equityFn = shallowCompare) {
   const previousRef = React.useRef(current);
-
-  const previousObj = previousRef.current;
-  const isEqual = equityFn(previousObj, current);
+  
+  const isEqual = equityFn(previousRef.current, current);
 
   React.useEffect(() => {
     if (!isEqual) {
@@ -28,5 +29,5 @@ export function useMemoCompare<T>(current: T, equityFn = shallowCompare) {
     }
   });
 
-  return isEqual ? previousObj : current;
+  return isEqual ? previousRef.current : current;
 }

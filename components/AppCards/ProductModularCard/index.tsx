@@ -2,7 +2,6 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
-import CardAction from "@material-ui/core/CardActions";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
@@ -21,26 +20,28 @@ type PropsType = EnhancedProductType & AppCardProps;
 const getClass = (classes: AppCardProps["classes"], key: "img") =>
   classes ? classes[key] : undefined;
 
-const ModularCard: React.ComponentType<PropsType> = product => {
+const ModularCard: React.ComponentType<PropsType> = (product) => {
   const classes = useStyles();
   const theme = useTheme();
 
   return (
     <Card>
-      <Link href={product.href} as={product.as} className={classes.linkClass}>
+      <Link href={product.href} as={product.as} className={classes.link}>
         <CardActionArea>
-          <CardAction>
-            <Paper elevation={0} className={classes.flag}>
-              <Typography variant="subtitle1">
-                {product.percentageOff}
-              </Typography>
-            </Paper>
-          </CardAction>
-          <Img
-            src={product.attachment_1}
-            alt={product.name}
-            className={getClass(product.classes, "img")}
-          />
+          <div style={{ position: "relative" }}>
+            <div className={classes.action}>
+              <Paper elevation={0} className={classes.flag}>
+                <Typography variant="subtitle1">
+                  {product.percentageOff}
+                </Typography>
+              </Paper>
+            </div>
+            <Img
+              src={product.attachment_1}
+              alt={product.name}
+              className={getClass(product.classes, "img")}
+            />
+          </div>
           <div style={{ padding: theme.spacing(2) }}>
             <Typography variant="caption" className={classes.text}>
               {product.brand}
@@ -70,7 +71,7 @@ const ModularCard: React.ComponentType<PropsType> = product => {
                     <Grid item>
                       <div
                         style={{
-                          paddingTop: product.size === "sm" ? "3px" : "0px"
+                          paddingTop: product.size === "sm" ? "3px" : "0px",
                         }}
                       >
                         <Typography variant="caption">
@@ -113,7 +114,7 @@ const ModularCard: React.ComponentType<PropsType> = product => {
 };
 
 ModularCard.defaultProps = {
-  size: "md"
+  size: "md",
 };
 
 export default ModularCard;
