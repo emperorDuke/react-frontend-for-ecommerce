@@ -4,36 +4,63 @@ import CategorySection from "../../components/CategorySection";
 import { Container } from "next/app";
 import { NextPage, NextPageContext } from "next";
 import { NextJSContext } from "next-redux-wrapper";
-import { productRequest } from "../../redux/actionCreators/ProductActions";
-import { filterRequest } from "../../redux/actionCreators/FilterActions";
-import { categoryRequest } from "../../redux/actionCreators/CategoryActions";
-
+import {
+  productSuccess,
+  productFailure,
+} from "../../redux/actionCreators/ProductActions";
+import {
+  filterSuccess,
+  filterFailure,
+} from "../../redux/actionCreators/FilterActions";
+import {
+  categoryRequest,
+  categorySuccess,
+  categoryFailure,
+} from "../../redux/actionCreators/CategoryActions";
+import fetch from "../../utils/Fetch";
+import { apiUrl } from "../../services";
 
 type Props = {
-    category_trackID: string | string[];
-}
+  id: string | string[];
+};
 
-const CategoryPage: NextPage<Props> = ({ category_trackID }) => {
+const CategoryPage: NextPage<Props> = ({ id }) => {
+  const ID = id instanceof Array ? undefined : id;
 
-    const ID = category_trackID instanceof Array ? undefined : category_trackID;
+  return (
+    <Container>
+      <Header />
+      <CategorySection trackId={ID} />
+      <Footer />
+    </Container>
+  );
+};
 
-    return (
-        <Container>
-            <Header />
-            <main>
-                <CategorySection trackId={ID} />
-            </main>
-            <Footer />
-        </Container>
-    );
-}
+CategoryPage.getInitialProps = async ({
+  store,
+  query,
+}: NextPageContext & NextJSContext) => {
+  const { id } = query;
+  const dispatch = store.dispatch;
 
-CategoryPage.getInitialProps = async ({ store, query }: NextPageContext & NextJSContext) => {
-    const { category_trackID } = query;
-    store.dispatch(productRequest(`/products/?category_trackID=${category_trackID}`));
-    store.dispatch(filterRequest(`/category/filterKey/${category_trackID}`));
-    store.dispatch(categoryRequest(`/get-categories`));
-    return { category_trackID };
-}
+  await fetch(
+    dispatch,
+    { success: productSuccess, failure: productFailure },
+    apiUrl("getProducts") + `?category=${id}`
+  );
+
+  await fetch(
+    dispatch,
+    { success: filterSuccess, failure: filterFailure },
+    apiUrl("getFilters", id[0])
+  );
+
+  await fetch(
+    dispatch,
+    { success: categorySuccess, failure: categoryFailure },
+    apiUrl("getCategories")
+  );
+  return { id };
+};
 
 export default CategoryPage;

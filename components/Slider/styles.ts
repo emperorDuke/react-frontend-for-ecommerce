@@ -14,22 +14,15 @@ type T = (val: StyleProps) => string;
 
 const getHeight: T = (val) => `${val.height - val.thumbHeight}px`;
 
-const getWidth: T = (val) => {
-  if (val.width === 0) {
-    return "100%";
-  } else {
-    return `${val.width}px`;
-  }
-};
+const getWidth: T = (val) => `${val.width}px`;
 
 const getTransform: T = (val) => `translateX(${val.position}px)`;
 
 const getTransition: T = (val) => {
   if (!val.transition) {
     return "none";
-  } else {
-    return "transform 500ms ease-in-out 20ms";
   }
+  return "transform 500ms ease-in-out 20ms";
 };
 
 export default makeStyles((theme: Theme) =>
@@ -81,7 +74,7 @@ export default makeStyles((theme: Theme) =>
       left: (val: StyleProps) => `calc(100% - ${val.width / 10}px)`,
     },
     disabledButton: {
-      display: "none"
-    }
+      display: "none",
+    },
   })
 );

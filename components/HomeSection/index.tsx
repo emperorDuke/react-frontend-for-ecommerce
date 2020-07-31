@@ -11,8 +11,7 @@ import CardEnhancer from "../CardEnhancer";
 import NavBar from "../NavBar";
 import useStyles from "./styles";
 import ModularCard from "../AppCards/ProductModularCard";
-import Slider from "../Slider";
-import Slide from "../Slider/Slide";
+import { Slider, Slide } from "../Slider";
 import Img from "../Img";
 import useSelector from "../../redux/utils/useStoreSelector";
 import { useListings, useAds, useMerchantStore } from "../../services";
@@ -224,7 +223,7 @@ const HomeSection: React.ComponentType = () => {
             <NavBar navItems={categories} />
           </Grid>
           <Grid item sm={8} md={6} lg={6}>
-            <Slider autoplay showThumbs infinite>
+            <Slider autoplay showThumbs >
               {mainAds.map((ad) => (
                 <Slide caption={ad.caption} key={ad.id}>
                   <Img src={ad.attachment} alt={ad.name} />

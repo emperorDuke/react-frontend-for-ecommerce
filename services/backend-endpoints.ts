@@ -26,7 +26,8 @@ const paths = {
   addressBook: `/buyer/users/addresses/`,
   getCategories: `/categories/`,
   getSponsoredStores: '/sponsored/stores/',
-  getSponsoredProducts: '/sponsored/products/'
+  getSponsoredProducts: '/sponsored/products/',
+  getFilters: (ID?: T) => `/category/filters/${ID}`
 };
 
 /**

@@ -71,8 +71,20 @@ export function useProduct() {
     ({ attributes }: IState) => attributes.attributes
   );
 
-  const incomingMeta = useSelector(
-    ({ productMetas }: IState) => productMetas.productMeta
+  const incomingSpecification = useSelector(
+    ({
+      productMetas: {
+        productMeta: { specifications },
+      },
+    }: IState) => specifications
+  );
+
+  const incomingKeyfeatures = useSelector(
+    ({
+      productMetas: {
+        productMeta: { key_features },
+      },
+    }: IState) => key_features
   );
 
   const productsInCart = React.useRef<Array<number>>([]);
@@ -150,12 +162,13 @@ export function useProduct() {
    */
   const getAttachments = React.useCallback(
     (id?: number | string) => {
-      const attachment_re = /attachments_/i;
+      const attachment_re = /^attachment_(1|2|3|4)$/i;
       const product = get(toInt(id));
 
       if (product) {
         return Object.keys(product)
           .filter((key) => attachment_re.test(key))
+          .filter((key) => !!product[key])
           .map((key) => product[key] as string);
       }
     },
@@ -174,14 +187,13 @@ export function useProduct() {
     [incomingAttributes]
   );
 
-  const getKeyfeatures = React.useCallback(() => incomingMeta.key_features, [
-    incomingMeta.key_features,
-  ]);
+  const getKeyfeatures = React.useCallback(() => {
+    return incomingKeyfeatures;
+  }, [incomingKeyfeatures]);
 
-  const getSpecifications = React.useCallback(
-    () => incomingMeta.specification,
-    [incomingMeta.specification]
-  );
+  const getSpecifications = React.useCallback(() => {
+    return incomingSpecification;
+  }, [incomingSpecification]);
 
   const all = React.useCallback(() => products, [products]);
 

@@ -20,7 +20,7 @@ export interface KeyFeatureType {
 }
 
 export interface MetaType {
-  specification: Array<SpecificationType>;
+  specifications: Array<SpecificationType>;
   key_features: Array<KeyFeatureType>;
 }
 
@@ -31,7 +31,7 @@ export interface MeteRequest extends Action {
 
 export interface MetaSucess extends Action {
   type: meta.META_SUCESSFUL;
-  payload: MetaType;
+  payload: MetaType[];
 }
 
 export interface MetaFailure extends Action {

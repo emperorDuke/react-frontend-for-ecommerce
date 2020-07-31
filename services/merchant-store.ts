@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootStoreState as IState } from "../redux/reducers/RootReducer";
-import { BehaviorSubject } from "rxjs";
 import { toInt } from "../utils/toInt";
 import { StoreType } from "../redux/actionCreators/StoreActions";
 import { useMemoCompare } from "../utils/useMemoCompare";
@@ -16,12 +15,6 @@ export type MerchantStoreEnhancer = (
   stores: Array<StoreType>
 ) => Array<EnhancedMerchantStore>;
 
-export interface MerchantStoreReturnType<T = EnhancedMerchantStore> {
-  merchantStores: Array<T>;
-  getMerchantStore: (id: number) => T | undefined;
-}
-
-const merchantStore$ = new BehaviorSubject<Array<EnhancedMerchantStore>>([]);
 
 export const merchantStoreEnhancer: MerchantStoreEnhancer = (stores) => {
   return stores.map((store) => {
@@ -49,14 +42,8 @@ export function useMerchantStore() {
   );
 
   React.useEffect(() => {
-    merchantStore$.next(enhancedMerchantStore);
-  }, [incomingMerchantStores]);
-
-  React.useEffect(() => {
-    merchantStore$.subscribe((val) => setMerchantStores(val));
-
-    return () => merchantStore$.unsubscribe();
-  }, []);
+    setMerchantStores(enhancedMerchantStore);
+  }, [enhancedMerchantStore]);
 
   const get = React.useCallback(
     (id?: number | string) => {

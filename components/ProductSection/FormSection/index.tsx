@@ -14,8 +14,7 @@ import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCartOutlined";
 import LocalShippingIcon from "@material-ui/icons/LocalShippingOutlined";
 import CurrencyManager from "../../CurrencyManager";
 import { addToCart } from "../../../redux/actionCreators/CartActions";
-import Slide from "../../Slider/Slide";
-import Slider from "../../Slider";
+import { Slider, Slide } from "../../Slider";
 import Img from "../../Img";
 import { VariationType } from "../../../redux/actionCreators/AttributeActions";
 import useStyles from "./styles";
@@ -23,7 +22,7 @@ import { PropsType } from "./@types";
 
 export default function ProductDetails(props: PropsType) {
   const [variants, setVariants] = useState<VariationType[]>([]);
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -37,7 +36,7 @@ export default function ProductDetails(props: PropsType) {
         product: props.product.id as number,
         quantity: quantity,
         variants: variants,
-        price: price * quantity
+        price: price * quantity,
       })
     );
 
@@ -46,7 +45,7 @@ export default function ProductDetails(props: PropsType) {
 
   const handleVariantChange = (arg: VariationType) => {
     const tempVariants = variants.slice();
-    const i = tempVariants.findIndex(v => v.attribute === arg.attribute);
+    const i = tempVariants.findIndex((v) => v.attribute === arg.attribute);
 
     if (i > -1) {
       tempVariants[i] = arg;
@@ -58,18 +57,21 @@ export default function ProductDetails(props: PropsType) {
   };
 
   const attributesAndvariants = () =>
-    props.attributes.map(attribute => (
+    props.attributes.map((attribute) => (
       <Grid item key={attribute.id}>
         <Grid container alignItems="center">
-          <Grid item md={2}>
-            <label style={{ textTransform: "capitalize" }}>
+          <Grid item md={2} lg={2} sm={2}>
+            <InputLabel style={{ textTransform: "uppercase" }}>
               {attribute.name}:
-            </label>
+            </InputLabel>
           </Grid>
-          <Grid item> 
-            <Slider type="thumbnails">
-              {attribute.variants.map(variant => (
-                <Slide onClick={() => handleVariantChange(variant)}>
+          <Grid item lg={6} md={5} sm={4}>
+            <Slider type="thumbnails" height={40} width={150}>
+              {attribute.variants.map((variant) => (
+                <Slide
+                  onClick={() => handleVariantChange(variant)}
+                  key={variant.id}
+                >
                   <Tooltip
                     title={
                       <p>
@@ -80,13 +82,11 @@ export default function ProductDetails(props: PropsType) {
                     enterTouchDelay={5}
                     leaveTouchDelay={20}
                     leaveDelay={20}
-                    key={variant.id}
                   >
                     {variant.attachment ? (
                       <Img
                         src={variant.attachment}
                         alt={variant.vendor_metric}
-                        className={classes.textWrapper}
                       />
                     ) : (
                       <div className={classes.textWrapper}>
@@ -124,7 +124,7 @@ export default function ProductDetails(props: PropsType) {
                       <Grid item>
                         <Grid container alignItems="center" spacing={1}>
                           <Grid item>
-                            <label>Brand:</label>
+                            <InputLabel>Brand:</InputLabel>
                           </Grid>
                           <Grid item>
                             <Typography variant="body1">
@@ -181,8 +181,8 @@ export default function ProductDetails(props: PropsType) {
               {attributesAndvariants()}
               <Grid item>
                 <Grid container alignItems="center">
-                  <Grid item md={2}>
-                    <label>QUANTITY:</label>
+                  <Grid item md={2} lg={2} sm={2}>
+                    <InputLabel>QUANTITY:</InputLabel>
                   </Grid>
                   <Grid item>
                     <InputWidget quantity={quantity} onChange={setQuantity} />
@@ -198,7 +198,6 @@ export default function ProductDetails(props: PropsType) {
               <Grid item md={2} />
               <Grid item>
                 <Button
-                  className={classes.tooltip}
                   onClick={() => handleOptions("buyNow")}
                   variant="contained"
                   color="secondary"
@@ -208,7 +207,6 @@ export default function ProductDetails(props: PropsType) {
               </Grid>
               <Grid item>
                 <Button
-                  className={classes.tooltip}
                   onClick={() => handleOptions("addToCart")}
                   variant="contained"
                   color="secondary"

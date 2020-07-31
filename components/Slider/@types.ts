@@ -1,4 +1,4 @@
-import { ThumbnailsProps } from "./Thumbnails";
+import { ThumbnailsProps } from "./thumbnails/Thumbnail";
 
 export interface State {
   dummyIndex: number;
@@ -9,7 +9,7 @@ export interface State {
   height: number;
 }
 
-export type EffectType = "fade" | "zoom-in" | "zoom-out" | "slide";
+export type EffectType = "fade" | "slide";
 
 export interface PayloadOne {
   nextIndex: number;
@@ -41,6 +41,7 @@ export interface PayloadArgument {
   effectType?: EffectType;
   state: State;
   nChildren: number;
+  infinite: boolean;
 }
 
 export interface SliderProps extends Pick<ThumbnailsProps, "noOfVisibleThumbs"> {

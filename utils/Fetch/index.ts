@@ -1,5 +1,6 @@
 import { Dispatch, Action } from "redux";
 import axios from "axios";
+import { makeArray } from "../makeArray";
 
 type ActionCreatorType = (arg: any) => Action;
 
@@ -8,9 +9,6 @@ interface ActionType {
   failure: ActionCreatorType;
 }
 
-function makeArray<T>(item: T): T[] {
-  return Array.isArray(item) ? item : [item];
-}
 
 export default function fetch(
   dispatch: Dispatch,

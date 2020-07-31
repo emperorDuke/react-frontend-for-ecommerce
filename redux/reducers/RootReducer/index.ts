@@ -30,7 +30,6 @@ export default combineReducers({
   categories: CategoryReducer,
   locations: LocationReducer,
   filters: filterReducer,
-  userAuth: UserAuthReducer,
   pickUpLocations: PickupLocationReducer,
   addressBook: AddressReducer,
   paymentInformation: PaymentInformationReducer,
@@ -39,5 +38,6 @@ export default combineReducers({
   user: UserReducer,
   orders: orderReducer,
   sponsoredItems: SponsoredReducer,
-  listings: listingReducer
+  listings: listingReducer,
+  userAuth: UserAuthReducer
 });

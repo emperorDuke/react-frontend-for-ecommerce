@@ -4,6 +4,7 @@ import { EpicDepenciesType } from "../../../store";
 import { filter, switchMap, map, catchError } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
+import { makeArray } from "../../../utils";
 
 const MetaEpic = (
   action$: ActionsObservable<T.MetaActionType>,
@@ -13,7 +14,8 @@ const MetaEpic = (
     filter(isOfType(T.meta.META_REQUEST)),
     switchMap(({ payload }) =>
       http.getJSON<T.MetaType>(payload).pipe(
-        map(attribute => T.metaSucessful(attribute)),
+        map(makeArray),
+        map(T.metaSucessful),
         catchError(err => of(T.metafailure(err.response)))
       )
     )

@@ -7,7 +7,7 @@ export function metaRequest(payload: string): T.MeteRequest {
   };
 }
 
-export function metaSucessful(payload: T.MetaType): T.MetaSucess {
+export function metaSucessful(payload: T.MetaType[]): T.MetaSucess {
   return {
     type: T.meta.META_SUCESSFUL,
     payload

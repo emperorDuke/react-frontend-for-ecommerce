@@ -4,3 +4,4 @@ export * from "./useIsomorphicEffect";
 export * from "./toInt";
 export * from "./useWindowResize";
 export * from "./useWidth";
+export * from "./makeArray";

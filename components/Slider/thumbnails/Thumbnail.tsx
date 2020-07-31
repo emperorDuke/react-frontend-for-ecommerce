@@ -3,14 +3,14 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import useStyles from "./styles";
 import clsx from "classnames";
-import { ThumbnailsProps } from "./@types";
 import { jumpforward as JF, jumpbackward as JB } from "../utils";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { useDidUpdate } from "../../../utils";
+import { ThumbnailsProps } from "./@types";
 
 export * from "./@types";
 
-function Thumbnails(props: ThumbnailsProps) {
+const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const offsetX = props.thumbDimension.width;
   const offsetY = props.thumbDimension.height;
@@ -39,9 +39,6 @@ function Thumbnails(props: ThumbnailsProps) {
     let i = 0;
     let j = i;
     let temp = [];
-
-    // the number of groups are determined depending on the
-    // number of thumbs per view
 
     if (nChildren % noOfVisibleThumbs > 0) {
       nGroups = Math.floor(nChildren / noOfVisibleThumbs) + 1;
@@ -140,7 +137,6 @@ function Thumbnails(props: ThumbnailsProps) {
     activeGroup.current += 1;
 
     setValue((prev) => ({
-      ...prev,
       transition: true,
       activeIndex: prev.activeIndex,
       focuserPosition: prev.focuserPosition,
@@ -152,7 +148,6 @@ function Thumbnails(props: ThumbnailsProps) {
     activeGroup.current -= 1;
 
     setValue((prev) => ({
-      ...prev,
       transition: true,
       activeIndex: prev.activeIndex,
       focuserPosition: prev.focuserPosition,

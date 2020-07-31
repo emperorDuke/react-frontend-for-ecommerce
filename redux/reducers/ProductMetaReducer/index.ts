@@ -5,7 +5,7 @@ import { FetchConst } from "../../../utils/Fetch/@types";
 const initialState: MetaStateType = {
   productMeta: {
     key_features: [],
-    specification: []
+    specifications: []
   },
   operations: {
     fetchMetas: {
@@ -33,7 +33,7 @@ export default function MetaReducer(
     case meta.META_SUCESSFUL:
       return {
         ...state,
-        productMeta: action.payload,
+        productMeta: action.payload[0],
         operations: {
           fetchMetas: {
             status: FetchConst.FETCH_SUCCESSFUL,

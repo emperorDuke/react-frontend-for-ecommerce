@@ -4,17 +4,16 @@ import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import useStyles from "./styles";
 import { useProduct, useMerchantStore } from "../../services";
-import Slider from "../Slider";
-import Slide from "../Slider/Slide";
+import { Slider, Slide } from "../Slider";
 import Img from "../Img";
 import CardEnhancer from "../CardEnhancer";
 import ModularCard from "../AppCards/ProductModularCard";
 
 interface StoreSectionProps {
-    storeId: string | number;
-};
+  storeId: string | number;
+}
 
-const StoreSection: React.ComponentType<StoreSectionProps> = props => {
+const StoreSection: React.ComponentType<StoreSectionProps> = (props) => {
   const classes = useStyles();
   const product = useProduct();
   const merchantStore = useMerchantStore();
@@ -26,9 +25,9 @@ const StoreSection: React.ComponentType<StoreSectionProps> = props => {
     <Container fixed>
       <Grid container direction="column">
         <Grid item>
-          <Slider type="carousel" autoplay showThumbs>
+          <Slider type="carousel" autoplay showThumbs >
             {ads &&
-              ads.map(ad => (
+              ads.map((ad) => (
                 <Slide caption={ad.text}>
                   <Img src={ad.attachment} alt={ad.text} />
                 </Slide>
@@ -36,9 +35,9 @@ const StoreSection: React.ComponentType<StoreSectionProps> = props => {
           </Slider>
         </Grid>
         <Grid item>
-        <Paper>
+          <Paper>
             <CardEnhancer size="md">
-              {products.map(product => (
+              {products.map((product) => (
                 <ModularCard {...product} key={product.id} />
               ))}
             </CardEnhancer>

@@ -4,7 +4,9 @@ import clsx from "classnames";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { IndicatorProps } from "./@types";
 
-const Indicators: React.ComponentType<IndicatorProps> = props => {
+export * from "./@types";
+
+const Indicators: React.ComponentType<IndicatorProps> = (props) => {
   const [idx, setIdx] = useState(props.activeIndex);
   const [dotDimension, setDotDimension] = useState(props.dotDimension);
 
@@ -28,7 +30,7 @@ const Indicators: React.ComponentType<IndicatorProps> = props => {
             aria-label="dot"
             className={clsx(classes.dot, {
               [classes.activeDot]: idx === i,
-              [classes.notActiveDot]: idx !== i
+              [classes.notActiveDot]: idx !== i,
             })}
           />
         ))}

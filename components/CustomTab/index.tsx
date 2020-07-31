@@ -4,7 +4,7 @@ import SwipeableViews from "react-swipeable-views";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Grid from "@material-ui/core/Grid";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import ChevronRight from "@material-ui/icons/ChevronRight";
 import InputLabel from "@material-ui/core/InputLabel";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
@@ -13,7 +13,7 @@ import styles from "./styles";
 import { EnhancedProductType } from "../../services";
 import {
   SpecificationType,
-  KeyFeatureType
+  KeyFeatureType,
 } from "../../redux/actionCreators/ProductMetaActions";
 import Img from "../Img";
 
@@ -42,7 +42,7 @@ class FullTabs extends React.Component<Props, { value: number }> {
   PRODUCTDETAILS = {
     text: "description_text",
     attachment_1: "description_attachament_1",
-    attachment_2: "description_attachament_2"
+    attachment_2: "description_attachament_2",
   };
 
   constructor(props: Props) {
@@ -63,14 +63,14 @@ class FullTabs extends React.Component<Props, { value: number }> {
       <Grid container direction="column">
         <Grid item>
           {Object.keys(this.props.product)
-            .filter(key => key === this.PRODUCTDETAILS.text)
-            .map(key => (
+            .filter((key) => key === this.PRODUCTDETAILS.text)
+            .map((key) => (
               <p key={this.props.product.id}>{this.props.product[key]}</p>
             ))}
         </Grid>
         {Object.keys(this.props.product)
           .filter(
-            key =>
+            (key) =>
               key === this.PRODUCTDETAILS.attachment_1 ||
               key === this.PRODUCTDETAILS.attachment_2
           )
@@ -88,29 +88,33 @@ class FullTabs extends React.Component<Props, { value: number }> {
       </Grid>
     );
 
-    const specifications = (
+    const keyfeatures = (
       <Grid container>
-        {this.props.specifications.map(spec => (
-          <Grid item>
-            <Grid container key={spec.id}>
-              <Grid item>
-                <InputLabel>{spec.type}:</InputLabel>
-              </Grid>
-              <Grid item>
-                <Typography component="p">{spec.value}</Typography>
-              </Grid>
+        {this.props.specifications.map((spec) => (
+          <Grid
+            item
+            container
+            direction="row"
+            key={spec.id}
+            alignItems="center"
+          >
+            <Grid item>
+              <InputLabel>{spec.type}:</InputLabel>
+            </Grid>
+            <Grid item>
+              <Typography component="p">{spec.value}</Typography>
             </Grid>
           </Grid>
         ))}
       </Grid>
     );
 
-    const keyfeatures = (
+    const specifications = (
       <Grid container direction="column">
-        {this.props.keyfeatures.map(feat => (
+        {this.props.keyfeatures.map((feat) => (
           <Grid item key={feat.id}>
-            <div>
-              <ChevronLeft />
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <ChevronRight />
               <Typography component="p">{feat.feature}</Typography>
             </div>
           </Grid>
@@ -132,7 +136,7 @@ class FullTabs extends React.Component<Props, { value: number }> {
             textColor="primary"
             variant="standard"
           >
-            {this.TABLABELS.map(label => (
+            {this.TABLABELS.map((label) => (
               <Tab
                 label={label}
                 key={label}

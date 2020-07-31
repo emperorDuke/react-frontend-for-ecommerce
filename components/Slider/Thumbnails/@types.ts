@@ -1,4 +1,4 @@
-import { Dimension } from "../types";
+import { Dimension } from "../@types";
 
 export interface ThumbnailsProps {
   children: React.ReactNodeArray;

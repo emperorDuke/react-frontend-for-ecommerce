@@ -10,6 +10,8 @@ import { EpicDepenciesType } from "../../../store";
 import { filter, map, catchError, switchMap } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
+import { ajax } from "rxjs/ajax";
+import { makeArray } from "../../../utils";
 
 const storesEpic = (
   action$: ActionsObservable<StoreActionTypes>,
@@ -18,13 +20,11 @@ const storesEpic = (
   action$.pipe(
     filter(isOfType(store.STORE_REQUEST)),
     switchMap(({ payload }) =>
-      http.getJSON<Array<StoreType> | StoreType>(payload).pipe(
-        map((stores) =>
-          Array.isArray(stores) ? storeSuccess(stores) : storeSuccess([stores])
-        ),
+      ajax.getJSON<StoreType[] | StoreType>(payload).pipe(
+        map(makeArray),
+        map(storeSuccess),
         catchError((err) => of(storeFailure(err.response)))
       )
     )
   );
-
 export default storesEpic;
