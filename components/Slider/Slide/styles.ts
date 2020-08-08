@@ -7,7 +7,7 @@ export default makeStyles((theme: Theme) =>
     base: {
       width: "inherit",
       height: "inherit",
-      borderRadius: "inherit"
+      borderRadius: "inherit",
     },
     captionWrapper: {
       display: "flex",

@@ -18,11 +18,23 @@ const getWidth: T = (val) => `${val.width}px`;
 
 const getTransform: T = (val) => `translateX(${val.position}px)`;
 
-const getTransition: T = (val) => {
+const getSlideEffectTransition: T = (val) => {
   if (!val.transition) {
     return "none";
   }
   return "transform 500ms ease-in-out 20ms";
+};
+
+const getFadeEffectTransition = (theme: Theme) => (val: StyleProps) => {
+  if (!val.transition) {
+    return "none";
+  }
+
+  return theme.transitions.create("opacity", {
+    duration: theme.transitions.duration.complex,
+    easing: theme.transitions.easing.easeInOut,
+    delay: "20ms",
+  });
 };
 
 export default makeStyles((theme: Theme) =>
@@ -33,16 +45,20 @@ export default makeStyles((theme: Theme) =>
       flexWrap: "nowrap",
       borderRadius: theme.shape.borderRadius,
       overflow: "hidden",
-      width: getWidth,
+      flexGrow: 1,
+    },
+    noOverflow: {
+      [theme.breakpoints.down("sm")]: {
+        overflow: "visible",
+      },
     },
     slider: {
-      flex: 1,
       display: "flex",
       flexDirection: "row",
       position: "relative",
       borderRadius: "inherit",
-      width: getWidth,
       height: getHeight,
+      width: getWidth,
       "&:hover $btn": {
         opacity: 0.4,
         cursor: "pointer",
@@ -54,9 +70,26 @@ export default makeStyles((theme: Theme) =>
         },
       },
     },
-    slideWrapper: {
+    resizeSlider: {
+      [theme.breakpoints.down("sm")]: {
+        // the spacing(1) at marginLeft of slide is substracted from
+        // the incoming width to balance it out
+        width: (state: StyleProps) => state.width - theme.spacing(1),
+        height: (state: StyleProps) => `${state.height}px`,
+      },
+    },
+    activeSlide: {
       transform: getTransform,
-      transition: getTransition,
+      transition: getSlideEffectTransition,
+    },
+    spaceSlide: {
+      [theme.breakpoints.down("sm")]: {
+        // space the image
+        margin: theme.spacing(0, 0, 0, 1),
+      },
+    },
+    fadeMove: {
+      transform: getTransform,
     },
     btn: {
       backgroundColor: theme.palette.grey[300],
@@ -73,7 +106,7 @@ export default makeStyles((theme: Theme) =>
       bottom: "0%",
       left: (val: StyleProps) => `calc(100% - ${val.width / 10}px)`,
     },
-    disabledButton: {
+    disabledBtn: {
       display: "none",
     },
   })

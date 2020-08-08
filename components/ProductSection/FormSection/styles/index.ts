@@ -4,28 +4,17 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 
 export default makeStyles((theme: Theme) =>
   createStyles({
-    container: {
-      width: theme.spacing(80)
+    capText: {
+      textTransform: "capitalize"
     },
-    pText: {
-      fontSize: theme.typography.fontSize,
-      fontColor: theme.palette.grey[500]
-    },
-    priceText: {
-      fontSize: theme.typography.fontSize * 2
-    },
-    localShippinIcon: {
-      marginRight: theme.spacing(1)
-    },
-    tooltip: {
-      fontSize: theme.typography.fontSize,
-      textTransform: "uppercase"
-    },
-    paperLayer: {
-      padding: theme.spacing(2)
-    },
-    greyBackground: {
+    greyWrapper: {
       backgroundColor: theme.palette.grey[50]
+    },
+    flexGrow: {
+      flexGrow: 1
+    },
+    padding: {
+      padding: theme.spacing(1)
     },
     textWrapper: {
       display: "flex",

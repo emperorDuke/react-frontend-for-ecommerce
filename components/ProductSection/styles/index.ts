@@ -4,7 +4,7 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 
 
 export default makeStyles((theme:Theme) => createStyles({
-    layout: {
-        width: (theme.breakpoints.width('lg') - theme.spacing(8)),
+    padding: {
+        padding: theme.spacing(1)
     }
 }))

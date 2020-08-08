@@ -20,11 +20,14 @@ import {
 } from "../../redux/actionCreators/ProductMetaActions";
 import { useDispatch } from "react-redux";
 import { storeRequest } from "../../redux/actionCreators/StoreActions";
+import PolicySection from "./PolicySection";
+import useStyles from "./styles";
 
 const ProductSection: React.ComponentType<{ id: string }> = (props) => {
   const product = useProduct();
   const merchantStore = useMerchantStore();
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const item = product.get(props.id);
 
@@ -50,19 +53,22 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
 
   return (
     <Container fixed>
-      <Grid container spacing={1} direction="column">
-        <Grid item>
+      <Grid container spacing={1}>
+        <Grid item xs={12} />
+        {/** first group */}
+        <Grid item xs={12} lg={9}>
           <Paper>
             <Grid container spacing={1}>
-              <Grid item md={4} lg={4}>
+              <Grid item xs={10} md={6} lg={7}>
                 <Slider
                   disableButtons
                   disableIndicator
                   showThumbs
-                  effectType="fade"
-                  width={300}
-                  height={500}
-                  thumbHeightFactor={8}
+                  effectType="slide"
+                  infinite
+                  width={400}
+                  height={380}
+                  thumbHeightFactor={6}
                 >
                   {images &&
                     images.map((image) => (
@@ -72,7 +78,7 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
                     ))}
                 </Slider>
               </Grid>
-              <Grid item>
+              <Grid item xs={12} md={6} lg={5}>
                 {item && attributes && (
                   <FormSection product={item} attributes={attributes} />
                 )}
@@ -80,21 +86,27 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item>
-          <Grid container spacing={1}>
-            <Grid item md={4} lg={4}>
-              {store && <StoreInfoSection {...store} />}
-            </Grid>
-            <Grid item sm={6} xs>
-              {item && specifications && keyfeatures && (
-                <CustomTab
-                  product={item}
-                  specifications={specifications}
-                  keyfeatures={keyfeatures}
-                />
-              )}
-            </Grid>
+        <Grid item container spacing={1} xs={12} lg={3}>
+          <Grid item xs={12} md={8} lg={12}>
+            <Paper>
+              <PolicySection />
+            </Paper>
           </Grid>
+          <Grid item xs={12} md={4} lg={12}>
+            <Paper className={classes.padding}>
+              {store && <StoreInfoSection {...store} />}
+            </Paper>
+          </Grid>
+        </Grid>
+        {/** second group */}
+        <Grid item xs={12}>
+          {item && specifications && keyfeatures && (
+            <CustomTab
+              product={item}
+              specifications={specifications}
+              keyfeatures={keyfeatures}
+            />
+          )}
         </Grid>
         <Grid item />
       </Grid>

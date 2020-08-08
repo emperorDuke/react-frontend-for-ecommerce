@@ -14,6 +14,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const offsetX = props.thumbDimension.width;
   const offsetY = props.thumbDimension.height;
+  const focuserVisible = !!props.focuserVisible;
 
   const [value, setValue] = useState({
     activeIndex: props.activeIndex,
@@ -30,6 +31,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     ...value,
     thumbWidth: offsetX,
     thumbHeight: offsetY,
+    focuserVisible,
   });
 
   useEffect(() => {
@@ -95,22 +97,21 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
       transition: true,
       activeIndex: props.activeIndex,
       thumbPosition: getThumbPosition(prev),
-      focuserPosition: getFocuserPosition(prev)
+      focuserPosition: getFocuserPosition(prev),
     }));
   }, [props.activeIndex]);
 
   useDidUpdate(() => {
-    const updateFocuser = ({ activeIndex }: typeof value) => {
+    const updateFocuser = (activeIndex: number) => {
       return activeIndex === 0 ? 0 : JF(0, offsetX, activeIndex);
     };
 
-    const updateThumb = ({ activeIndex }: typeof value) => {
+    const updateThumb = () => {
       let position = 0;
-      const currentGroup = getGroupNumber(activeIndex);
 
-      if (currentGroup > 1) {
+      if (activeGroup.current > 1) {
         const previousGroup = 1;
-        const groupOffset = Math.abs(previousGroup - currentGroup);
+        const groupOffset = Math.abs(previousGroup - activeGroup.current);
         const nTime = noOfVisibleThumbs * groupOffset;
         position = JB(0, offsetX, nTime);
       }
@@ -119,12 +120,12 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     };
 
     setValue((prev) => ({
-      ...prev,
+      activeIndex: prev.activeIndex,
       transition: false,
-      thumbPosition: updateThumb(prev),
-      focuserPosition: updateFocuser(prev),
+      thumbPosition: updateThumb(),
+      focuserPosition: updateFocuser(prev.activeIndex),
     }));
-  }, [props.thumbDimension])
+  }, [props.thumbDimension]);
 
   const getGroupNumber = (idx: number) => {
     let index = groups.current.findIndex(
@@ -198,7 +199,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
       </ButtonBase>
     </div>
   );
-}
+};
 
 Thumbnails.defaultProps = {
   noOfVisibleThumbs: 4,

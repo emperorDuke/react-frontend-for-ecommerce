@@ -42,9 +42,13 @@ export function useListings() {
   }, [mappedListings]);
 
   React.useEffect(() => {
-    const products = incomingListings.flatMap((listing) =>
-      Object.keys(listing).flatMap((key) => listing[key])
-    );
+    const products = incomingListings
+      .map((listing) =>
+        Object.keys(listing)
+          .map((key) => listing[key])
+          .flat()
+      )
+      .flat();
     dispatch(extendProducts(products));
   }, [incomingListings]);
 

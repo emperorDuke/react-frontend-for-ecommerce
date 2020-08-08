@@ -24,6 +24,7 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
     <div
       onClick={handleClick}
       className={clsx(classes.base, props.className)}
+      style={props.style}
       ref={ref}
       aria-label={`slide-${props.__index}`}
       role="button"

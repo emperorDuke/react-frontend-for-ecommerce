@@ -2,23 +2,22 @@ import React from "react";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { BootstrappedInput } from "../CustomForms/CustomInputHtml";
+import FormControl from "@material-ui/core/FormControl";
 import useStyles from "./styles";
 import { InputWidgetProps } from "./@types";
 
-const InputWithQtyControl: React.ComponentType<InputWidgetProps> = ({
-  quantity,
-  onChange,
-  index,
-}) => {
-  const classes = useStyles();
+const InputWithQtyControl: React.ComponentType<InputWidgetProps> = (props) => {
+  const height = props.height || 30;
+  const quantity = props.quantity;
+  const classes = useStyles({ height });
 
   return (
-    <>
+    <FormControl fullWidth>
       <BootstrappedInput
         type="text"
         id="quantity"
         value={quantity}
-        onChange={(e) => onChange(Number(e.target.value), index)}
+        onChange={(e) => props.onChange(Number(e.target.value), props.index)}
         className={classes.qtyInput}
         readOnly={quantity >= 10}
         inputProps={{
@@ -27,9 +26,9 @@ const InputWithQtyControl: React.ComponentType<InputWidgetProps> = ({
         startAdornment={
           <InputAdornment position="start">
             <IconButton
-              onClick={() => onChange(--quantity, index)}
+              onClick={() => props.onChange(quantity - 1, props.index)}
               disabled={quantity <= 1}
-              className={classes.leftQtyBtn}
+              className={classes.btn}
             >
               -
             </IconButton>
@@ -38,8 +37,8 @@ const InputWithQtyControl: React.ComponentType<InputWidgetProps> = ({
         endAdornment={
           <InputAdornment position="end">
             <IconButton
-              onClick={() => onChange(++quantity, index)}
-              className={classes.rightQtyBtn}
+              onClick={() => props.onChange(quantity + 1, props.index)}
+              className={classes.btn}
               disabled={quantity >= 10}
             >
               +
@@ -47,7 +46,7 @@ const InputWithQtyControl: React.ComponentType<InputWidgetProps> = ({
           </InputAdornment>
         }
       />
-    </>
+    </FormControl>
   );
 };
 

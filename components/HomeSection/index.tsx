@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Paper from "@material-ui/core/Paper";
+import Hidden from "@material-ui/core/Hidden";
 import CardEnhancer from "../CardEnhancer";
 import NavBar from "../NavBar";
 import useStyles from "./styles";
@@ -219,11 +220,13 @@ const HomeSection: React.ComponentType = () => {
           </Button>
         </Grid>
         <Grid item container spacing={1} wrap="nowrap">
-          <Grid item sm={4} md={3} lg={3}>
-            <NavBar navItems={categories} />
+          <Grid item xs={3}>
+            <Hidden smDown>
+              <NavBar navItems={categories} />
+            </Hidden>
           </Grid>
-          <Grid item sm={8} md={6} lg={6}>
-            <Slider autoplay showThumbs >
+          <Grid item xs={10} md={6}>
+            <Slider autoplay showThumbs infinite effectType="fade">
               {mainAds.map((ad) => (
                 <Slide caption={ad.caption} key={ad.id}>
                   <Img src={ad.attachment} alt={ad.name} />
@@ -231,7 +234,9 @@ const HomeSection: React.ComponentType = () => {
               ))}
             </Slider>
           </Grid>
-          <Grid item xs={3} sm md lg/>
+          <Grid item xs>
+            <Paper>working !!</Paper>
+          </Grid>
         </Grid>
         <Grid item container spacing={1}>
           <Grid item xs={3} />

@@ -4,14 +4,11 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import InputLabel from "@material-ui/core/InputLabel";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
-import Tooltip from "@material-ui/core/Tooltip";
 import clsx from "classnames";
 import InputWidget from "../../InputWidget";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCartOutlined";
-import LocalShippingIcon from "@material-ui/icons/LocalShippingOutlined";
 import CurrencyManager from "../../CurrencyManager";
 import { addToCart } from "../../../redux/actionCreators/CartActions";
 import { Slider, Slide } from "../../Slider";
@@ -19,6 +16,8 @@ import Img from "../../Img";
 import { VariationType } from "../../../redux/actionCreators/AttributeActions";
 import useStyles from "./styles";
 import { PropsType } from "./@types";
+import Flag from "../../Flag";
+import Link from "../../Link";
 
 export default function ProductDetails(props: PropsType) {
   const [variants, setVariants] = useState<VariationType[]>([]);
@@ -40,8 +39,13 @@ export default function ProductDetails(props: PropsType) {
       })
     );
 
+    setVariants([]);
+
     if (action === "buyNow") router.push("/checkout-page");
   };
+
+  const getVariant = (id?: number) =>
+    variants.filter((v) => v.attribute === id);
 
   const handleVariantChange = (arg: VariationType) => {
     const tempVariants = variants.slice();
@@ -58,225 +62,183 @@ export default function ProductDetails(props: PropsType) {
 
   const attributesAndvariants = () =>
     props.attributes.map((attribute) => (
-      <Grid item key={attribute.id}>
-        <Grid container alignItems="center">
-          <Grid item md={2} lg={2} sm={2}>
-            <InputLabel style={{ textTransform: "uppercase" }}>
+      <Grid
+        item
+        container
+        direction="column"
+        spacing={1}
+        xs={12}
+        key={attribute.id}
+      >
+        <Grid item container alignItems="center" spacing={1}>
+          <Grid item>
+            <Typography variant="subtitle2" className={classes.capText}>
               {attribute.name}:
-            </InputLabel>
+            </Typography>
           </Grid>
-          <Grid item lg={6} md={5} sm={4}>
-            <Slider type="thumbnails" height={40} width={150}>
-              {attribute.variants.map((variant) => (
-                <Slide
-                  onClick={() => handleVariantChange(variant)}
-                  key={variant.id}
-                >
-                  <Tooltip
-                    title={
-                      <p>
-                        {variant.metric_verbose_name || variant.vendor_metric}
-                      </p>
-                    }
-                    enterDelay={5}
-                    enterTouchDelay={5}
-                    leaveTouchDelay={20}
-                    leaveDelay={20}
-                  >
-                    {variant.attachment ? (
-                      <Img
-                        src={variant.attachment}
-                        alt={variant.vendor_metric}
-                      />
-                    ) : (
-                      <div className={classes.textWrapper}>
-                        <p className={classes.text}>{variant.vendor_metric}</p>
-                      </div>
-                    )}
-                  </Tooltip>
-                </Slide>
-              ))}
-            </Slider>
+          <Grid item>
+            {getVariant(attribute.id).map((v) => (
+              <Typography variant="body2" className={classes.capText}>
+                {v.metric_verbose_name || v.vendor_metric}
+              </Typography>
+            ))}
           </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <Slider
+            type="thumbnails"
+            height={40}
+            width={200}
+            focuserVisible={Boolean(getVariant(attribute.id).length)}
+          >
+            {attribute.variants.map((variant) => (
+              <Slide
+                onClick={() => handleVariantChange(variant)}
+                key={variant.id}
+              >
+                {variant.attachment ? (
+                  <Img src={variant.attachment} alt={variant.vendor_metric} />
+                ) : (
+                  <div className={classes.textWrapper}>
+                    <p className={classes.text}>{variant.vendor_metric}</p>
+                  </div>
+                )}
+              </Slide>
+            ))}
+          </Slider>
         </Grid>
       </Grid>
     ));
 
   return (
-    <div className={classes.container}>
+    <div className={clsx(classes.flexGrow, classes.padding)}>
       <Grid container direction="column" spacing={1}>
-        <Grid item>
-          <div className={classes.paperLayer}>
-            <Grid container direction="column" spacing={1}>
+        <Grid item xs={12}>
+          <Grid container direction="column" spacing={1}>
+            <Grid item container direction="column" spacing={1}>
               <Grid item>
-                <Grid container direction="column" spacing={1}>
+                <Typography variant="h6">{props.product.name}</Typography>
+              </Grid>
+              {/** next level "availabilty and brand" */}
+              <Grid item container alignItems="center" spacing={1}>
+                <Grid item>
+                  <Flag flag={props.product.availability} />
+                </Grid>
+                <Grid item>
+                  <Typography variant="body1">|</Typography>
+                </Grid>
+                <Grid item container alignItems="center" spacing={1} xs>
                   <Grid item>
-                    <Typography variant="h5">{props.product.name}</Typography>
+                    <Typography variant="subtitle2">Brand:</Typography>
                   </Grid>
                   <Grid item>
-                    <Grid container spacing={3}>
-                      <Grid item>
-                        <Rating
-                          readonly
-                          rating={props.product.rating.average_rating}
-                        />
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" spacing={1}>
-                          <Grid item>
-                            <InputLabel>Brand:</InputLabel>
-                          </Grid>
-                          <Grid item>
-                            <Typography variant="body1">
-                              {props.product.brand}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Divider />
+                    <Typography variant="body1">
+                      {props.product.brand}
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item>
-                <Grid container>
-                  <Grid item>
-                    {props.product.discount ? (
-                      <Grid container spacing={3} alignItems="center">
-                        <Grid item>
-                          <Typography
-                            variant="h5"
-                            className={classes.priceText}
-                          >
-                            <CurrencyManager price={props.product.discount} />
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <s>
-                            <Typography
-                              variant="caption"
-                              className={classes.pText}
-                            >
-                              <CurrencyManager price={props.product.price} />
-                            </Typography>
-                          </s>
-                        </Grid>
-                      </Grid>
-                    ) : (
-                      <Typography variant="h5" className={classes.pText}>
-                        <CurrencyManager price={props.product.price} />
-                      </Typography>
-                    )}
-                  </Grid>
+              {/** next level rating and reviews */}
+              <Grid item container spacing={1} alignItems="center">
+                <Grid item>
+                  <Rating
+                    readonly
+                    rating={props.product.rating.average_rating}
+                  />
+                </Grid>
+                <Grid item>
+                  <Link href="/">
+                    <Typography variant="body2">(3000 reviews)</Typography>
+                  </Link>
                 </Grid>
               </Grid>
-            </Grid>
-          </div>
-        </Grid>
-        <Grid item>
-          <div className={clsx(classes.paperLayer, classes.greyBackground)}>
-            <Grid container spacing={1} direction="column">
-              {attributesAndvariants()}
-              <Grid item>
-                <Grid container alignItems="center">
-                  <Grid item md={2} lg={2} sm={2}>
-                    <InputLabel>QUANTITY:</InputLabel>
-                  </Grid>
-                  <Grid item>
-                    <InputWidget quantity={quantity} onChange={setQuantity} />
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </div>
-        </Grid>
-        <Grid item>
-          <div className={classes.paperLayer}>
-            <Grid container spacing={2}>
-              <Grid item md={2} />
-              <Grid item>
-                <Button
-                  onClick={() => handleOptions("buyNow")}
-                  variant="contained"
-                  color="secondary"
-                >
-                  Buy It Now
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  onClick={() => handleOptions("addToCart")}
-                  variant="contained"
-                  color="secondary"
-                >
-                  <AddShoppingCartIcon className={classes.localShippinIcon} />
-                  Add to cart
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} direction="column">
               <Grid item>
                 <Divider />
               </Grid>
-              <Grid item>
-                <Grid container>
-                  <Grid item sm={3} xs>
-                    <InputLabel>RETURN POLICY</InputLabel>
-                  </Grid>
-                  <Grid item sm={9} xs>
-                    <Typography variant="h5" className={classes.pText}>
-                      Return accepted if product is not as described, buuyer
-                      pays return shipping fee or keep the product and agree
-                      refun with the seller
-                    </Typography>
-                  </Grid>
+            </Grid>
+            {/** prices */}
+            <Grid item container alignItems="center" xs={12}>
+              <Grid item container direction="column" xs={7}>
+                <Grid item>
+                  <Typography variant="h5">
+                    <CurrencyManager
+                      price={props.product.discount || props.product.price}
+                    />
+                  </Typography>
                 </Grid>
-              </Grid>
-              <Grid item>
-                <Grid container spacing={3}>
-                  <Grid item sm={3}>
-                    <InputLabel>SELLER GUARANTEES:</InputLabel>
-                  </Grid>
-                  <Grid item sm={9}>
-                    <Grid container spacing={1}>
-                      <Grid item>
-                        <LocalShippingIcon />
-                      </Grid>
-                      <Grid item>
-                        <Typography variant="h5" className={classes.pText}>
-                          one-time delivery within two working days
+                {props.product.discount && props.product.price && (
+                  <Grid item container spacing={1}>
+                    <Grid item>
+                      <s>
+                        <Typography variant="subtitle2">
+                          <CurrencyManager price={props.product.price} />
                         </Typography>
-                      </Grid>
+                      </s>
+                    </Grid>
+                    <Grid item>
+                      <Flag flag={props.product.percentageOff} />
                     </Grid>
                   </Grid>
-                </Grid>
+                )}
               </Grid>
+              <div className={classes.flexGrow} />
               <Grid item>
-                <Grid container spacing={3}>
-                  <Grid item sm={3}>
-                    <InputLabel>STORE PROMOTIONS:</InputLabel>
-                  </Grid>
-                  <Grid item sm={9}>
-                    <Typography variant="h5" className={classes.pText}>
-                      when you buy twenty pieces you get a discount of 30%
-                    </Typography>
-                  </Grid>
-                </Grid>
+                <Typography variant="caption">
+                  Want to sell ? <Link href="/">Start here</Link>
+                </Typography>
               </Grid>
-              <Grid item>
-                <Grid container spacing={3}>
-                  <Grid item sm={3}>
-                    <InputLabel>PAYMENTS:</InputLabel>
-                  </Grid>
-                  <Grid item sm={9}>
-                    <img src="/static/cards.png" alt="cards" />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item>
+          <Divider />
+        </Grid>
+        <Grid item xs={12}>
+          <div className={classes.greyWrapper}>
+            <Grid container spacing={1} direction="column">
+              {attributesAndvariants()}
+              <Grid item container direction="column" spacing={1}>
+                <Grid item>
+                  <Typography variant="subtitle2">Quantity:</Typography>
+                </Grid>
+                <Grid item container xs={12}>
+                  <Grid item xs={4}>
+                    <InputWidget
+                      quantity={quantity}
+                      onChange={setQuantity}
+                      height={25}
+                    />
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </div>
+        </Grid>
+        <Grid item>
+          <Divider />
+        </Grid>
+        <Grid item xs={12}>
+          <Grid container spacing={1}>
+            <Grid item>
+              <Button
+                onClick={() => handleOptions("buyNow")}
+                variant="contained"
+                color="secondary"
+              >
+                Buy It Now
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() => handleOptions("addToCart")}
+                variant="contained"
+                color="secondary"
+                startIcon={<AddShoppingCartIcon />}
+              >
+                Add to cart
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </div>

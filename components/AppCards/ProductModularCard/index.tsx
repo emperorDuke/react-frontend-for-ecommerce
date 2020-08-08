@@ -14,6 +14,7 @@ import { EnhancedProductType } from "../../../services";
 import { AppCardProps } from "../@types";
 import useStyles from "../styles";
 import useTheme from "@material-ui/core/styles/useTheme";
+import Flag from "../../Flag";
 
 type PropsType = EnhancedProductType & AppCardProps;
 
@@ -30,11 +31,7 @@ const ModularCard: React.ComponentType<PropsType> = (product) => {
         <CardActionArea>
           <div style={{ position: "relative" }}>
             <div className={classes.action}>
-              <Paper elevation={0} className={classes.flag}>
-                <Typography variant="subtitle1">
-                  {product.percentageOff}
-                </Typography>
-              </Paper>
+              <Flag flag={product.percentageOff} />
             </div>
             <Img
               src={product.attachment_1}

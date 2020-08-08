@@ -1,14 +1,15 @@
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import createStyles from '@material-ui/core/styles/createStyles';
-import {Theme} from '@material-ui/core/styles/createMuiTheme';
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import createStyles from "@material-ui/core/styles/createStyles";
+import { Theme } from "@material-ui/core/styles/createMuiTheme";
 
-
-
-export default makeStyles((theme:Theme) => createStyles({
+export default makeStyles((theme: Theme) =>
+  createStyles({
     root: {
-        padding: theme.spacing(2)
+      flexGrow: 1,
     },
-    text:{
-        fontSize: theme.typography.fontSize
-    }
-}));
+    image: {
+      width: "100%",
+      height: theme.spacing(8),
+    },
+  })
+);

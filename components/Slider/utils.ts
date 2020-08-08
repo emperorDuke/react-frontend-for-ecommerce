@@ -18,9 +18,8 @@ export function jumpbackward(
 
 export function getNextPayload({
   nChildren,
-  effectType,
   state,
-  infinite
+  infinite,
 }: PayloadArgument) {
   let activeIndex =
     state.activeIndex === nChildren - 1 ? 0 : state.activeIndex + 1;
@@ -30,7 +29,7 @@ export function getNextPayload({
   const width = state.width;
   const height = state.height;
 
-  if (effectType === "slide" && infinite) {
+  if (infinite) {
     transition = true;
     dummyIndex = state.dummyIndex + 1;
     position = jumpbackward(state.position, width);
@@ -44,7 +43,7 @@ export function getNextPayload({
       width,
     };
   } else {
-    transition = effectType === "slide" && !infinite
+    transition = true;
     position =
       state.activeIndex === nChildren - 1
         ? jumpforward(state.position, width, nChildren - 1)
@@ -63,20 +62,18 @@ export function getNextPayload({
 
 export function getPrevPayload({
   nChildren,
-  effectType,
   state,
-  infinite
+  infinite,
 }: PayloadArgument) {
   let activeIndex =
     state.activeIndex === 0 ? nChildren - 1 : state.activeIndex - 1;
-  let transition = false;
+  let transition = true;
   let dummyIndex = 0;
   let position = 0;
   const width = state.width;
   const height = state.height;
 
-  if (effectType === "slide" && infinite) {
-    transition = true;
+  if (infinite) {
     dummyIndex = state.dummyIndex - 1;
     position = jumpforward(state.position, width);
 
@@ -85,8 +82,8 @@ export function getPrevPayload({
       transition,
       dummyIndex,
       position,
-      height: state.height,
-      width: state.width,
+      height,
+      width,
     };
   } else {
     position =

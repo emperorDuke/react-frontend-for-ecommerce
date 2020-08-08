@@ -3,6 +3,9 @@ import { useSwipeable, EventData } from "react-swipeable";
 import ArrowLeftIcon from "@material-ui/icons/ArrowBack";
 import ArrowRightIcon from "@material-ui/icons/ArrowForward";
 import ButtonBase from "@material-ui/core/ButtonBase";
+import Fade from "@material-ui/core/Fade";
+import useTheme from "@material-ui/core/styles/useTheme";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import clsx from "classnames";
 import useStyles from "./styles";
 import Thumbnail from "./thumbnails/Thumbnail";
@@ -20,9 +23,10 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const initHeight = Number(props.height) || 0;
   const initWidth = Number(props.width) || 0;
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
-  const isThumbnail = props.type === "thumbnails";
-  const isSlideEffect = props.effectType === "slide";
+  const isThumbnailType = props.type === "thumbnails";
   const infinite = !!props.infinite;
+  const focuserVisible = !isThumbnailType || !!props.focuserVisible;
+  const isManual = !infinite && !props.autoplay;
 
   const [state, dispatch] = useReducer(reducer, {
     dummyIndex: 1,
@@ -57,21 +61,17 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
       return el;
     };
 
-    if (isSlideEffect) {
-      const cloneChildren = Children.toArray(props.children);
-      const firstIndex = 0;
-      const lastIndex = cloneChildren.length - 1;
-      const childrenArrayCopy = cloneChildren.slice();
+    const cloneChildren = Children.toArray(props.children);
+    const firstIndex = 0;
+    const lastIndex = cloneChildren.length - 1;
+    const childrenArrayCopy = cloneChildren.slice();
 
-      childrenArrayCopy.push(
-        insertNewKey(cloneChildren[firstIndex], firstIndex)
-      );
+    childrenArrayCopy.push(insertNewKey(cloneChildren[firstIndex], firstIndex));
 
-      childrenArrayCopy.unshift(
-        insertNewKey(cloneChildren[lastIndex], lastIndex)
-      );
-      return childrenArrayCopy;
-    }
+    childrenArrayCopy.unshift(
+      insertNewKey(cloneChildren[lastIndex], lastIndex)
+    );
+    return childrenArrayCopy;
   }, [props.children]);
 
   const thumbnailDimension = useMemo(() => {
@@ -79,9 +79,9 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
     let height = 0;
 
-    if (props.thumbHeightFactor && !isThumbnail) {
+    if (props.thumbHeightFactor && !isThumbnailType) {
       height = state.height / props.thumbHeightFactor;
-    } else if (isThumbnail) {
+    } else if (isThumbnailType) {
       height = state.height;
     }
 
@@ -94,6 +94,10 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
     return { width, height };
   }, [state.width, state.height]);
+
+  const theme = useTheme();
+
+  const shouldHide = useMediaQuery(theme.breakpoints.down("sm"));
 
   const slideRef = useRef<HTMLDivElement>(null);
 
@@ -110,10 +114,10 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
   const handlers = useSwipeable({
     onSwipedLeft: (event?: EventData) => {
-      effect(next)();
+      call(next)();
     },
     onSwipedRight: (event?: EventData) => {
-      effect(previous)();
+      call(previous)();
     },
     trackMouse: true,
     trackTouch: true,
@@ -123,7 +127,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     const dimension = getDimension();
 
     const getPosition = () => {
-      if (isSlideEffect && !isThumbnail) {
+      if (!isThumbnailType) {
         return 0 - dimension.width;
       } else {
         return state.position;
@@ -142,12 +146,11 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
     const event = fromEvent(window, "resize")
       .pipe(debounceTime(250), map(getDimension))
-      .subscribe((val) => {
+      .subscribe((dimension) => {
         dispatch({
           type: "updateSize",
           payload: {
-            ...val,
-            effectType: props.effectType,
+            ...dimension,
           },
         });
       });
@@ -164,7 +167,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   }, [state.activeIndex, state.position]);
 
   useEffect(() => {
-    if (isSlideEffect && infinite) {
+    if (infinite) {
       const onTransitionEnd = () => {
         if (slideRef.current) {
           slideRef.current.addEventListener(
@@ -192,8 +195,9 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const getDimension = () => {
     let width = 0;
     let height = 0;
-    if (sliderRef.current && sliderRef.current.parentElement) {
-      width = sliderRef.current.parentElement.clientWidth;
+
+    if (sliderRef.current) {
+      width = sliderRef.current.clientWidth;
       height = sliderRef.current.clientHeight;
     }
     return { width, height };
@@ -224,34 +228,39 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const refreshTimer = props.autoplay ? resetCount : () => null;
 
   const next = () => {
-    if (isSlideEffect && state.dummyIndex === nChildren + CLONE - 1) return;
+    const isLastSlide = state.activeIndex === nChildren - 1;
+    // dont run unless it will interfere with the reflow
+    if (state.dummyIndex === nChildren + CLONE - 1) return;
 
-    const effectType = props.effectType;
+    // dont run when it has reach last slide and controls are manual
+    if (isManual && isLastSlide) return;
 
     dispatch({
       type: "moveTo",
-      payload: getNextPayload({ nChildren, effectType, state, infinite }),
+      payload: getNextPayload({ nChildren, state, infinite }),
     });
   };
 
   const previous = () => {
-    if (isSlideEffect && state.dummyIndex === 0) return;
+    // dont run unless it will interfere with the reflow
+    if (state.dummyIndex === 0) return;
 
-    const effectType = props.effectType;
+    // dont run when it has reach first slide and controls are manual
+    if (isManual && state.activeIndex === 0) return;
 
     dispatch({
       type: "moveTo",
-      payload: getPrevPayload({ nChildren, effectType, state, infinite }),
+      payload: getPrevPayload({ nChildren, state, infinite }),
     });
   };
 
-  const effect = (callback: () => void) => {
+  const call = (callback: () => void) => {
     refreshTimer();
     return callback;
   };
 
   const goToIndex = (nextIndex: number) => {
-    const payload = { nextIndex, isSlideEffect };
+    const payload = { nextIndex };
 
     refreshTimer();
 
@@ -304,70 +313,92 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     if (props.autoplay) return play();
   };
 
+  const getCssClasses = (i: number, className: any) => {
+    const isFadeEffect = props.effectType === "fade";
+    const isSlideEffect = props.effectType === "slide";
+
+    return clsx(
+      {
+        [classes.fadeMove]: isFadeEffect,
+        [classes.activeSlide]: isSlideEffect,
+        [classes.spaceSlide]: !isThumbnailType && isSlideEffect,
+      },
+      className
+    );
+  };
+
   const renderItem = () => {
-    if (!isSlideEffect) {
-      return Children.map(props.children, (child, i) => (
-        <Animator key={i} activeIndex={state.activeIndex}>
-          {React.isValidElement(child) &&
-            React.cloneElement(child, {
-              className: clsx(child.props.className, classes.slideWrapper),
-            })}
-        </Animator>
-      ));
-    } else {
+    const isFadeEffect = props.effectType === "fade";
+    
+    if (isFadeEffect) {
       return (
         childrenWithClone &&
-        childrenWithClone.map(
-          (child) =>
-            React.isValidElement(child) &&
-            React.cloneElement(child, {
-              className: clsx(child.props.className, classes.slideWrapper),
-              ref: slideRef,
-            })
-        )
+        childrenWithClone.map((child, i) => (
+          <Animator ref={slideRef} activeIndex={state.activeIndex}>
+            {React.isValidElement(child) &&
+              React.cloneElement(child, {
+                className: getCssClasses(i, child.props.className),
+              })}
+          </Animator>
+        ))
       );
     }
+    return (
+      childrenWithClone &&
+      childrenWithClone.map(
+        (child, i) =>
+          React.isValidElement(child) &&
+          React.cloneElement(child, {
+            className: getCssClasses(i, child.props.className),
+            ref: slideRef,
+          })
+      )
+    );
   };
 
   const hideRightBtn = {
-    [classes.disabledButton]: !infinite && state.activeIndex === nChildren - 1,
+    [classes.disabledBtn]: isManual && state.activeIndex === nChildren - 1,
   };
 
   const hideLeftBtn = {
-    [classes.disabledButton]: !infinite && state.activeIndex === 0,
+    [classes.disabledBtn]: isManual && state.activeIndex === 0,
   };
 
   const attributes = {
     ...handlers,
     onMouseEnter: handleOnMouseEnter,
     onMouseLeave: handleOnMouseLeave,
-    className: classes.slider,
     "aria-label": "slide-wrapper",
+    className: clsx(props.className, classes.slider, {
+      [classes.resizeSlider]: !isThumbnailType,
+    }),
   };
 
   return (
     <React.Fragment>
       {props.children && (
         <div
-          className={clsx(classes.container, props.className)}
           aria-label="slider"
           ref={sliderRef}
+          className={clsx(classes.container, {
+            [classes.noOverflow]: !isThumbnailType,
+          })}
         >
-          {!isThumbnail && (
+          {!isThumbnailType && (
             <div {...attributes}>
               {renderItem()}
-              {!props.disableButtons && (
+              {!props.disableButtons && !shouldHide && (
                 <ButtonBase
-                  onClick={effect(previous)}
+                  onClick={call(previous)}
                   className={clsx(classes.btn, classes.leftBtn, hideLeftBtn)}
                 >
                   <ArrowLeftIcon />
                 </ButtonBase>
               )}
 
-              {!props.disableButtons && (
+              {!props.disableButtons && !shouldHide && (
                 <ButtonBase
-                  onClick={effect(next)}
+                  onClick={call(next)}
                   className={clsx(classes.btn, classes.rightBtn, hideRightBtn)}
                 >
                   <ArrowRightIcon />
@@ -375,7 +406,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               )}
 
               {/** dot indicator */}
-              {!props.disableIndicator && (
+              {(!props.disableIndicator || shouldHide) && (
                 <Indicators
                   children={props.children}
                   setIndex={goToIndex}
@@ -387,20 +418,21 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
           )}
 
           {/** thumbs  */}
-          {(isThumbnail || props.showThumbs) && (
+          {(isThumbnailType || props.showThumbs) && !shouldHide && (
             <Thumbnail
               children={props.children}
               setIndex={goToIndex}
               activeIndex={state.activeIndex}
               thumbDimension={thumbnailDimension}
               noOfVisibleThumbs={noOfVisibleThumbs}
+              focuserVisible={focuserVisible}
             />
           )}
         </div>
       )}
     </React.Fragment>
   );
-}
+};
 
 Slider.defaultProps = {
   interval: 5000,

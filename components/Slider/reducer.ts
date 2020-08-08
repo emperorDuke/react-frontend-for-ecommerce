@@ -5,18 +5,10 @@ const getPosition = (state: State, payload: UpdateSize) => {
   let position = 0;
   let startPosition = 0 - payload.width;
 
-  if (payload.effectType === "slide") {
-    if (state.activeIndex === 0) {
-      position = startPosition;
-    } else {
-      position = jumpbackward(startPosition, payload.width, state.activeIndex);
-    }
+  if (state.activeIndex === 0) {
+    position = startPosition;
   } else {
-    if (state.activeIndex === 0) {
-      position = 0;
-    } else {
-      position = jumpbackward(0, payload.width, state.activeIndex);
-    }
+    position = jumpbackward(startPosition, payload.width, state.activeIndex);
   }
 
   return position;
@@ -32,7 +24,7 @@ export function reducer(state: State, action: Action): State {
     case "moveforward":
       return {
         ...state,
-        transition: action.payload.isSlideEffect ? true : false,
+        transition: true,
         activeIndex: action.payload.nextIndex,
         dummyIndex: action.payload.nextIndex + 1,
         position: jumpbackward(
@@ -44,7 +36,7 @@ export function reducer(state: State, action: Action): State {
     case "movebackward":
       return {
         ...state,
-        transition: action.payload.isSlideEffect ? true : false,
+        transition: true,
         activeIndex: action.payload.nextIndex,
         dummyIndex: action.payload.nextIndex + 1,
         position: jumpforward(

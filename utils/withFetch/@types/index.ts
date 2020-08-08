@@ -4,7 +4,7 @@
 export interface WithFetch {
     isLoading: boolean;
     hasLoaded: boolean;
-    item: string;
+    src: string;
     loadingError: string;
 }
 

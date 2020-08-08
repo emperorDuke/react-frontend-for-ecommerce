@@ -8,15 +8,13 @@ interface StyleProps {
   thumbHeight: number;
   thumbPosition: number;
   transition: boolean;
+  focuserVisible: boolean;
 }
 
 export default makeStyles((theme: Theme) =>
   createStyles({
     thumbnailsWrapper: {
       position: "relative",
-      width: "100%",
-      backgroundColor: theme.palette.grey[300],
-      flex: 1,
       display: "flex",
       "&:hover $button": {
         opacity: 0.6,
@@ -62,6 +60,7 @@ export default makeStyles((theme: Theme) =>
       transition: (val: StyleProps) =>
         val.transition ? "transform 600ms ease-in 10ms" : "none",
       borderRadius: theme.shape.borderRadius,
+      display: (val: StyleProps) => val.focuserVisible ? "initial" : "none"
     },
     thumbsWrapper: {
       display: "flex",

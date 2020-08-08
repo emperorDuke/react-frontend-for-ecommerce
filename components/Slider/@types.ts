@@ -13,7 +13,6 @@ export type EffectType = "fade" | "slide";
 
 export interface PayloadOne {
   nextIndex: number;
-  isSlideEffect: boolean;
 }
 
 export interface PayloadTwo {
@@ -26,7 +25,6 @@ export interface Dimension {
 }
 
 export interface UpdateSize extends Dimension {
-  effectType?: EffectType;
 }
 
 export type Action =
@@ -38,13 +36,13 @@ export type Action =
   | { type: "updateSize"; payload: UpdateSize };
 
 export interface PayloadArgument {
-  effectType?: EffectType;
   state: State;
   nChildren: number;
   infinite: boolean;
 }
 
-export interface SliderProps extends Pick<ThumbnailsProps, "noOfVisibleThumbs"> {
+export interface SliderProps
+  extends Pick<ThumbnailsProps, "noOfVisibleThumbs" | "focuserVisible"> {
   children?: React.ReactNodeArray;
   className?: string;
   interval?: number;

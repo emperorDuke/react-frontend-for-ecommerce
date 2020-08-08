@@ -17,14 +17,14 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
     RatingStateTypes
   > {
     static defaultProps: Readonly<RatingDefaultProps> = {
-      readonly: false
+      readonly: false,
     };
 
     constructor(props: RatingProps & WithStyles<typeof styles>) {
       super(props);
       this.state = {
         defaultRating: 0,
-        tempRating: 0
+        tempRating: 0,
       };
     }
 
@@ -40,7 +40,9 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
           }
         } else {
           this.setState({
-            defaultRating: rating.toString().includes(".") ? rating + 1 : rating
+            defaultRating: rating.toString().includes(".")
+              ? rating + 1
+              : rating,
           });
         }
       }
@@ -51,11 +53,14 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
     };
 
     starOver = (rating: number) => {
-      this.setState(prev => ({ defaultRating: rating, tempRating: prev.defaultRating }));
+      this.setState((prev) => ({
+        defaultRating: rating,
+        tempRating: prev.defaultRating,
+      }));
     };
 
     starOut = () => {
-      this.setState(prev => ({ defaultRating: prev.tempRating }));
+      this.setState((prev) => ({ defaultRating: prev.tempRating }));
     };
 
     sortStarType = (rating: number, idx: number) => {
@@ -77,8 +82,8 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
     };
 
     render() {
-      const { defaultRating } = this.state,
-        { classes, readonly, className } = this.props;
+      const { defaultRating } = this.state;
+      const { classes, readonly, className } = this.props;
 
       let stars: Array<JSX.Element> = [];
 
@@ -88,7 +93,7 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
             key={i}
             className={classNames(classes.starRating, className, {
               [classes.isDisabled]: readonly,
-              [classes.notSelected]: Math.floor(defaultRating) < i
+              [classes.notSelected]: Math.floor(defaultRating) < i,
             })}
             onClick={!readonly ? this.rate.bind(this, i) : undefined}
             onMouseOver={!readonly ? this.starOver.bind(this, i) : undefined}
