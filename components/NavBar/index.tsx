@@ -11,10 +11,23 @@ import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
 import Link from "../Link";
 
+function S() {
+  const one = "-";
+  const two = " & ";
+
+  const re1 = " ";
+
+
+  return {
+    strip: (s: string) => s.replace(" and ", two),
+    unStrip: (s: string) => s.replace(two, " and ").replace(one, re1),
+  };
+}
+
 function SideBar(props: SideBarProps) {
   const [index, setIndex] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState(10);
 
   const classes = useStyles({ height });
   const paperRef = useRef<HTMLDivElement>(null);
@@ -43,7 +56,7 @@ function SideBar(props: SideBarProps) {
           <React.Fragment key={name}>
             <ListItem button onClick={handleOpen(name)}>
               <ListItemText
-                primary={name}
+                primary={S().strip(name)}
                 classes={{
                   primary: classes.fonts,
                 }}
@@ -67,23 +80,21 @@ function SideBar(props: SideBarProps) {
                       <ListSubHeader disableSticky className={classes.fonts}>
                         <Link
                           href="/items/[slug]"
-                          as={`/items/${child.name.split(" ").join("-")}?id=${
-                            child.track_id
+                          as={`/items/${child.name}?id=${
+                            child.id
                           }`}
                         >
-                          {child.name}
+                          {S().strip(child.name)}
                         </Link>
                       </ListSubHeader>
                       {child.children.map((grandChild) => (
                         <ListItem key={grandChild.name}>
                           <Link
                             href="/items/[slug]"
-                            as={`/items/${grandChild.name
-                              .split(" ")
-                              .join("-")}?id=${grandChild.track_id}`}
+                            as={`/items/${grandChild.name}?id=${grandChild.id}`}
                           >
                             <ListItemText
-                              primary={grandChild.name}
+                              primary={S().strip(grandChild.name)}
                               classes={{
                                 primary: classes.fonts,
                               }}

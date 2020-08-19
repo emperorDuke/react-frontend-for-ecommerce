@@ -1,7 +1,7 @@
 import {
   CartActionTypes,
   cart,
-  CartType
+  CartType,
 } from "../../actionCreators/CartActions";
 import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
@@ -17,9 +17,9 @@ const initialState: CartState = {
   operations: {
     fetchCart: {
       status: null,
-      error: null
-    }
-  }
+      error: null,
+    },
+  },
 };
 
 export default function cartReducer(
@@ -33,17 +33,17 @@ export default function cartReducer(
         cart: [...state.cart, { ...action.payload }].map((cart, i) => {
           cart["index"] = i;
           return cart;
-        })
+        }),
       };
     case cart.UPDATE_CART:
       return {
         ...state,
-        cart: state.cart.map(cart => {
+        cart: state.cart.map((cart) => {
           if (cart.index === action.payload.index) {
             return { ...cart, ...action.payload };
           }
           return cart;
-        })
+        }),
       };
     case cart.REQUEST:
       return {
@@ -51,9 +51,9 @@ export default function cartReducer(
         operations: {
           fetchCart: {
             status: FetchConst.FETCH_IN_PROCESS,
-            error: null
-          }
-        }
+            error: null,
+          },
+        },
       };
     case cart.FETCH_SUCCESSFUL:
       return {
@@ -62,9 +62,9 @@ export default function cartReducer(
         operations: {
           fetchCart: {
             status: FetchConst.FETCH_SUCCESSFUL,
-            error: null
-          }
-        }
+            error: null,
+          },
+        },
       };
     case cart.FETCH_FAILED:
       return {
@@ -72,22 +72,19 @@ export default function cartReducer(
         operations: {
           fetchCart: {
             status: FetchConst.FETCH_FAILED,
-            error: action.payload
-          }
-        }
+            error: action.payload,
+          },
+        },
       };
     case cart.LOAD_CART:
       return {
         ...state,
-        cart: state.cart.map((cart, i) => {
-          cart["index"] = i;
-          return cart;
-        })
+        cart: action.payload,
       };
     case cart.REMOVE_ITEM:
       return {
         ...state,
-        cart: state.cart.filter(cart => cart.index !== action.payload.index)
+        cart: state.cart.filter((cart) => cart.index !== action.payload.index),
       };
     default:
       return state;

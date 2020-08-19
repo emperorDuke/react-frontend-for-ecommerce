@@ -13,16 +13,10 @@ import RadioComponent from "./RadioComponent";
 export * from "./@types";
 
 const Categories: React.ComponentType<{
-  navItems: Array<{ name: string; track_id: string }>;
+  navItems: Array<{ name: string; id: string }>;
 }> = memo(({ navItems }) => {
-  const list = navItems.map(({ name, track_id }) => (
-    <Link
-      key={track_id}
-      href={{
-        pathname: `items/${name.split(" ").join("-")}`,
-        query: { categoryTrackID: track_id }
-      }}
-    >
+  const list = navItems.map(({ name, id }) => (
+    <Link key={id} href="/items/[slug]" as={`/items/${name}?id=${id}`}>
       <ListItem button>
         <ListItemText primary={name} />
       </ListItem>
@@ -32,7 +26,7 @@ const Categories: React.ComponentType<{
   return <List>{list}</List>;
 });
 
-const Filters: React.ComponentType<FilterProps> = props => {
+const Filters: React.ComponentType<FilterProps> = (props) => {
   const attributeFilter: Array<JSX.Element> = [];
 
   for (let filterKey in props.filters) {
@@ -87,7 +81,7 @@ const Filters: React.ComponentType<FilterProps> = props => {
             />
           </Grid>
           <Grid item>
-            <Divider/>
+            <Divider />
           </Grid>
         </>
       );
@@ -97,7 +91,7 @@ const Filters: React.ComponentType<FilterProps> = props => {
   return (
     <Grid container direction="column" spacing={1}>
       <Grid item>
-        {props.categories && props.categories.length > 0 && (
+        {props.categories && props.categories.length && (
           <Categories navItems={props.categories} />
         )}
       </Grid>

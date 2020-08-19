@@ -22,6 +22,9 @@ import { useDispatch } from "react-redux";
 import { storeRequest } from "../../redux/actionCreators/StoreActions";
 import PolicySection from "./PolicySection";
 import useStyles from "./styles";
+import CardEnhancer from "../CardEnhancer";
+import ModularCard from "../AppCards/ProductModularCard";
+import { productRequest } from "../../redux/actionCreators/ProductActions";
 
 const ProductSection: React.ComponentType<{ id: string }> = (props) => {
   const product = useProduct();
@@ -30,10 +33,15 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
   const classes = useStyles();
 
   const item = product.get(props.id);
+  const items = product.all().filter((p) => p.id !== Number(props.id));
 
   useEffect(() => {
     if (item) {
-      dispatch(storeRequest(apiUrl("getMerchantStore", item.store)));
+      const storeUrl = apiUrl("getMerchantStore", item.store);
+      const itemsUrl = apiUrl("getProducts") + `?category=${item.category}`;
+
+      dispatch(storeRequest(storeUrl));
+      dispatch(productRequest(itemsUrl));
     }
   }, []);
 
@@ -59,7 +67,7 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
         <Grid item xs={12} lg={9}>
           <Paper>
             <Grid container spacing={1}>
-              <Grid item xs={10} md={6} lg={7}>
+              <Grid item xs={12} md={6} lg={7}>
                 <Slider
                   disableButtons
                   disableIndicator
@@ -108,7 +116,13 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
             />
           )}
         </Grid>
-        <Grid item />
+        <Grid item>
+          <CardEnhancer>
+            {items.map((p) => (
+              <ModularCard {...p} />
+            ))}
+          </CardEnhancer>
+        </Grid>
       </Grid>
     </Container>
   );

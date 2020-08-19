@@ -65,7 +65,9 @@ class FullTabs extends React.Component<Props, { value: number }> {
           {Object.keys(this.props.product)
             .filter((key) => key === this.PRODUCTDETAILS.text)
             .map((key) => (
-              <p key={this.props.product.id}>{this.props.product[key]}</p>
+              <Typography variant="body1" key={this.props.product.id}>
+                {this.props.product[key]}
+              </Typography>
             ))}
         </Grid>
         {Object.keys(this.props.product)
@@ -74,17 +76,14 @@ class FullTabs extends React.Component<Props, { value: number }> {
               key === this.PRODUCTDETAILS.attachment_1 ||
               key === this.PRODUCTDETAILS.attachment_2
           )
-          .map(
-            (key, i) =>
-              key && (
-                <Grid item key={`attachment_${i}`}>
-                  <Img
-                    src={this.props.product[key] as string}
-                    alt={this.props.product[key] as string}
-                  />
-                </Grid>
-              )
-          )}
+          .map((key, i) => (
+            <Grid item key={`attachment_${i}`}>
+              <Img
+                src={this.props.product[key] as string}
+                alt={this.props.product[key] as string}
+              />
+            </Grid>
+          ))}
       </Grid>
     );
 
@@ -97,6 +96,7 @@ class FullTabs extends React.Component<Props, { value: number }> {
             direction="row"
             key={spec.id}
             alignItems="center"
+            spacing={1}
           >
             <Grid item>
               <InputLabel>{spec.type}:</InputLabel>

@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import clsx from "classnames";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import StarIcon from "@material-ui/icons/Star";
 import StarHalfIcon from "@material-ui/icons/StarHalf";
@@ -26,6 +26,10 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
         defaultRating: 0,
         tempRating: 0,
       };
+
+      this.rate = this.rate.bind(this);
+      this.starOut = this.starOut.bind(this);
+      this.starOver = this.starOver.bind(this);
     }
 
     componentDidMount() {
@@ -48,11 +52,11 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
       }
     }
 
-    rate = (rating: number) => {
+    rate = (rating: number) => () => {
       this.setState({ defaultRating: rating, tempRating: rating });
     };
 
-    starOver = (rating: number) => {
+    starOver = (rating: number) => () => {
       this.setState((prev) => ({
         defaultRating: rating,
         tempRating: prev.defaultRating,
@@ -91,13 +95,13 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
         stars.push(
           <label
             key={i}
-            className={classNames(classes.starRating, className, {
+            className={clsx(classes.starRating, className, {
               [classes.isDisabled]: readonly,
               [classes.notSelected]: Math.floor(defaultRating) < i,
             })}
-            onClick={!readonly ? this.rate.bind(this, i) : undefined}
-            onMouseOver={!readonly ? this.starOver.bind(this, i) : undefined}
-            onMouseOut={!readonly ? this.starOut.bind(this, i) : undefined}
+            onClick={!readonly ? this.rate(i) : undefined}
+            onMouseOver={!readonly ? this.starOver(i) : undefined}
+            onMouseOut={!readonly ? this.starOut : undefined}
           >
             {this.sortStarType(defaultRating, i)}
           </label>

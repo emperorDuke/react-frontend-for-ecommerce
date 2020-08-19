@@ -116,8 +116,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                 </Grid>
                 <div style={{ flexGrow: 1 }} />
                 <Grid item>
-                  <Button>
-                    <PersonIcon className={classes.cartBtn} />
+                  <Button startIcon={<PersonIcon />}>
                     hi, sign in | join{" "}
                   </Button>
                 </Grid>

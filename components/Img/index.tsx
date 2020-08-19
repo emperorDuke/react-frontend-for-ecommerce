@@ -2,24 +2,24 @@ import React from "react";
 import withFetch from "../../utils/withFetch";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
-import { ImgProps } from "./@types";
-import useStyles from "./styles";
+import { ImgProps } from "./@types"
 
 export * from "./@types";
 export * from "./styles";
 
-const Img =  withFetch<ImgProps & { ref?: any }>((props) => {
+const Img = withFetch<ImgProps & { innerRef?: any }>((props) => {
+  const { innerRef, ...rest } = props;
 
   return (
     <React.Fragment>
       {props.isLoading ? (
-        <div {...props}>
+        <div ref={innerRef} {...rest}>
           <CircularProgress color="secondary" size={2} />
         </div>
       ) : props.hasLoaded ? (
-        <img {...props} />
+        <img ref={innerRef} {...rest} />
       ) : (
-        <Typography {...props} variant="subtitle1" noWrap>
+        <Typography ref={innerRef} {...rest} variant="subtitle1" noWrap>
           {props.alt}
         </Typography>
       )}
@@ -28,5 +28,5 @@ const Img =  withFetch<ImgProps & { ref?: any }>((props) => {
 });
 
 export default React.forwardRef<HTMLImageElement, ImgProps>((props, ref) => {
-  return <Img ref={ref} {...props} />
-})
+  return <Img innerRef={ref} {...props} />;
+});

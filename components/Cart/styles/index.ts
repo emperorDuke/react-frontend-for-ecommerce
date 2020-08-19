@@ -5,28 +5,28 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 export default makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      [theme.breakpoints.down("sm")]: {
-        maxWidth: theme.spacing(80)
-      }
+      flexGrow: 1,
     },
     variantContainer: {
       display: "flex",
-      flexDirection: "row"
-    },
-    thumb: {
-      height: theme.spacing(4),
-      width: theme.spacing(6)
+      flexDirection: "row",
+      flexWrap: "nowrap"
     },
     image: {
-      height: theme.spacing(9),
-      width: theme.spacing(12)
+      height: "100%",
+      width: "100%"
     },
     imageContainer: {
-      border: `2px solid ${theme.palette.grey[200]}`,
-      padding: "5px",
+      display: "flex",
+      justifyContent: "center",
+      padding: theme.spacing(1),
+      border: `1px solid ${theme.palette.grey[200]}`,
       borderRadius: theme.shape.borderRadius,
       transition: "border-color 500ms ease-in 30ms",
+      width: "100%",
+      height: "100%",
       "&:hover": {
+        cursor: "pointer",
         borderColor: theme.palette.grey[500]
       }
     },
@@ -34,8 +34,7 @@ export default makeStyles((theme: Theme) =>
       flexGrow: 1
     },
     font: {
-      fontSize: theme.typography.fontSize,
-      fontFamily: theme.typography.fontFamily,
+      ...theme.typography.subtitle2,
       textTransform: "capitalize"
     },
     bottomSpacer: {
@@ -45,37 +44,10 @@ export default makeStyles((theme: Theme) =>
       flexBasis: "100px"
     },
     background: {
-      backgroundColor: theme.palette.grey[200]
-    },
-    label: {
-      paddingTop: "12px"
-    },
-    textContainer: {
-      padding: "10px 0px 0px 20px"
-    },
-    thumbContainer: {
-      border: `2px solid ${theme.palette.grey[200]}`,
-      marginLeft: "5px",
-      padding: "3px",
-      borderRadius: theme.shape.borderRadius,
-      transition: "border-color 500ms ease-in 30ms",
-      "&:hover": {
-        borderColor: theme.palette.grey[500]
-      }
-    },
-    qtyContainer: {
-      padding: "0px 12px 0px 0px",
-      marginBottom: "40px"
+      backgroundColor: theme.palette.common.black
     },
     toolbarPadding: {
       padding: theme.spacing(1)
     },
-    tableContainer: {},
-    tableCell: {
-      maxWidth: "220px"
-    },
-    marginRightIcon: {
-      marginRight: theme.spacing(1)
-    }
   })
 );

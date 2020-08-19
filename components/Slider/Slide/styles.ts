@@ -2,12 +2,19 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 
+const slideStyle = {
+  width: "inherit",
+  height: "inherit",
+  borderRadius: "inherit",
+};
+
 export default makeStyles((theme: Theme) =>
   createStyles({
-    base: {
-      width: "inherit",
-      height: "inherit",
-      borderRadius: "inherit",
+    slide: {
+      ...slideStyle,
+      "& > *": {
+        ...slideStyle,
+      },
     },
     captionWrapper: {
       display: "flex",
@@ -22,16 +29,13 @@ export default makeStyles((theme: Theme) =>
       "&:hover": {
         cursor: "pointer",
         opacity: 0.7,
-        transition: "opacity 500ms ease-in-out 50ms"
-      }
+        transition: "opacity 500ms ease-in-out 50ms",
+      },
     },
     caption: {
       ...theme.typography.subtitle1,
       color: "white",
-      margin: "2px"
+      margin: "2px",
     },
-    f: {
-      border: "2px solid red"
-    }
   })
 );

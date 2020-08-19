@@ -1,7 +1,5 @@
 import { FilterKeyTypes } from "../../../redux/actionCreators/FilterActions/@types";
 import { CategoryTypes } from "../../../redux/actionCreators/CategoryActions/@types";
-import { useEffect } from "react";
-import { useRef } from "react";
 
 const LOOKUPSEP = "__";
 const GTE = "gte";
@@ -11,9 +9,9 @@ const LTE = "lte";
  * refactor the filter data
  * @param filters the fetched filters
  */
-export function transformFilter(filters: FilterKeyTypes | undefined) {
+export function transformFilter(filters?: FilterKeyTypes) {
   if (filters) {
-    const newFilters: FilterKeyTypes = Object.create(Object.prototype);
+    const newFilters: FilterKeyTypes = {};
 
     for (let filterKey in filters) {
       let attribute = filters[filterKey];
@@ -69,35 +67,28 @@ export function insertOrEditQuery(prevQuery: string, newSubQuery: string) {
  * @param items fetched categories
  * @param id category track id
  */
-export function getCategories(
-  items: Array<CategoryTypes> | undefined,
-  id?: string
-) {
+export function getCategories(items?: CategoryTypes[], id?: string) {
   if (items) {
-    let newItems: Array<{ name: string; track_id: string }> = [];
+    let newItems: Array<{ name: string; id: string }> = [];
 
-    for (let j = 0; j < items.length; j++) {
-      let itemsChildren = items[j].children;
-
-      for (let k = 0; k < itemsChildren.length; k++) {
-        let child = itemsChildren[k];
-
-        if (child.track_id === id) {
+    for (let item of items) {
+      for (let child of item.children) {
+        if (child.id === id) {
           newItems.concat(
-            [{ name: child.name, track_id: child.track_id }],
+            [{ name: child.name, id: child.id }],
             child.children.map((grandChild) => ({
               name: grandChild.name,
-              track_id: grandChild.track_id,
+              id: grandChild.id,
             }))
           );
           break;
         } else {
-          for (let i = 0; i < child.children.length; i++) {
-            if (child.children[i].track_id === id) {
+          for (let grandChild of child.children) {
+            if (grandChild.id === id) {
               newItems.concat([
                 {
-                  name: child.children[i].name,
-                  track_id: child.children[i].track_id,
+                  name: grandChild.name,
+                  id: grandChild.id,
                 },
               ]);
               break;
@@ -108,7 +99,5 @@ export function getCategories(
       break;
     }
     return newItems;
-  } else {
-    return undefined;
   }
 }

@@ -25,7 +25,7 @@ function Sorter() {
 
   const classes = useStyles();
 
-  const handleSelect = () => (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const currentParam = sortParameters.find(
       param => param.type === e.target.value
     );
@@ -51,7 +51,7 @@ function Sorter() {
       <Grid item>
         <Grid container direction="row">
           <Grid item>
-            <NativeSelect value={param.type} onChange={handleSelect()}>
+            <NativeSelect value={param.type} onChange={handleSelect}>
               {sortOptions}
             </NativeSelect>
           </Grid>

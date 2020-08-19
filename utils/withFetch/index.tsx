@@ -6,7 +6,7 @@ import { of, Subscription } from "rxjs";
 
 export * from "./@types";
 
-export default function withFetch<P extends { src?: string; ref?: any }>(
+export default function withFetch<P extends { src?: string; innerRef?: any }>(
   Component: React.ComponentType<WithFetch & Omit<P, "src">>
 ): React.ComponentType<P> {
   return class extends React.Component<P, WithFetch> {

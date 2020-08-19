@@ -12,6 +12,8 @@ import {
   productFailure,
 } from "../../actionCreators/ProductActions";
 import { of } from "rxjs";
+import { ajax } from "rxjs/ajax";
+import { makeArray } from "../../../utils";
 
 const ProductEpic = (
   action$: ActionsObservable<ProductActionType>,
@@ -20,12 +22,9 @@ const ProductEpic = (
   action$.pipe(
     filter(isOfType(product.PRODUCT_REQUEST)),
     switchMap(({ payload }) =>
-      http.getJSON<Array<ProductType> | ProductType>(payload).pipe(
-        map((product) =>
-          Array.isArray(product)
-            ? productSuccess(product)
-            : productSuccess([product])
-        ),
+      ajax.getJSON<Array<ProductType> | ProductType>(payload).pipe(
+        map(makeArray),
+        map(productSuccess),
         catchError((err) => of(productFailure(err.response)))
       )
     )

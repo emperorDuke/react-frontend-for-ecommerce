@@ -34,7 +34,7 @@ const filterReducer: Reducer<FilterReducertype, FilterActionTypes> = (
     case filter.FILTER_SUCCESS:
       return {
         ...state,
-        filters: action.payload,
+        filters: action.payload[0],
         operations: {
           fetchFilters: {
             status: FetchConst.FETCH_SUCCESSFUL,

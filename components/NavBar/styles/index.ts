@@ -15,7 +15,8 @@ export default makeStyles((theme: Theme) =>
       flexGrow: 1
     },
     fonts: {
-      ...theme.typography.body1
+      ...theme.typography.body2,
+      textTransform: "capitalize"
     },
     navHeader: {
       display: "block",
@@ -24,7 +25,8 @@ export default makeStyles((theme: Theme) =>
       borderRadius: theme.shape.borderRadius
     },
     paper: {
-      marginLeft: theme.spacing(1)
+      marginLeft: theme.spacing(1),
+      flexGrow: 1
     }
   })
 );

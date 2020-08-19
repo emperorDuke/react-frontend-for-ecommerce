@@ -16,7 +16,7 @@ export default makeStyles((theme: Theme) =>
       textTransform: "capitalize",
     },
     slider: {
-      height: theme.spacing(80),
+      height: theme.spacing(60),
       width: "100%",
     },
   })

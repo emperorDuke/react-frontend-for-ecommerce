@@ -23,17 +23,14 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
   return (
     <div
       onClick={handleClick}
-      className={clsx(classes.base, props.className)}
+      className={clsx(classes.slide, props.className)}
       style={props.style}
       ref={ref}
       aria-label={`slide-${props.__index}`}
       role="button"
     >
       {props.__showCaption && props.caption && captionEl}
-      {React.isValidElement(props.children) &&
-        React.cloneElement(props.children, {
-          className: clsx(classes.base, props.children.props.className),
-        })}
+      {props.children}
     </div>
   );
 });

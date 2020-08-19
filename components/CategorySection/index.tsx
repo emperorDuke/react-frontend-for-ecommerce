@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Filter from "../Filter";
 import useSelector from "../../redux/utils/useStoreSelector";
-import * as _ from "./utils";
+import { transformFilter, getCategories, insertOrEditQuery } from "./utils";
 import { CategorySectionProps } from "./@types";
 import { useDispatch } from "react-redux";
 import { productRequest } from "../../redux/actionCreators/ProductActions";
@@ -15,10 +15,8 @@ export * from "./utils";
 export * from "./@types";
 
 const CategorySection: React.ComponentType<CategorySectionProps> = (props) => {
-  const query = `category-trackId=${props.trackId}`;
+  const [stateQuery, setStateQuery] = useState(`category=${props.trackId}`);
 
-  const [stateQuery, setStateQuery] = useState(query);
- 
   const filters = useSelector(({ filters }) => filters.filters);
 
   const categories = useSelector(({ categories }) => categories.categories);
@@ -27,24 +25,22 @@ const CategorySection: React.ComponentType<CategorySectionProps> = (props) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => setStateQuery(query), [props.trackId]);
-
   useDidUpdate(() => {
     dispatch(productRequest(`/products/?${stateQuery}`));
-  }, [query]);
+  }, [stateQuery]);
 
-  const transformedFilters = useMemo(() => _.transformFilter(filters), [
-    filters,
-  ]);
+  const transformedFilters = useMemo(() => {
+    return transformFilter(filters);
+  }, [filters]);
 
   const sortedCategories = useMemo(
-    () => _.getCategories(categories, props.trackId),
-    [categories]
+    () => getCategories(categories, props.trackId),
+    [categories, props.trackId]
   );
 
   const postQuery = (newSubQuery: string) => {
     setStateQuery((prevStateQuery) =>
-      _.insertOrEditQuery(prevStateQuery, newSubQuery)
+      insertOrEditQuery(prevStateQuery, newSubQuery)
     );
   };
 

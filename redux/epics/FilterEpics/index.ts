@@ -21,7 +21,8 @@ const filterEpic = (
     filter(isOfType(filterType.FILTER_REQUEST)),
     switchMap(({ payload }) =>
       http.getJSON<FilterKeyTypes>(payload).pipe(
-        map(filters => filterSuccess(filters)),
+        map(val => [val]),
+        map(filterSuccess),
         catchError(err => of(filterFailure(err.response)))
       )
     )

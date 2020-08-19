@@ -16,7 +16,7 @@ const useStyles = makeStyles(() =>
     },
     highOpacity: {
       opacity: 1,
-      transition: "opacity 400ms ease-in-out 30ms",
+      transition: "opacity 300ms ease-i",
     },
     lowOpacity: {
       opacity: 0.5,

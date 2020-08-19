@@ -47,14 +47,14 @@ export default function ProductDetails(props: PropsType) {
   const getVariant = (id?: number) =>
     variants.filter((v) => v.attribute === id);
 
-  const handleVariantChange = (arg: VariationType) => {
+  const handleVariantChange = (param: VariationType) => {
     const tempVariants = variants.slice();
-    const i = tempVariants.findIndex((v) => v.attribute === arg.attribute);
+    const i = tempVariants.findIndex((v) => v.attribute === param.attribute);
 
     if (i > -1) {
-      tempVariants[i] = arg;
+      tempVariants[i] = param;
     } else {
-      tempVariants.push(arg);
+      tempVariants.push(param);
     }
 
     setVariants(tempVariants);
@@ -89,7 +89,7 @@ export default function ProductDetails(props: PropsType) {
             type="thumbnails"
             height={40}
             width={200}
-            focuserVisible={Boolean(getVariant(attribute.id).length)}
+            focuserVisible={getVariant(attribute.id).length > 0}
           >
             {attribute.variants.map((variant) => (
               <Slide

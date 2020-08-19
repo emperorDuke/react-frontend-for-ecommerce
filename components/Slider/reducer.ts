@@ -21,7 +21,7 @@ export function reducer(state: State, action: Action): State {
         ...state,
         ...action.payload,
       };
-    case "moveforward":
+    case "jumpforward":
       return {
         ...state,
         transition: true,
@@ -33,7 +33,7 @@ export function reducer(state: State, action: Action): State {
           Math.abs(action.payload.nextIndex - state.activeIndex)
         ),
       };
-    case "movebackward":
+    case "jumpbackward":
       return {
         ...state,
         transition: true,

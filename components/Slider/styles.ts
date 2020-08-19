@@ -25,18 +25,6 @@ const getSlideEffectTransition: T = (val) => {
   return "transform 500ms ease-in-out 20ms";
 };
 
-const getFadeEffectTransition = (theme: Theme) => (val: StyleProps) => {
-  if (!val.transition) {
-    return "none";
-  }
-
-  return theme.transitions.create("opacity", {
-    duration: theme.transitions.duration.complex,
-    easing: theme.transitions.easing.easeInOut,
-    delay: "20ms",
-  });
-};
-
 export default makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -44,7 +32,6 @@ export default makeStyles((theme: Theme) =>
       flexDirection: "column",
       flexWrap: "nowrap",
       borderRadius: theme.shape.borderRadius,
-      overflow: "hidden",
       flexGrow: 1,
     },
     noOverflow: {
@@ -74,7 +61,7 @@ export default makeStyles((theme: Theme) =>
       [theme.breakpoints.down("sm")]: {
         // the spacing(1) at marginLeft of slide is substracted from
         // the incoming width to balance it out
-        width: (state: StyleProps) => state.width - theme.spacing(1),
+        width: (state: StyleProps) => `${state.width - theme.spacing(1)}px`,
         height: (state: StyleProps) => `${state.height}px`,
       },
     },
@@ -109,5 +96,9 @@ export default makeStyles((theme: Theme) =>
     disabledBtn: {
       display: "none",
     },
+    wrapper: {
+      flexGrow: 1,
+      overflow: "hidden"
+    }
   })
 );

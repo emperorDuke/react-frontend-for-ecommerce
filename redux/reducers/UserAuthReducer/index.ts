@@ -1,5 +1,4 @@
 import { auth, AuthActionType } from "../../actionCreators/UserAuthActions";
-import { getCookie } from "../../../cookie";
 
 type UserAuthStateType = {
   isLoggedIn: boolean;

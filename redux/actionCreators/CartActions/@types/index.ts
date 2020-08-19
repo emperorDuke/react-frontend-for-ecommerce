@@ -1,7 +1,6 @@
 import { Action } from "redux";
 import { VariationType } from "../../AttributeActions";
 
-
 export enum cart {
   ADD_ITEM = "ADD_ITEM",
   LOAD_CART = "LOAD_CART",
@@ -9,9 +8,9 @@ export enum cart {
   FETCH_SUCCESSFUL = "FETCH_SUCCESSFUL",
   FETCH_FAILED = "FETCH_FAILED",
   UPDATE_CART = "UPDATE_CART",
-  REMOVE_ITEM = "REMOVE_ITEM"
+  REMOVE_ITEM = "REMOVE_ITEM",
 }
-  
+
 export interface CartType {
   id?: number;
   buyer?: number;
@@ -52,16 +51,15 @@ export interface LoadCartType extends Action {
 }
 
 export interface RemoveCartType extends Action {
-  type: cart.REMOVE_ITEM,
-  payload: CartType;
+  type: cart.REMOVE_ITEM;
+  payload: Pick<CartType, "index" | "id">;
 }
 
-
-  
-export type CartActionTypes = AddToCartType | 
-                              RequestCartType | 
-                              CartRequestFailed | 
-                              CartRequestSuccessfulType |
-                              LoadCartType |
-                              RemoveCartType |
-                              UpdateCartType;
+export type CartActionTypes =
+  | AddToCartType
+  | RequestCartType
+  | CartRequestFailed
+  | CartRequestSuccessfulType
+  | LoadCartType
+  | RemoveCartType
+  | UpdateCartType;

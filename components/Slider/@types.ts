@@ -29,8 +29,8 @@ export interface UpdateSize extends Dimension {
 
 export type Action =
   | { type: "moveTo"; payload: State }
-  | { type: "moveforward"; payload: PayloadOne }
-  | { type: "movebackward"; payload: PayloadOne }
+  | { type: "jumpforward"; payload: PayloadOne }
+  | { type: "jumpbackward"; payload: PayloadOne }
   | { type: "reflowToFirst"; payload: PayloadTwo }
   | { type: "reflowToLast"; payload: PayloadTwo }
   | { type: "updateSize"; payload: UpdateSize };
@@ -56,4 +56,5 @@ export interface SliderProps
   type?: "carousel" | "thumbnails";
   effectType?: EffectType;
   infinite?: boolean;
+  pauseOnMouseEnter?: boolean;
 }

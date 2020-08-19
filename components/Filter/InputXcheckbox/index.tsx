@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { InputXcheckboxProps } from "./@types";
 import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
@@ -11,6 +11,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormLabel from "@material-ui/core/FormLabel";
 import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
+import { useDidUpdate } from "../../../utils";
 
 export * from "./@types";
 
@@ -18,7 +19,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
   items,
   label,
   postQuery,
-  disableInputEl = false
+  disableInputEl = false,
 }) => {
   const [brand, setBrands] = useState("");
   const [localItems, setLocalItems] = useState({ items: items, index: 0 });
@@ -30,12 +31,14 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
     []
   );
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const idx = localItems["index"];
-    const value = localItems["items"][idx]["value"];
     const checked = localItems["items"][idx]["checked"];
 
-    if (checked) postQuery(value);
+    if (checked) {
+      const value = localItems["items"][idx]["value"];
+      postQuery(value);
+    }
   }, [localItems]);
 
   const handleChange = (idx: number) => (
@@ -50,7 +53,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
   const renderFormWithLabel = (withLabel = true) => {
     return (
       <FormControl>
-        {withLabel && (
+      {withLabel && (
           <FormLabel component="legend" className={classes.label}>
             {label}
           </FormLabel>
@@ -76,7 +79,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
   return (
     <>
       {disableInputEl ? (
-        renderFormWithLabel(false)
+        renderFormWithLabel()
       ) : (
         <Grid container spacing={1}>
           <Grid item>
@@ -99,7 +102,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
               />
             </FormControl>
           </Grid>
-          <Grid item>{renderFormWithLabel()}</Grid>
+          <Grid item>{renderFormWithLabel(false)}</Grid>
         </Grid>
       )}
     </>

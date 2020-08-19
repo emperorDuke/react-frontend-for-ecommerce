@@ -13,7 +13,6 @@ import {
   filterFailure,
 } from "../../redux/actionCreators/FilterActions";
 import {
-  categoryRequest,
   categorySuccess,
   categoryFailure,
 } from "../../redux/actionCreators/CategoryActions";
@@ -21,11 +20,10 @@ import fetch from "../../utils/Fetch";
 import { apiUrl } from "../../services";
 
 type Props = {
-  id: string | string[];
+  ID: string;
 };
 
-const CategoryPage: NextPage<Props> = ({ id }) => {
-  const ID = id instanceof Array ? undefined : id;
+const CategoryPage: NextPage<Props> = ({ ID }) => {
 
   return (
     <Container>
@@ -36,23 +34,21 @@ const CategoryPage: NextPage<Props> = ({ id }) => {
   );
 };
 
-CategoryPage.getInitialProps = async ({
-  store,
-  query,
-}: NextPageContext & NextJSContext) => {
-  const { id } = query;
-  const dispatch = store.dispatch;
+CategoryPage.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
+  const { id } = ctx.query;
+  const ID = Array.isArray(id) ? id[0] : id;
+  const dispatch = ctx.store.dispatch;
 
   await fetch(
     dispatch,
     { success: productSuccess, failure: productFailure },
-    apiUrl("getProducts") + `?category=${id}`
+    apiUrl("getProducts") + `?category=${ID}`
   );
 
   await fetch(
     dispatch,
     { success: filterSuccess, failure: filterFailure },
-    apiUrl("getFilters", id[0])
+    apiUrl("getFilters", ID)
   );
 
   await fetch(
@@ -60,7 +56,7 @@ CategoryPage.getInitialProps = async ({
     { success: categorySuccess, failure: categoryFailure },
     apiUrl("getCategories")
   );
-  return { id };
+  return { ID };
 };
 
 export default CategoryPage;
