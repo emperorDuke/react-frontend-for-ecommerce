@@ -9,8 +9,6 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import { useDidUpdate } from "../../../utils";
 import { ThumbnailsProps } from "./@types";
 
-export * from "./@types";
-
 const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const offsetX = props.thumbDimension.width;

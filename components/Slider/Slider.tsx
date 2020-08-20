@@ -8,8 +8,8 @@ import useTheme from "@material-ui/core/styles/useTheme";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import clsx from "classnames";
 import useStyles from "./styles";
-import Thumbnail from "./thumbnails/Thumbnail";
-import Indicators from "./indicators/Indicator";
+import { Thumbnail } from "./Thumbnail";
+import {Indicator} from "./Indicator";
 import { getNextPayload, getPrevPayload } from "./utils";
 import { fromEvent } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
@@ -421,7 +421,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
               {/** dot indicator */}
               {(!props.disableIndicator || shouldHide) && (
-                <Indicators
+                <Indicator
                   children={props.children}
                   setIndex={goToIndex}
                   activeIndex={state.activeIndex}

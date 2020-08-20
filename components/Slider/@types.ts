@@ -1,4 +1,4 @@
-import { ThumbnailsProps } from "./thumbnails/Thumbnail";
+import { ThumbnailsProps } from "./Thumbnail";
 
 export interface State {
   slideNo: number;

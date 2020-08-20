@@ -4,8 +4,6 @@ import clsx from "classnames";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import { IndicatorProps } from "./@types";
 
-export * from "./@types";
-
 const Indicators: React.ComponentType<IndicatorProps> = (props) => {
   const [idx, setIdx] = useState(props.activeIndex);
   const [dotDimension, setDotDimension] = useState(props.dotDimension);
@@ -21,6 +19,7 @@ const Indicators: React.ComponentType<IndicatorProps> = (props) => {
       <div
         className={classes.dotsWrapper}
         role="button"
+        tabIndex={0}
         aria-label="dots-wrapper"
       >
         {Children.map(props.children, (c, i) => (

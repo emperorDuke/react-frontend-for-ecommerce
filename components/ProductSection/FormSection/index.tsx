@@ -133,7 +133,7 @@ export default function ProductDetails(props: PropsType) {
                     <Typography variant="subtitle2">Brand:</Typography>
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                       {props.product.brand}
                     </Typography>
                   </Grid>
@@ -171,7 +171,7 @@ export default function ProductDetails(props: PropsType) {
                   <Grid item container spacing={1}>
                     <Grid item>
                       <s>
-                        <Typography variant="subtitle2">
+                        <Typography variant="body2">
                           <CurrencyManager price={props.product.price} />
                         </Typography>
                       </s>

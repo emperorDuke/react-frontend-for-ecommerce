@@ -28,6 +28,7 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
       ref={ref}
       aria-label={`slide-${props.__index}`}
       role="button"
+      tabIndex={0}
     >
       {props.__showCaption && props.caption && captionEl}
       {props.children}
