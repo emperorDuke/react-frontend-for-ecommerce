@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useReducer, Children, useMemo } from "react";
-import { useSwipeable, EventData } from "react-swipeable";
+import { useSwipeable } from "react-swipeable";
 import ArrowLeftIcon from "@material-ui/icons/ArrowBack";
 import ArrowRightIcon from "@material-ui/icons/ArrowForward";
 import Fade from "@material-ui/core/Fade";
@@ -25,12 +25,12 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const isThumbnailType = props.type === "thumbnails";
   const infinite = !!props.infinite;
-  const focuserVisible = !isThumbnailType || !!props.focuserVisible;
+  const focusThumbs = !isThumbnailType || !!props.focusThumbs;
   const isManual = !infinite && !props.autoplay;
   const pauseOnMouseEnter = props.autoplay && !!props.pauseOnMouseEnter;
 
   const [state, dispatch] = useReducer(reducer, {
-    dummyIndex: 1,
+    slideNo: 1,
     position: 0,
     transition: true,
     activeIndex: 0,
@@ -127,19 +127,44 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     trackMouse: true,
     trackTouch: true,
     preventDefaultTouchmoveEvent: true,
-    onSwipedLeft: (event?: EventData) => {
-      call(next)();
-    },
-    onSwipedRight: (event?: EventData) => {
-      call(previous)();
-    },
+    onSwipedLeft: () => call(next)(),
+    onSwipedRight: () => call(previous)(),
   });
 
   useEffect(() => {
+    const handleTransitionEnd = () => {
+      const isFirstClone = state.slideNo === 0;
+      const isLastClone = state.slideNo === nChildren + CLONE - 1;
+      const payload = { nChildren };
+
+      if (isFirstClone) {
+        dispatch({
+          type: "reflowToLast",
+          payload,
+        });
+      } else if (isLastClone) {
+        dispatch({
+          type: "reflowToFirst",
+          payload,
+        });
+      }
+    };
+
     onTransitionEndRef.current = handleTransitionEnd;
-  });
+  }, [state.slideNo, nChildren, CLONE]);
 
   useEffect(() => {
+    const getDimension = () => {
+      let width = 0;
+      let height = 0;
+
+      if (sliderRef.current) {
+        width = sliderRef.current.clientWidth;
+        height = sliderRef.current.clientHeight;
+      }
+      return { width, height };
+    };
+
     const dimension = getDimension();
 
     const getPosition = () => {
@@ -212,17 +237,6 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     return cleanUpStarter;
   }, [state.activeIndex, state.position]);
 
-  const getDimension = () => {
-    let width = 0;
-    let height = 0;
-
-    if (sliderRef.current) {
-      width = sliderRef.current.clientWidth;
-      height = sliderRef.current.clientHeight;
-    }
-    return { width, height };
-  };
-
   const countDownSeconds = () => {
     if (countDownRef.current === 0) {
       next();
@@ -250,7 +264,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const next = () => {
     const isLastSlide = state.activeIndex === nChildren - 1;
     // dont run unless it will interfere with the reflow
-    if (state.dummyIndex === nChildren + CLONE - 1) return;
+    if (state.slideNo === nChildren + CLONE - 1) return;
 
     // dont run when it has reach last slide and controls are manual
     if (isManual && isLastSlide) return;
@@ -263,7 +277,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
   const previous = () => {
     // dont run unless it will interfere with the reflow
-    if (state.dummyIndex === 0) return;
+    if (state.slideNo === 0) return;
 
     // dont run when it has reach first slide and controls are manual
     if (isManual && state.activeIndex === 0) return;
@@ -307,24 +321,6 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     startCountDown();
   };
 
-  const handleTransitionEnd = () => {
-    const isFirstClone = state.dummyIndex === 0;
-    const isLastClone = state.dummyIndex === nChildren + CLONE - 1;
-    const payload = { nChildren };
-
-    if (isFirstClone) {
-      dispatch({
-        type: "reflowToLast",
-        payload,
-      });
-    } else if (isLastClone) {
-      dispatch({
-        type: "reflowToFirst",
-        payload,
-      });
-    }
-  };
-
   const handleOnMouseEnter = () => {
     if (pauseOnMouseEnter) return pause();
   };
@@ -354,7 +350,11 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
       return childrenWithClone.map(
         (child, i) =>
           React.isValidElement(child) && (
-            <Fade in={child.props.__index === state.activeIndex} timeout={800}>
+            <Fade
+              in={child.props.__index === state.activeIndex}
+              timeout={800}
+              key={child.props.__index}
+            >
               {React.cloneElement(child, {
                 className: getCssClasses(i, child.props.className),
                 ref: slideRef,
@@ -439,7 +439,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               activeIndex={state.activeIndex}
               thumbDimension={thumbnailDimension}
               noOfVisibleThumbs={noOfVisibleThumbs}
-              focuserVisible={focuserVisible}
+              focusThumbs={focusThumbs}
             />
           )}
         </div>

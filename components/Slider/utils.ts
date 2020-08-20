@@ -24,20 +24,20 @@ export function getNextPayload({
   let activeIndex =
     state.activeIndex === nChildren - 1 ? 0 : state.activeIndex + 1;
   let transition = false;
-  let dummyIndex = 0;
+  let slideNo = 0;
   let position = 0;
   const width = state.width;
   const height = state.height;
 
   if (infinite) {
     transition = true;
-    dummyIndex = state.dummyIndex + 1;
+    slideNo = state.slideNo + 1;
     position = jumpbackward(state.position, width);
 
     return {
       activeIndex,
       transition,
-      dummyIndex,
+      slideNo,
       position,
       height,
       width,
@@ -52,7 +52,7 @@ export function getNextPayload({
     return {
       activeIndex,
       transition,
-      dummyIndex,
+      slideNo,
       position,
       height,
       width,
@@ -68,19 +68,19 @@ export function getPrevPayload({
   let activeIndex =
     state.activeIndex === 0 ? nChildren - 1 : state.activeIndex - 1;
   let transition = true;
-  let dummyIndex = 0;
+  let slideNo = 0;
   let position = 0;
   const width = state.width;
   const height = state.height;
 
   if (infinite) {
-    dummyIndex = state.dummyIndex - 1;
+    slideNo = state.slideNo - 1;
     position = jumpforward(state.position, width);
 
     return {
       activeIndex,
       transition,
-      dummyIndex,
+      slideNo,
       position,
       height,
       width,
@@ -94,7 +94,7 @@ export function getPrevPayload({
     return {
       activeIndex,
       transition,
-      dummyIndex,
+      slideNo,
       position,
       height,
       width,

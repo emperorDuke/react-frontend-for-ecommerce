@@ -27,11 +27,16 @@ const getSlideEffectTransition: T = (val) => {
 
 export default makeStyles((theme: Theme) =>
   createStyles({
+    wrapper: {
+      flexGrow: 1,
+      overflow: "hidden",
+      borderRadius: theme.shape.borderRadius,
+    },
     container: {
       display: "flex",
       flexDirection: "column",
       flexWrap: "nowrap",
-      borderRadius: theme.shape.borderRadius,
+      borderRadius: "inherit",
       flexGrow: 1,
     },
     noOverflow: {
@@ -96,9 +101,5 @@ export default makeStyles((theme: Theme) =>
     disabledBtn: {
       display: "none",
     },
-    wrapper: {
-      flexGrow: 1,
-      overflow: "hidden"
-    }
   })
 );

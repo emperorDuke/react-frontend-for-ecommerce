@@ -39,15 +39,13 @@ export default function ProductDetails(props: PropsType) {
       })
     );
 
-    setVariants([]);
-
     if (action === "buyNow") router.push("/checkout-page");
   };
 
   const getVariant = (id?: number) =>
     variants.filter((v) => v.attribute === id);
 
-  const handleVariantChange = (param: VariationType) => {
+  const handleVariantChange = (param: VariationType) => () => {
     const tempVariants = variants.slice();
     const i = tempVariants.findIndex((v) => v.attribute === param.attribute);
 
@@ -78,7 +76,11 @@ export default function ProductDetails(props: PropsType) {
           </Grid>
           <Grid item>
             {getVariant(attribute.id).map((v) => (
-              <Typography variant="body2" className={classes.capText}>
+              <Typography
+                variant="body2"
+                className={classes.capText}
+                key={v.vendor_metric}
+              >
                 {v.metric_verbose_name || v.vendor_metric}
               </Typography>
             ))}
@@ -87,13 +89,12 @@ export default function ProductDetails(props: PropsType) {
         <Grid item xs={12}>
           <Slider
             type="thumbnails"
-            height={40}
-            width={200}
-            focuserVisible={getVariant(attribute.id).length > 0}
+            className={classes.thumnbnail}
+            focusThumbs={!!getVariant(attribute.id).length}
           >
             {attribute.variants.map((variant) => (
               <Slide
-                onClick={() => handleVariantChange(variant)}
+                onClick={handleVariantChange(variant)}
                 key={variant.id}
               >
                 {variant.attachment ? (

@@ -7,5 +7,5 @@ export interface ThumbnailsProps {
   thumbDimension: Dimension;
   className?: string;
   noOfVisibleThumbs?: number;
-  focuserVisible?: boolean;
+  focusThumbs?: boolean;
 }

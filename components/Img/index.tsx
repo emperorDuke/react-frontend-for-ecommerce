@@ -8,15 +8,15 @@ export * from "./@types";
 export * from "./styles";
 
 const Img = withFetch<ImgProps & { innerRef?: any }>((props) => {
-  const { innerRef, ...rest } = props;
+  const { innerRef, isLoading, hasLoaded, loadingError, ...rest } = props;
 
   return (
     <React.Fragment>
-      {props.isLoading ? (
+      {isLoading ? (
         <div ref={innerRef} {...rest}>
-          <CircularProgress color="secondary" size={2} />
+          <CircularProgress color="secondary" size={4} />
         </div>
-      ) : props.hasLoaded ? (
+      ) : hasLoaded ? (
         <img ref={innerRef} {...rest} />
       ) : (
         <Typography ref={innerRef} {...rest} variant="subtitle1" noWrap>

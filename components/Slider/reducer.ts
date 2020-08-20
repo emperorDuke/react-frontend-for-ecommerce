@@ -26,7 +26,7 @@ export function reducer(state: State, action: Action): State {
         ...state,
         transition: true,
         activeIndex: action.payload.nextIndex,
-        dummyIndex: action.payload.nextIndex + 1,
+        slideNo: action.payload.nextIndex + 1,
         position: jumpbackward(
           state.position,
           state.width,
@@ -38,7 +38,7 @@ export function reducer(state: State, action: Action): State {
         ...state,
         transition: true,
         activeIndex: action.payload.nextIndex,
-        dummyIndex: action.payload.nextIndex + 1,
+        slideNo: action.payload.nextIndex + 1,
         position: jumpforward(
           state.position,
           state.width,
@@ -48,7 +48,7 @@ export function reducer(state: State, action: Action): State {
     case "reflowToFirst":
       return {
         ...state,
-        dummyIndex: 1,
+        slideNo: 1,
         activeIndex: 0,
         transition: false,
         position: jumpforward(
@@ -61,7 +61,7 @@ export function reducer(state: State, action: Action): State {
     case "reflowToLast":
       return {
         ...state,
-        dummyIndex: action.payload.nChildren,
+        slideNo: action.payload.nChildren,
         activeIndex: action.payload.nChildren - 1,
         transition: false,
         position: jumpbackward(

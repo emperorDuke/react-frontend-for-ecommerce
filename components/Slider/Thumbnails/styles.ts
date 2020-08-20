@@ -8,7 +8,7 @@ interface StyleProps {
   thumbHeight: number;
   thumbPosition: number;
   transition: boolean;
-  focuserVisible: boolean;
+  focusThumbs: boolean;
 }
 
 export default makeStyles((theme: Theme) =>
@@ -60,7 +60,7 @@ export default makeStyles((theme: Theme) =>
       transition: (val: StyleProps) =>
         val.transition ? "transform 600ms ease-in 10ms" : "none",
       borderRadius: theme.shape.borderRadius,
-      display: (val: StyleProps) => val.focuserVisible ? "initial" : "none"
+      display: (val: StyleProps) => val.focusThumbs ? "initial" : "none"
     },
     thumbsWrapper: {
       display: "flex",

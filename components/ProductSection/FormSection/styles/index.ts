@@ -26,6 +26,10 @@ export default makeStyles((theme: Theme) =>
     },
     text: {
       ...theme.typography.button
+    },
+    thumnbnail: {
+      width: "100%",
+      height: theme.spacing(6)
     }
   })
 );

@@ -1,7 +1,7 @@
 import { ThumbnailsProps } from "./thumbnails/Thumbnail";
 
 export interface State {
-  dummyIndex: number;
+  slideNo: number;
   position: number;
   transition: boolean;
   activeIndex: number;
@@ -42,7 +42,7 @@ export interface PayloadArgument {
 }
 
 export interface SliderProps
-  extends Pick<ThumbnailsProps, "noOfVisibleThumbs" | "focuserVisible"> {
+  extends Pick<ThumbnailsProps, "noOfVisibleThumbs" | "focusThumbs"> {
   children?: React.ReactNodeArray;
   className?: string;
   interval?: number;

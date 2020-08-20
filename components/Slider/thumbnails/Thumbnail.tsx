@@ -1,5 +1,6 @@
 import React, { useEffect, useState, Children, useRef } from "react";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import { useSwipeable } from "react-swipeable";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import useStyles from "./styles";
 import clsx from "classnames";
@@ -14,7 +15,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const offsetX = props.thumbDimension.width;
   const offsetY = props.thumbDimension.height;
-  const focuserVisible = !!props.focuserVisible;
+  const focusThumbs = !!props.focusThumbs;
 
   const [value, setValue] = useState({
     activeIndex: props.activeIndex,
@@ -31,7 +32,15 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     ...value,
     thumbWidth: offsetX,
     thumbHeight: offsetY,
-    focuserVisible,
+    focusThumbs,
+  });
+
+  const handlers = useSwipeable({
+    onSwipedRight: () => prevGroup(),
+    onSwipedLeft: () => nextGroup(),
+    trackMouse: true,
+    trackTouch: true,
+    preventDefaultTouchmoveEvent: true,
   });
 
   useEffect(() => {
@@ -166,7 +175,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
 
   return (
     <div className={classes.thumbnailsWrapper}>
-      <div className={classes.thumbnails}>
+      <div className={classes.thumbnails} {...handlers}>
         <div className={classes.thumbsWrapper}>
           {Children.map(props.children, (child, i) => (
             <ButtonBase>
