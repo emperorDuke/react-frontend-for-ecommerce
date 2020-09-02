@@ -23,14 +23,13 @@ export function getNextPayload({
 }: PayloadArgument) {
   let activeIndex =
     state.activeIndex === nChildren - 1 ? 0 : state.activeIndex + 1;
-  let transition = false;
+  let transition = true;;
   let slideNo = 0;
   let position = 0;
   const width = state.width;
   const height = state.height;
 
   if (infinite) {
-    transition = true;
     slideNo = state.slideNo + 1;
     position = jumpbackward(state.position, width);
 
@@ -43,7 +42,6 @@ export function getNextPayload({
       width,
     };
   } else {
-    transition = true;
     position =
       state.activeIndex === nChildren - 1
         ? jumpforward(state.position, width, nChildren - 1)

@@ -16,7 +16,7 @@ export default makeStyles((theme: Theme) =>
     thumbnailsWrapper: {
       position: "relative",
       display: "flex",
-      "&:hover $button": {
+      "&:hover $btn": {
         opacity: 0.6,
         transition: "opacity 500ms ease-in-out 50ms",
         "&:hover": {
@@ -48,7 +48,7 @@ export default makeStyles((theme: Theme) =>
     thumbWrapper: {
       height: "100%",
       width: "100%",
-      borderRadius: "inherit",
+      borderRadius: theme.shape.borderRadius,
     },
     focuser: {
       position: "absolute",
@@ -66,7 +66,7 @@ export default makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "row",
     },
-    button: {
+    btn: {
       backgroundColor: theme.palette.grey[300],
       position: "absolute",
       height: "100%",
@@ -75,14 +75,14 @@ export default makeStyles((theme: Theme) =>
       zIndex: 2,
       boxShadow: "0px 0px 9px 1px black",
     },
-    leftButton: {
+    leftBtn: {
       bottom: 0,
     },
-    rightButton: {
+    rightBtn: {
       bottom: 0,
       left: (val: StyleProps) => `calc(100% - ${val.thumbWidth / 2.5}px)`,
     },
-    disabledButton: {
+    disabledBtn: {
       display: "none",
     },
   })

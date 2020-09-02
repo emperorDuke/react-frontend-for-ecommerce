@@ -68,6 +68,13 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
   }, []);
 
   useEffect(() => {
+    const getGroupNumber = (idx: number) => {
+      let index = groups.current.findIndex(
+        (group) => idx >= group.start && idx <= group.end
+      );
+      return ++index;
+    };
+  
     const getFocuserPosition = (prev: typeof value) => {
       const nTime = Math.abs(props.activeIndex - prev.activeIndex);
 
@@ -80,40 +87,38 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
       }
     };
 
-    const getThumbPosition = (prev: typeof value) => {
+    const getThumbPosition = (thumbPosition:  number) => {
       const currentGroup = getGroupNumber(props.activeIndex);
-      const previousGroup = getGroupNumber(prev.activeIndex);
-      const groupOffset = Math.abs(currentGroup - previousGroup);
-      const isSameGroup = previousGroup === currentGroup;
+      const groupOffset = Math.abs(currentGroup - activeGroup.current);
       const nTime = noOfVisibleThumbs * groupOffset;
 
       if (activeGroup.current === currentGroup) {
-        return prev.thumbPosition;
-      } else if (props.activeIndex > prev.activeIndex && !isSameGroup) {
-        activeGroup.current += groupOffset;
-        return JB(prev.thumbPosition, offsetX, nTime);
-      } else if (props.activeIndex < prev.activeIndex && !isSameGroup) {
-        activeGroup.current -= groupOffset;
-        return JF(prev.thumbPosition, offsetX, nTime);
+        return thumbPosition;
+      } else if (activeGroup.current > currentGroup) {
+        activeGroup.current = currentGroup;
+        return JF(thumbPosition, offsetX, nTime);
+      } else if (activeGroup.current < currentGroup) {
+        activeGroup.current = currentGroup;
+        return JB(thumbPosition, offsetX, nTime);
       }
 
-      return prev.thumbPosition;
+      return thumbPosition;
     };
 
     setValue((prev) => ({
       transition: true,
       activeIndex: props.activeIndex,
-      thumbPosition: getThumbPosition(prev),
+      thumbPosition: getThumbPosition(prev.thumbPosition),
       focuserPosition: getFocuserPosition(prev),
     }));
   }, [props.activeIndex]);
 
   useDidUpdate(() => {
-    const updateFocuser = (activeIndex: number) => {
+    const updateFocuserPosition = (activeIndex: number) => {
       return activeIndex === 0 ? 0 : JF(0, offsetX, activeIndex);
     };
 
-    const updateThumb = () => {
+    const updateThumbPosition = () => {
       let position = 0;
 
       if (activeGroup.current > 1) {
@@ -129,17 +134,10 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     setValue((prev) => ({
       activeIndex: prev.activeIndex,
       transition: false,
-      thumbPosition: updateThumb(),
-      focuserPosition: updateFocuser(prev.activeIndex),
+      thumbPosition: updateThumbPosition(),
+      focuserPosition: updateFocuserPosition(prev.activeIndex),
     }));
   }, [props.thumbDimension]);
-
-  const getGroupNumber = (idx: number) => {
-    let index = groups.current.findIndex(
-      (group) => idx >= group.start && idx <= group.end
-    );
-    return ++index;
-  };
 
   const nextGroup = () => {
     activeGroup.current += 1;
@@ -163,12 +161,12 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     }));
   };
 
-  const hideRightButton = {
-    [classes.disabledButton]: activeGroup.current === groups.current.length,
+  const hideRightBtn = {
+    [classes.disabledBtn]: activeGroup.current === groups.current.length,
   };
 
-  const hideLeftButton = {
-    [classes.disabledButton]: activeGroup.current === 1,
+  const hideLeftBtn = {
+    [classes.disabledBtn]: activeGroup.current === 1,
   };
 
   return (
@@ -193,13 +191,13 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
         <div className={classes.focuser} />
       </div>
       <ButtonBase
-        className={clsx(classes.button, classes.leftButton, hideLeftButton)}
+        className={clsx(classes.btn, classes.leftBtn, hideLeftBtn)}
         onClick={prevGroup}
       >
         <ChevronLeftIcon />
       </ButtonBase>
       <ButtonBase
-        className={clsx(classes.button, classes.rightButton, hideRightButton)}
+        className={clsx(classes.btn, classes.rightBtn, hideRightBtn)}
         onClick={nextGroup}
       >
         <ChevronRightIcon />

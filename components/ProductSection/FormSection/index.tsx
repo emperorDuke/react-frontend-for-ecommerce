@@ -18,6 +18,7 @@ import useStyles from "./styles";
 import { PropsType } from "./@types";
 import Flag from "../../Flag";
 import Link from "../../Link";
+import { StyledButton } from "../../Header";
 
 export default function ProductDetails(props: PropsType) {
   const [variants, setVariants] = useState<VariationType[]>([]);
@@ -88,15 +89,12 @@ export default function ProductDetails(props: PropsType) {
         </Grid>
         <Grid item xs={12}>
           <Slider
-            type="thumbnails"
+            type="thumbnail"
             className={classes.thumnbnail}
             focusThumbs={!!getVariant(attribute.id).length}
           >
             {attribute.variants.map((variant) => (
-              <Slide
-                onClick={handleVariantChange(variant)}
-                key={variant.id}
-              >
+              <Slide onClick={handleVariantChange(variant)} key={variant.id}>
                 {variant.attachment ? (
                   <Img src={variant.attachment} alt={variant.vendor_metric} />
                 ) : (
@@ -221,22 +219,22 @@ export default function ProductDetails(props: PropsType) {
         <Grid item xs={12}>
           <Grid container spacing={1}>
             <Grid item>
-              <Button
-                onClick={() => handleOptions("buyNow")}
+              <StyledButton
+                onClick={() => handleOptions("addToCart")}
                 variant="contained"
-                color="secondary"
+                startIcon={<AddShoppingCartIcon />}
+                className={classes.cartBtn}
               >
-                Buy It Now
-              </Button>
+                Add to cart
+              </StyledButton>
             </Grid>
             <Grid item>
               <Button
-                onClick={() => handleOptions("addToCart")}
+                onClick={() => handleOptions("buyNow")}
                 variant="contained"
-                color="secondary"
-                startIcon={<AddShoppingCartIcon />}
+                color="primary"
               >
-                Add to cart
+                Buy It Now
               </Button>
             </Grid>
           </Grid>

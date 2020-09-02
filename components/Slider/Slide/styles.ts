@@ -5,7 +5,7 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 const slideStyle = {
   width: "inherit",
   height: "inherit",
-  borderRadius: "inherit",
+  borderRadius: "inherit"
 };
 
 export default makeStyles((theme: Theme) =>

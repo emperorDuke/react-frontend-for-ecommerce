@@ -42,12 +42,12 @@ const StoreInfoSection: React.ComponentType<MerchantStore> = (props) => {
         </Grid>
         <Grid item container xs={12} alignItems="center" spacing={1}>
           <Grid item>
-            <Button variant="outlined" color="secondary">
+            <Button variant="outlined" color="primary">
               go to store
             </Button>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="secondary">
+            <Button variant="contained" color="primary">
               follow
             </Button>
           </Grid>

@@ -36,7 +36,7 @@ interface Buyer {
 }
 
 
-export function useUser<T extends "seller" | "buyer">(userType: T) {
+export function useUser<T extends "seller" | "buyer">(userType: T)  {
   const userAuth = useSelector(({ userAuth }) => userAuth);
   const incomingCart = useSelector(({ cart }) => cart.cart);
   const addressBook = useSelector(

@@ -44,17 +44,37 @@ export interface PayloadArgument {
 export interface SliderProps
   extends Pick<ThumbnailsProps, "noOfVisibleThumbs" | "focusThumbs"> {
   children?: React.ReactNodeArray;
+  /**
+   * Css class
+   */
   className?: string;
+  /**
+   * time in ms before slide change
+   */
   interval?: number;
+  /**
+   * Show thumnnails
+   */
   showThumbs?: boolean;
+  /**
+   * The factor number of how small the thumb height is in relative to the 
+   * height of slider
+   */
   thumbHeightFactor?: number;
   disableIndicator?: boolean;
   disableButtons?: boolean;
   autoplay?: boolean;
+  /**
+   * Width of the slider
+   */
   width?: number | string;
+  /**
+   * Height of the slider
+   */
   height?: number | string;
-  type?: "carousel" | "thumbnails";
+  type?: "carousel" | "thumbnail";
   effectType?: EffectType;
   infinite?: boolean;
   pauseOnMouseEnter?: boolean;
+  timeout?: number;
 }

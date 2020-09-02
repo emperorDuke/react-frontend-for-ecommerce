@@ -15,6 +15,28 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { useUser, apiUrl } from "../../services";
 import { Posting } from "../../redux/actionCreators/PostActions";
+import { BuyerSignUpForm } from "../BuyerSignUpForm";
+
+const schema = yup.object().shape({
+  first_name: yup
+    .string()
+    .required("first name is required !")
+    .min(2, "first name is too short !"),
+  middle_name: yup.string().notRequired(),
+  last_name: yup
+    .string()
+    .required("last name is required !")
+    .min(2, "last name is too short !"),
+  address: yup.string().min(2, "Address is invalid !").notRequired(),
+  phone_number: yup
+    .string()
+    .required("phone number is required")
+    .min(11, "Invalid Phone Number"),
+  country: yup.string().required("country is required !"),
+  city: yup.string().required("city is required !"),
+  state: yup.string().required("state is required !"),
+  zip_code: yup.string().notRequired(),
+});
 
 function AddressSection() {
   const [openForm, setOpenForm] = useState(false);
@@ -131,77 +153,16 @@ function AddressSection() {
       {/** form for adding new address */}
       <Dialog
         open={openForm}
-        onClose={() => setOpenForm(false)}
         aria-labelledby="dialog-for-address-form"
       >
         <DialogTitle>Add new address</DialogTitle>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            onClick={() => setOpenForm(false)}
-            color="secondary"
-          >
-            cancel
-          </Button>
-        </DialogActions>
         <DialogContent>
-          <Formik
+          <BuyerSignUpForm
+            onSubmit={handleAddressForm}
+            schema={schema}
             initialValues={initialValues}
-            onSubmit={(values) => handleAddressForm(values)}
-            validationSchema={yup.object().shape({
-              first_name: yup
-                .string()
-                .required("first name is required !")
-                .min(2, "first name is too short !"),
-              middle_name: yup.string().notRequired(),
-              last_name: yup
-                .string()
-                .required("last name is required !")
-                .min(2, "last name is too short !"),
-              address: yup
-                .string()
-                .min(2, "Address is invalid !")
-                .notRequired(),
-              phone_number: yup
-                .string()
-                .required("phone number is required")
-                .min(11, "Invalid Phone Number"),
-              country: yup.string().required("country is required !"),
-              city: yup.string().required("city is required !"),
-              state: yup.string().required("state is required !"),
-              zip_code: yup.string().notRequired(),
-            })}
-          >
-            {(props) => (
-              <form onSubmit={props.handleSubmit} onReset={props.handleReset}>
-                {Object.keys(initialValues).map((key) => (
-                  <React.Fragment>
-                    <TextField
-                      id={key}
-                      name={key}
-                      type="text"
-                      label={key}
-                      onChange={props.handleChange}
-                      onBlur={props.handleBlur}
-                      value={props.values.address}
-                      required
-                      placeholder={key}
-                      color="secondary"
-                      variant="outlined"
-                    />
-                    <ErrorMessage name={key} />
-                  </React.Fragment>
-                ))}
-                <Grid container>
-                  <Grid item>
-                    <Button type="submit" variant="contained" color="secondary">
-                      submit
-                    </Button>
-                  </Grid>
-                </Grid>
-              </form>
-            )}
-          </Formik>
+            onCancel={() => setOpenForm(false)}
+          />
         </DialogContent>
       </Dialog>
     </Paper>

@@ -31,7 +31,7 @@ import {
   productSuccess,
 } from "../../actionCreators/ProductActions";
 import { BEARER } from "../../utils/bearer-constant";
-import { ajax } from "rxjs/ajax";
+import { ajax, AjaxError } from "rxjs/ajax";
 
 const removeIndex = (cart: actions.CartType) => {
   if (cart["index"]) delete cart["index"];
@@ -55,10 +55,8 @@ const addToCartEpic: T.CartEpic = (action$, state$) =>
         () => state.userAuth.isLoggedIn,
         ajax
           .post(path("updateCart", payload.id), JSON.stringify(payload), {
-            headers: {
-              Authorization: `${BEARER} ${state.userAuth.token}`,
-              "Content-type": "application/json",
-            },
+            Authorization: `${BEARER} ${state.userAuth.token}`,
+            "Content-type": "application/json",
           })
           .pipe(catchError(() => EMPTY)),
         storageStream(state.cart.cart)
@@ -75,13 +73,13 @@ const fetchCartEpic: T.CartEpic = (action$, state$) =>
     switchMap(([, state]) =>
       ajax
         .getJSON<Array<CartType>>(path("getCarts"), {
-          headers: {
-            Authorization: `${BEARER} ${state.userAuth.token}`,
-          },
+          Authorization: `${BEARER} ${state.userAuth.token}`,
         })
         .pipe(
           map((cart) => actions.cartRequestSuccessful(cart)),
-          catchError((err) => of(actions.cartRequestFailed(err.response)))
+          catchError((err: AjaxError) =>
+            of(actions.cartRequestFailed(err.response))
+          )
         )
     )
   );
@@ -97,10 +95,8 @@ const updateCartEpics: T.CartEpic = (action$, state$) =>
         () => state.userAuth.isLoggedIn,
         ajax
           .post(path("updateCart", payload.id), JSON.stringify(payload), {
-            headers: {
-              Authorization: `${BEARER} ${state.userAuth.token}`,
-              "Content-type": "application/json",
-            },
+            Authorization: `${BEARER} ${state.userAuth.token}`,
+            "Content-type": "application/json",
           })
           .pipe(catchError(() => EMPTY)),
         storageStream(state.cart.cart)
@@ -118,9 +114,7 @@ const removeFromCartEpic: T.CartEpic = (action$, state$) =>
         () => state.userAuth.isLoggedIn,
         ajax
           .delete(path("updateCart", payload.id), {
-            headers: {
-              Authorization: `${BEARER} ${state.userAuth.token}`,
-            },
+            Authorization: `${BEARER} ${state.userAuth.token}`,
           })
           .pipe(catchError(() => EMPTY)),
         storageStream(state.cart.cart)

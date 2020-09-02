@@ -7,7 +7,7 @@ const Logo = () => {
       <img
         src="/static/favicon.ico"
         alt="logo"
-        style={{ margin: "-1px", height: "12vmin" }}
+        style={{ width: "50%", height: "10vh" }}
       />
     </Link>
   );

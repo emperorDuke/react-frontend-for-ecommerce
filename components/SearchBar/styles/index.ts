@@ -10,13 +10,14 @@ export default makeStyles((theme: Theme) =>
     },
     selectRight: {
       fontSize: theme.typography.fontSize,
-      borderLeft: `1px solid ${theme.palette.grey[400]}`
+      borderRight: `1px solid ${theme.palette.grey[400]}`
     },
     inputField: {
       border: `1px solid ${theme.palette.grey[400]}`,
       fontSize: theme.typography.fontSize,
       height: theme.spacing(6),
-      borderRadius: theme.shape.borderRadius
+      borderRadius: theme.shape.borderRadius,
+      
     },
     inputRoot: {
       width: theme.spacing(40),
@@ -42,8 +43,24 @@ export default makeStyles((theme: Theme) =>
     button: {
       height: theme.spacing(6),
     },
-    searchIcon: {
-      fontSize: theme.typography.fontSize * 2
+    wrapper: {
+      border: `1px solid transparent`,
+      backgroundColor: theme.palette.background.paper,
+      borderRadius: theme.shape.borderRadius,
+      "&:focus": {
+        border: `1px solid ${theme.palette.secondary.dark}`
+      },
+      "&:click":{
+        border: `1px solid ${theme.palette.secondary.dark}`
+      }
+    },
+    options: {
+      ...theme.typography.overline
+    },
+    focus: {
+      "&:focus": {
+        borderColor: theme.palette.secondary.dark
+      }
     }
   })
 );

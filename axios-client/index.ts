@@ -1,39 +1,17 @@
-import axios, { AxiosRequestConfig } from "axios";
-
-export const API_URL = 'http://localhost:8000/';
+import { default as ax, AxiosRequestConfig } from "axios";
+import { BEARER } from "../redux/utils/bearer-constant";
 
 /**
- *  axios 
+ *  axios
  */
-export default function axiosClient () {
+export default function axiosClient(token: string) {
+  const axios = ax.create();
 
-    const defaultOptions:AxiosRequestConfig = {
-        baseURL: API_URL,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': null
-        }
-    };
+  axios.interceptors.request.use((config) => {
+    config.headers["Authorization"] = `${BEARER} ${token}`;
+    config.headers["Content-type"] = "application/json";
+    return config;
+  });
 
-    const axiosInstance = axios.create(defaultOptions);
-
-    axiosInstance.interceptors.request.use((config) => {
-        
-        const token = localStorage.getItem('token');
-
-        if (token) config.headers['Authorization'] = `JWT ${token}`;
-        
-        return config;
-    });
-
-    axiosInstance.interceptors.response.use((config) => {
-
-        if (config.data['token']) {
-            localStorage.setItem('token', config.data['token']);
-        }
-
-        return config;
-    });
-
-    return axiosInstance;
+  return axios;
 }

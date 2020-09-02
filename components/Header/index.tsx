@@ -1,21 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "../Link";
 import { HeaderProps } from "./@types";
-import classNames from "classnames";
 import Logo from "../Logo/Logo";
 import SearchBar from "../SearchBar";
 import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
 import Grid from "@material-ui/core/Grid";
 import Badge from "@material-ui/core/Badge";
+import Typography from "@material-ui/core/Typography";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import CloseIcon from "@material-ui/icons/CloseOutlined";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import withStyles from "@material-ui/core/styles/withStyles";
+import { Theme } from "@material-ui/core/styles/createMuiTheme";
+import createStyles from "@material-ui/core/styles/createStyles";
 import Container from "@material-ui/core/Container";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import MenuIcon from "@material-ui/icons/Menu";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCartOutlined";
-import PersonIcon from "@material-ui/icons/PersonOutline";
 import Popover from "@material-ui/core/Popover";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import FavoriteIcon from "@material-ui/icons/Favorite";
 import useStyles from "./styles";
 import NavBar from "../NavBar";
 import { QueryTypes } from "../SearchBar/@types";
@@ -24,10 +32,41 @@ import { categoryRequest } from "../../redux/actionCreators/CategoryActions";
 import { LocationRequest } from "../../redux/actionCreators/LocationActions";
 import { useDispatch } from "react-redux";
 import { Posting as Post } from "../../redux/actionCreators/PostActions";
-import LoginForm from "../Loginsection";
 import { CartType, loadCart } from "../../redux/actionCreators/CartActions";
 import { CART_STORAGE_KEY } from "../CartSection/utils";
-import { apiUrl }from "../../services";
+import { apiUrl } from "../../services";
+import Loginsection from "../Loginsection";
+import UserRegSection from "../UserRegSection";
+
+export const StyledButton = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      color: theme.palette.background.paper,
+      "&$disabled": {
+        color: theme.palette.grey[400],
+      },
+    },
+    disabled: {},
+    outlined: {
+      borderColor: theme.palette.grey[400],
+      color: theme.palette.grey[300],
+      "&$disabled": {
+        borderColor: theme.palette.grey[400],
+      },
+      "&:hover": {
+        borderColor: theme.palette.grey[300],
+      },
+    },
+    containedPrimary: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.background.paper,
+      "&:hover": {
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.background.paper,
+      },
+    },
+  })
+)(Button);
 
 const Header: React.ComponentType<HeaderProps> = (props) => {
   const cart = useStoreSelector(({ cart }) => cart.cart);
@@ -48,11 +87,17 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
+  const [anchorEl2, setAnchorEl2] = useState<HTMLElement | null>(null);
+
   const [queryStrings, setQueryStrings] = useState<QueryTypes>({
     location: "Region",
     category: "All Categories",
     query: "",
   });
+
+  const [openLoginForm, setOpenLoginForm] = useState(false);
+
+  const [openSignUpForm, setOpenSignUpForm] = useState(false);
 
   useEffect(() => {
     let parsedCart: Array<CartType>;
@@ -81,95 +126,175 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
 
   return (
     <header>
-      <Container maxWidth="lg">
-        <Grid container>
-          <Grid item>
-            <Button>hi, sign in / register</Button>
-          </Grid>
-          <div style={{ flexGrow: 1 }} />
-          <Grid item>
-            <Button>my account</Button>
-          </Grid>
-          <Grid item>
-            <Button>help ?</Button>
-          </Grid>
-        </Grid>
-      </Container>
-      <Paper elevation={0} className={classes.subHeader_2}>
-        <AppBar position="static" className={classes.appBar} elevation={2}>
-          <Toolbar>
-            <Container maxWidth="lg">
-              <Grid container alignItems="center">
-                <Grid item className={classes.image}>
-                  <Logo />
-                </Grid>
-                <Grid item>
-                  {!props.disableSearch && (
-                    <SearchBar
-                      locations={storeLocations}
-                      categories={categories}
-                      postSearch={postSearchQuery}
-                      queries={queryStrings}
-                      onChange={setQueryStrings}
-                    />
-                  )}
-                </Grid>
-                <div style={{ flexGrow: 1 }} />
-                <Grid item>
-                  <Button startIcon={<PersonIcon />}>
-                    hi, sign in | join{" "}
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button aria-label="Cart">
-                    <Link href="/cart" color="inherit">
-                      <Badge
-                        badgeContent={cart.length}
-                        color="secondary"
-                        classes={{ badge: classes.badge }}
-                      >
-                        <ShoppingCartIcon className={classes.cartBtn} />
-                      </Badge>
-                      cart
-                    </Link>
-                  </Button>
-                </Grid>
+      <AppBar position="static" className={classes.header} elevation={2}>
+        <div className={classes.subHeaderWrapper_1}>
+          <Container maxWidth="lg">
+            <Grid container alignItems="center" spacing={1} wrap="nowrap">
+              <Grid item xs={3}>
+                <Logo />
               </Grid>
-            </Container>
-          </Toolbar>
-        </AppBar>
-        {/* <Container fixed>
-          <Grid container>
-            <Grid item>
-              <Button
-                onClick={
-                  !props.disableCategoryButton
-                    ? e => setAnchorEl(e.currentTarget)
-                    : undefined
-                }
-                className={classNames(classes.font)}
-                variant={props.disableCategoryButton ? "outlined" : "text"}
-              >
-                <MenuIcon className={classes.menuIcon} />
-                Categories
-              </Button>
-              {!props.disableCategoryButton && (
+              <Grid item>
+                {!props.disableSearch && (
+                  <SearchBar
+                    locations={storeLocations}
+                    categories={categories}
+                    postSearch={postSearchQuery}
+                    queries={queryStrings}
+                    onChange={setQueryStrings}
+                  />
+                )}
+              </Grid>
+              <Grid item>
+                <StyledButton
+                  endIcon={<ArrowDropDownIcon />}
+                  onClick={(e) => setAnchorEl2(e.currentTarget)}
+                >
+                  hi, sign in | join
+                </StyledButton>
                 <Popover
-                  open={!!anchorEl}
-                  onClose={() => setAnchorEl(null)}
-                  anchorReference="anchorPosition"
-                  anchorPosition={{
-                    top: 190,
-                    left: 66
+                  open={!!anchorEl2}
+                  anchorEl={anchorEl2}
+                  onClose={() => setAnchorEl2(null)}
+                  anchorReference="anchorEl"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
                   }}
                 >
-                  <NavBar navItems={categories} />
+                  <Paper className={classes.loginPaper}>
+                    <Grid container spacing={1} direction="column">
+                      <Grid item />
+                      <Grid item xs={12}>
+                        <div style={{ padding: "0px 8px" }}>
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            color="primary"
+                            onClick={() => setOpenLoginForm(true)}
+                          >
+                            Login
+                          </Button>
+                        </div>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            flexWrap: "nowrap",
+                          }}
+                        >
+                          <div className={classes.divider} />
+                          <div className={classes.spacer} />
+                          <Typography variant="caption" color="secondary">
+                            New member ?
+                          </Typography>
+                          <div className={classes.spacer} />
+                          <div className={classes.divider} />
+                        </div>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <div style={{ padding: "0px 8px" }}>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            color="primary"
+                            onClick={() => setOpenSignUpForm(true)}
+                          >
+                            create account
+                          </Button>
+                        </div>
+                      </Grid>
+                      <Grid item />
+                    </Grid>
+                  </Paper>
                 </Popover>
-              )}
+                <Dialog
+                  open={openLoginForm}
+                  aria-labelledby="dialog-for-login-form"
+                  fullWidth
+                >
+                  <DialogTitle>Login</DialogTitle>
+                  <DialogActions>
+                    <IconButton onClick={() => setOpenLoginForm(false)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </DialogActions>
+                  <DialogContent>
+                    <Loginsection />
+                  </DialogContent>
+                </Dialog>
+                <Dialog
+                  open={openSignUpForm}
+                  aria-labelledby="dialog-for-signUp-form"
+                  fullWidth
+                >
+                  <DialogTitle>Sign Up</DialogTitle>
+                  <DialogActions>
+                    <IconButton onClick={() => setOpenSignUpForm(false)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </DialogActions>
+                  <DialogContent>
+                    <UserRegSection onCancel={() => setOpenSignUpForm(false)} />
+                  </DialogContent>
+                </Dialog>
+              </Grid>
+              <Grid item>
+                <StyledButton startIcon={<FavoriteIcon />}>
+                  wishlist
+                </StyledButton>
+              </Grid>
+              <Grid item>
+                <Badge
+                  badgeContent={cart.length}
+                  color="secondary"
+                  classes={{ badge: classes.badge }}
+                >
+                  <StyledButton
+                    aria-label="Cart"
+                    startIcon={<ShoppingCartIcon />}
+                  >
+                    <Link href="/cart" color="inherit">
+                      cart
+                    </Link>
+                  </StyledButton>
+                </Badge>
+              </Grid>
             </Grid>
-          </Grid> 
-        </Container>*/}
-      </Paper>
+          </Container>
+        </div>
+        <div className={classes.subHeaderWrapper_2}>
+          <Container maxWidth="lg">
+            <Grid container alignItems="center">
+              <Grid item>
+                <StyledButton
+                  onClick={(e) => setAnchorEl(e.currentTarget)}
+                  startIcon={<MenuIcon />}
+                  variant="outlined"
+                  disabled={props.disableCategoryButton}
+                >
+                  Categories
+                </StyledButton>
+                {!props.disableCategoryButton && (
+                  <Popover
+                    open={!!anchorEl}
+                    anchorEl={anchorEl}
+                    onClose={() => setAnchorEl(null)}
+                    anchorReference="anchorEl"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                  >
+                    <NavBar navItems={categories} />
+                  </Popover>
+                )}
+              </Grid>
+            </Grid>
+          </Container>
+        </div>
+      </AppBar>
     </header>
   );
 };

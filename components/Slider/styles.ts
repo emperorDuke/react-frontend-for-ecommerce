@@ -8,6 +8,7 @@ type StyleProps = {
   width: number;
   transition: boolean;
   thumbHeight: number;
+  timeout?: number
 };
 
 type T = (val: StyleProps) => string;
@@ -22,7 +23,7 @@ const getSlideEffectTransition: T = (val) => {
   if (!val.transition) {
     return "none";
   }
-  return "transform 500ms ease-in-out 20ms";
+  return `transform ${val.timeout}ms ease-in`;
 };
 
 export default makeStyles((theme: Theme) =>
@@ -36,8 +37,7 @@ export default makeStyles((theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       flexWrap: "nowrap",
-      borderRadius: "inherit",
-      flexGrow: 1,
+      borderRadius: theme.shape.borderRadius,
     },
     noOverflow: {
       [theme.breakpoints.down("sm")]: {
@@ -46,23 +46,20 @@ export default makeStyles((theme: Theme) =>
     },
     slider: {
       display: "flex",
-      flexDirection: "row",
       position: "relative",
-      borderRadius: "inherit",
+      borderRadius: theme.shape.borderRadius,
       height: getHeight,
       width: getWidth,
       "&:hover $btn": {
         opacity: 0.4,
         cursor: "pointer",
-        transition: "opacity 500ms ease-in 50ms",
+        transition: "opacity 500ms ease-in",
         "&:hover": {
           opacity: 0.9,
           cursor: "pointer",
-          transition: "opacity 500ms ease-in 50ms",
+          transition: "opacity 500ms ease-in",
         },
       },
-    },
-    resizeSlider: {
       [theme.breakpoints.down("sm")]: {
         // the spacing(1) at marginLeft of slide is substracted from
         // the incoming width to balance it out
@@ -74,13 +71,13 @@ export default makeStyles((theme: Theme) =>
       transform: getTransform,
       transition: getSlideEffectTransition,
     },
-    spaceSlide: {
+    spaceSlides: {
       [theme.breakpoints.down("sm")]: {
         // space the image
         margin: theme.spacing(0, 0, 0, 1),
       },
     },
-    fadeMove: {
+    activeFade: {
       transform: getTransform,
     },
     btn: {

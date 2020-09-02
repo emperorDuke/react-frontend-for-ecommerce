@@ -9,13 +9,14 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import clsx from "classnames";
 import useStyles from "./styles";
 import { Thumbnail } from "./Thumbnail";
-import {Indicator} from "./Indicator";
+import { Indicator } from "./Indicator";
 import { getNextPayload, getPrevPayload } from "./utils";
 import { fromEvent } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
 import { SliderProps } from "./@types";
 import { reducer } from "./reducer";
 import { SlideProps } from "./Slide/@types";
+import { useIsomorphicLayoutEffect } from "../../utils";
 
 const Slider: React.ComponentType<SliderProps> = (props) => {
   const SECONDS = 1000;
@@ -23,34 +24,22 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const initHeight = Number(props.height) || 0;
   const initWidth = Number(props.width) || 0;
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
-  const isThumbnailType = props.type === "thumbnails";
+  const isThumbnailType = props.type === "thumbnail";
   const infinite = !!props.infinite;
   const focusThumbs = !isThumbnailType || !!props.focusThumbs;
   const isManual = !infinite && !props.autoplay;
   const pauseOnMouseEnter = props.autoplay && !!props.pauseOnMouseEnter;
+  const nChildren = Children.count(props.children) || 0;
+  const count = props.interval ? Math.floor(props.interval / SECONDS) : 5;
 
   const [state, dispatch] = useReducer(reducer, {
     slideNo: 1,
     position: 0,
-    transition: true,
+    transition: false,
     activeIndex: 0,
     width: initWidth,
     height: initHeight,
   });
-
-  const count = useMemo(() => {
-    if (props.interval) {
-      return Math.floor(props.interval / SECONDS);
-    }
-    return 5;
-  }, [props.interval]);
-
-  const nChildren = useMemo(() => {
-    if (props.children) {
-      return Children.count(props.children);
-    }
-    return 0;
-  }, [props.children]);
 
   const childrenWithClone = useMemo(() => {
     const insertNewKey = (el: any, i: number) => {
@@ -121,6 +110,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const classes = useStyles({
     ...state,
     thumbHeight: thumbnailDimension.height,
+    timeout: props.timeout
   });
 
   const handlers = useSwipeable({
@@ -153,7 +143,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     onTransitionEndRef.current = handleTransitionEnd;
   }, [state.slideNo, nChildren, CLONE]);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const getDimension = () => {
       let width = 0;
       let height = 0;
@@ -262,12 +252,11 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const refreshTimer = props.autoplay ? resetAndStartCount : () => null;
 
   const next = () => {
-    const isLastSlide = state.activeIndex === nChildren - 1;
     // dont run unless it will interfere with the reflow
     if (state.slideNo === nChildren + CLONE - 1) return;
 
-    // dont run when it has reach last slide and controls are manual
-    if (isManual && isLastSlide) return;
+    // dont run if index has reach last slide and controls are manual
+    if (isManual && state.activeIndex === nChildren - 1) return;
 
     dispatch({
       type: "moveTo",
@@ -279,7 +268,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     // dont run unless it will interfere with the reflow
     if (state.slideNo === 0) return;
 
-    // dont run when it has reach first slide and controls are manual
+    // dont run if it has reach first slide and controls are manual
     if (isManual && state.activeIndex === 0) return;
 
     dispatch({
@@ -335,9 +324,9 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
     return clsx(
       {
-        [classes.fadeMove]: isFadeEffect,
+        [classes.activeFade]: isFadeEffect,
         [classes.activeSlide]: isSlideEffect,
-        [classes.spaceSlide]: !isThumbnailType && isSlideEffect,
+        [classes.spaceSlides]: !isThumbnailType && isSlideEffect,
       },
       className
     );
@@ -352,7 +341,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
           React.isValidElement(child) && (
             <Fade
               in={child.props.__index === state.activeIndex}
-              timeout={800}
+              timeout={props.timeout}
               key={child.props.__index}
             >
               {React.cloneElement(child, {
@@ -396,9 +385,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
               aria-label="slider-wrapper"
-              className={clsx(classes.slider, {
-                [classes.resizeSlider]: !isThumbnailType,
-              })}
+              className={classes.slider}
             >
               {renderItem()}
               {!props.disableButtons && !shouldHide && (
@@ -462,6 +449,7 @@ Slider.defaultProps = {
   width: 600,
   infinite: false,
   pauseOnMouseEnter: false,
+  timeout: 800
 };
 
 export default Slider;

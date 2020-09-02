@@ -1,8 +1,6 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
-import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -213,12 +211,6 @@ const HomeSection: React.ComponentType = () => {
         {/* ///////////// spacer //////////////////// */}
         <Grid item />
         {/* ///////////// spacer //////////////////// */}
-
-        <Grid item>
-          <Button variant="outlined" startIcon={<MenuIcon />}>
-            Categories
-          </Button>
-        </Grid>
         <Grid item container spacing={1} wrap="nowrap">
           <Grid item xs={3}>
             <Hidden smDown>
@@ -226,7 +218,7 @@ const HomeSection: React.ComponentType = () => {
             </Hidden>
           </Grid>
           <Grid item xs={10} md={6}>
-            <Slider autoplay showThumbs infinite effectType="fade">
+            <Slider autoplay showThumbs infinite>
               {mainAds.map((ad) => (
                 <Slide caption={ad.caption} key={ad.id}>
                   <Img src={ad.attachment} alt={ad.name} />

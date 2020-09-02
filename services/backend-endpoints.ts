@@ -21,7 +21,7 @@ const paths = {
   updateCart: (ID?: T) => `/cart/${ID}/`,
   getOrder: (ID?: T) => `/order/${ID}/`,
   orders: `/order/`,
-  getUser: (ID?: T) => `/users/${ID}/`,
+  getBuyer: (ID?: T) => `/buyer/users/${ID}/`,
   getPickupLocation: `/location/`,
   addressBook: `/buyer/users/addresses/`,
   getCategories: `/categories/`,

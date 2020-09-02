@@ -1,6 +1,7 @@
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import createStyles from "@material-ui/core/styles/createStyles";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import { blueGrey } from "@material-ui/core/colors";
 
 export default makeStyles((theme: Theme) =>
   createStyles({
@@ -30,6 +31,13 @@ export default makeStyles((theme: Theme) =>
     thumnbnail: {
       width: "100%",
       height: theme.spacing(6)
+    },
+    cartBtn: {
+      backgroundColor: theme.palette.primary.light,
+      "&:hover": {
+        backgroundColor: theme.palette.primary.dark,
+        color: "#FFF"
+      }
     }
   })
 );

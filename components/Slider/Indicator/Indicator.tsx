@@ -6,22 +6,17 @@ import { IndicatorProps } from "./@types";
 
 const Indicators: React.ComponentType<IndicatorProps> = (props) => {
   const [idx, setIdx] = useState(props.activeIndex);
-  const [dotDimension, setDotDimension] = useState(props.dotDimension);
+  const [dimension, setDimension] = useState(props.dotDimension);
 
-  const classes = useStyles({ ...dotDimension });
+  const classes = useStyles({ ...dimension });
 
-  useEffect(() => setDotDimension(props.dotDimension), [props.dotDimension]);
+  useEffect(() => setDimension(props.dotDimension), [props.dotDimension]);
 
   useEffect(() => setIdx(props.activeIndex), [props.activeIndex]);
 
   return (
     <div className={classes.indicatorWrapper} aria-label="indicator">
-      <div
-        className={classes.dotsWrapper}
-        role="button"
-        tabIndex={0}
-        aria-label="dots-wrapper"
-      >
+      <div className={classes.dotsWrapper} aria-label="dots-wrapper">
         {Children.map(props.children, (c, i) => (
           <ButtonBase
             key={i}

@@ -20,9 +20,10 @@ export default makeStyles((theme: Theme) =>
     },
     navHeader: {
       display: "block",
-      backgroundColor: theme.palette.grey[100],
+      backgroundColor: theme.palette.primary.main,
       padding: theme.spacing(1),
-      borderRadius: theme.shape.borderRadius
+      borderTopLeftRadius: theme.shape.borderRadius,
+      borderTopRightRadius: theme.shape.borderRadius
     },
     paper: {
       marginLeft: theme.spacing(1),

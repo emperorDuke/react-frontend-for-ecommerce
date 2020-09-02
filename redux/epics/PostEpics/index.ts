@@ -15,13 +15,17 @@ import {
   postingSuccess,
   postingFailed,
 } from "../../actionCreators/PostActions";
-import { of, iif, concat, from } from "rxjs";
-import { authenticate } from "../../actionCreators/UserAuthActions";
+import { of, iif, from } from "rxjs";
+import {
+  Authenticate,
+  authenticate,
+} from "../../actionCreators/UserAuthActions";
 import { BEARER } from "../../utils/bearer-constant";
+import { ajax } from "rxjs/ajax";
 
 type PostEpic = Epic<
-  PostActionTypes | ReturnType<typeof authenticate>,
-  PostActionTypes | ReturnType<typeof authenticate>,
+  PostActionTypes | Authenticate,
+  PostActionTypes | Authenticate,
   RootStoreState,
   EpicDepenciesType
 >;
@@ -50,7 +54,7 @@ const postEpic: PostEpic = (action$, state$, { http }) =>
         headers["Content-Type"] = "application/json";
       }
 
-      return http.post(payload.url, payload.body, headers).pipe(
+      return ajax.post(payload.url, payload.body, headers).pipe(
         mergeMap((res) =>
           iif(
             () =>
