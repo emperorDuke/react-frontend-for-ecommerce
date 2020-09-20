@@ -6,7 +6,7 @@ import useStyles from "./styles";
 import clsx from "classnames";
 import { jumpforward as JF, jumpbackward as JB } from "../utils";
 import ButtonBase from "@material-ui/core/ButtonBase";
-import { useDidUpdate } from "../../../utils";
+import { useDidUpdateEffect } from "../../../utils";
 import { ThumbnailsProps } from "./@types";
 
 const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
@@ -74,7 +74,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
       );
       return ++index;
     };
-  
+
     const getFocuserPosition = (prev: typeof value) => {
       const nTime = Math.abs(props.activeIndex - prev.activeIndex);
 
@@ -82,12 +82,14 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
         return 0;
       } else if (props.activeIndex > prev.activeIndex) {
         return JF(prev.focuserPosition, offsetX, nTime);
-      } else {
+      } else if (props.activeIndex < prev.activeIndex) {
         return JB(prev.focuserPosition, offsetX, nTime);
       }
+
+      return prev.focuserPosition;
     };
 
-    const getThumbPosition = (thumbPosition:  number) => {
+    const getThumbPosition = (thumbPosition: number) => {
       const currentGroup = getGroupNumber(props.activeIndex);
       const groupOffset = Math.abs(currentGroup - activeGroup.current);
       const nTime = noOfVisibleThumbs * groupOffset;
@@ -113,7 +115,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     }));
   }, [props.activeIndex]);
 
-  useDidUpdate(() => {
+  useDidUpdateEffect(() => {
     const updateFocuserPosition = (activeIndex: number) => {
       return activeIndex === 0 ? 0 : JF(0, offsetX, activeIndex);
     };
@@ -161,43 +163,52 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
     }));
   };
 
-  const hideRightBtn = {
+  const rightBtn = {
     [classes.disabledBtn]: activeGroup.current === groups.current.length,
+    [classes.onHoverRightBtn]: props.standalone
   };
 
-  const hideLeftBtn = {
+  const leftBtn = {
     [classes.disabledBtn]: activeGroup.current === 1,
+    [classes.onHoverLeftBtn]: props.standalone
   };
 
   return (
     <div className={classes.thumbnailsWrapper}>
       <div className={classes.thumbnails} {...handlers}>
-        <div className={classes.thumbsWrapper}>
-          {Children.map(props.children, (child, i) => (
-            <ButtonBase>
-              <div className={classes.thumbWrapperContainer}>
-                <div key={`child${i}`} className={classes.thumbWrapper}>
-                  {React.isValidElement(child) &&
-                    React.cloneElement(child, {
-                      __showCaption: false,
-                      __index: i,
-                      __setIndex: props.setIndex,
-                    })}
-                </div>
-              </div>
-            </ButtonBase>
-          ))}
-        </div>
+        {Children.map(props.children, (child, i) => (
+          <ButtonBase
+            className={classes.thumbWrapper}
+            key={`child-${i}`}
+          >
+            <div
+              className={clsx(classes.thumb, {
+                [classes.notActiveThumb]: i !== props.activeIndex,
+                [classes.activeThumb]:
+                  i === props.activeIndex &&
+                  props.focusThumbs &&
+                  props.standalone,
+              })}
+            >
+              {React.isValidElement(child) &&
+                React.cloneElement(child, {
+                  __showCaption: false,
+                  __index: i,
+                  __setIndex: props.setIndex,
+                })}
+            </div>
+          </ButtonBase>
+        ))}
         <div className={classes.focuser} />
       </div>
       <ButtonBase
-        className={clsx(classes.btn, classes.leftBtn, hideLeftBtn)}
+        className={clsx(classes.btn, classes.leftBtn, leftBtn)}
         onClick={prevGroup}
       >
         <ChevronLeftIcon />
       </ButtonBase>
       <ButtonBase
-        className={clsx(classes.btn, classes.rightBtn, hideRightBtn)}
+        className={clsx(classes.btn, classes.rightBtn, rightBtn)}
         onClick={nextGroup}
       >
         <ChevronRightIcon />

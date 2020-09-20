@@ -41,7 +41,7 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
       const itemsUrl = apiUrl("getProducts") + `?category=${item.category}`;
 
       dispatch(storeRequest(storeUrl));
-      dispatch(productRequest(itemsUrl));
+      // dispatch(productRequest(itemsUrl));
     }
   }, []);
 
@@ -66,7 +66,7 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
         {/** first group */}
         <Grid item xs={12} lg={9}>
           <Paper>
-            <Grid container spacing={1}>
+            <Grid container>
               <Grid item xs={12} md={6} lg={7}>
                 <Slider
                   disableButtons
@@ -94,16 +94,16 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item container spacing={1} xs={12} lg={3}>
-          <Grid item xs={12} md={8} lg={12}>
-            <Paper>
-              <PolicySection />
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={4} lg={12}>
-            <Paper className={classes.padding}>
-              {store && <StoreInfoSection {...store} />}
-            </Paper>
+        <Grid item xs={12} lg>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={7} lg={12}>
+              <Paper>
+                <PolicySection />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md lg>
+              <Paper>{store && <StoreInfoSection {...store} />}</Paper>
+            </Grid>
           </Grid>
         </Grid>
         {/** second group */}

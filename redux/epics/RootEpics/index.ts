@@ -12,20 +12,20 @@ import DeliveryAddressEpic from "../AddressEpics";
 import PaymentInformationEpics from "../PaymentInformationEpics";
 import AttributeEpics from "../AttributeEpics";
 import MetaEpics from "../MetaEpics";
-
-
+import UserEpics from "../UserEpics";
 
 export default combineEpics(
-    CartEpics,
-    StoreEpics,
-    ProductEpic,
-    postEpic,
-    filterEpic,
-    CategoryEpics,
-    LocationEpics,
-    PickupLocationEpic,
-    DeliveryAddressEpic,
-    PaymentInformationEpics,
-    AttributeEpics,
-    MetaEpics
+  CartEpics,
+  StoreEpics,
+  ProductEpic,
+  postEpic,
+  filterEpic,
+  CategoryEpics,
+  LocationEpics,
+  PickupLocationEpic,
+  DeliveryAddressEpic,
+  PaymentInformationEpics,
+  AttributeEpics,
+  MetaEpics,
+  UserEpics
 );

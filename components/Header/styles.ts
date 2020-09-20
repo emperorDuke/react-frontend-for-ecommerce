@@ -30,6 +30,9 @@ export default makeStyles((theme: Theme) =>
     },
     spacer: {
       width: theme.spacing(1)
+    },
+    btn: {
+      width: theme.spacing(5)
     }
   })
 );

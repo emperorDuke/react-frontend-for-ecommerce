@@ -1,5 +1,4 @@
 import React from "react";
-import clsx from "classnames";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
@@ -30,8 +29,8 @@ export * from "./styles";
 
 const Cart: React.ComponentType<CartProps> = (props) => {
   const classes = useStyles();
-  const globalProduct = useProduct();
-  const globalMerchantStore = useMerchantStore();
+  const product = useProduct();
+  const merchantStore = useMerchantStore();
 
   const tableHeadItems = [
     { id: "img", label: "Item" },
@@ -46,24 +45,24 @@ const Cart: React.ComponentType<CartProps> = (props) => {
   ));
 
   const tableBodyItems = props.items.map((item) => {
-    let tag: JSX.Element | undefined;
+    let tag = <React.Fragment key={item.index}></React.Fragment>;
 
-    const product = globalProduct.get(item.product);
+    const _product = product.get(item.product);
 
-    if (product) {
-      const attributes = globalProduct.getAttributes(product.id);
-      const merchantStore = globalMerchantStore.get(product.store);
+    if (_product) {
+      const attributes = product.getAttributes(_product.id);
+      const _merchantStore = merchantStore.get(_product.store);
 
       if (attributes) {
         tag = (
           <TableRow key={item.index}>
-            <TableCell component="th" scope="row">
+            <TableCell scope="row">
               <div style={{ maxWidth: "100px" }}>
-                <Link href={product.href} as={product.as}>
+                <Link href={_product.href} as={_product.as}>
                   <div className={classes.imageContainer}>
                     <Img
-                      src={product.attachment_1}
-                      alt={product.name}
+                      src={_product.attachment_1}
+                      alt={_product.name}
                       className={classes.image}
                     />
                   </div>
@@ -73,10 +72,10 @@ const Cart: React.ComponentType<CartProps> = (props) => {
             <TableCell>
               <div style={{ maxWidth: "300px" }}>
                 <Typography variant="subtitle2" gutterBottom>
-                  Seller: {merchantStore && merchantStore.name}
+                  Seller: {_merchantStore && _merchantStore.name}
                 </Typography>
                 <Typography variant="body2" gutterBottom>
-                  {product.name}
+                  {_product.name}
                 </Typography>
                 <Typography variant="caption" gutterBottom>
                   This product is eligible for free shiping from Lagos within 3
@@ -85,6 +84,7 @@ const Cart: React.ComponentType<CartProps> = (props) => {
                 <div className={classes.variantContainer}>
                   <Button
                     startIcon={<DeleteIcon />}
+                    color="primary"
                     onClick={() =>
                       props.onDelete({ index: item.index, id: item.id })
                     }
@@ -92,7 +92,11 @@ const Cart: React.ComponentType<CartProps> = (props) => {
                     Remove
                   </Button>
                   <div className={classes.spacer} />
-                  <Button startIcon={<FavoriteIcon />} variant="outlined">
+                  <Button
+                    startIcon={<FavoriteIcon />}
+                    variant="outlined"
+                    color="primary"
+                  >
                     Save for later
                   </Button>
                 </div>
@@ -106,7 +110,7 @@ const Cart: React.ComponentType<CartProps> = (props) => {
                       (attribute) => variant.attribute === attribute.id
                     );
                     return (
-                      <Grid item container xs={12}>
+                      <Grid item container xs={12} key={variant.id}>
                         <Grid item xs={12}>
                           <Typography className={classes.font}>
                             {attribute && attribute.name}:
@@ -127,7 +131,7 @@ const Cart: React.ComponentType<CartProps> = (props) => {
                           >
                             {variant.attachment ? (
                               <div className={classes.imageContainer}>
-                                <Link href={product.href} as={product.as}>
+                                <Link href={_product.href} as={_product.as}>
                                   <Img
                                     src={variant.attachment}
                                     alt={variant.vendor_metric}
@@ -174,7 +178,7 @@ const Cart: React.ComponentType<CartProps> = (props) => {
   });
 
   return (
-    <>
+    <React.Fragment>
       <AppBar position="static" className={classes.background}>
         <Toolbar>
           <Typography variant="h6"> Cart </Typography>
@@ -226,7 +230,7 @@ const Cart: React.ComponentType<CartProps> = (props) => {
           </Grid>
         </Grid>
       </Toolbar>
-    </>
+    </React.Fragment>
   );
 };
 

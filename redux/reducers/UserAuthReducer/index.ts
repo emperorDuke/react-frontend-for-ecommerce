@@ -30,6 +30,7 @@ export default function userAuthReducer(
     case auth.RESTORE_AUTH_STATE:
       return {
         ...state,
+        isLoggedIn: true,
         token: action.payload,
       };
     default:

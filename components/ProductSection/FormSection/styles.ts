@@ -8,6 +8,11 @@ export default makeStyles((theme: Theme) =>
     capText: {
       textTransform: "capitalize"
     },
+    green: {
+      backgroundColor: theme.palette.success.main,
+      padding: theme.spacing(0, 1, 0, 1),
+      color: theme.palette.success.contrastText,
+    },
     greyWrapper: {
       backgroundColor: theme.palette.grey[50]
     },

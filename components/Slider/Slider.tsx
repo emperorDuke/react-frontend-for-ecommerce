@@ -110,7 +110,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const classes = useStyles({
     ...state,
     thumbHeight: thumbnailDimension.height,
-    timeout: props.timeout
+    timeout: props.timeout,
   });
 
   const handlers = useSwipeable({
@@ -210,21 +210,11 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    const start = () => {
-      if (props.autoplay) {
-        resetAndStartCount();
-      }
-    };
+    if (props.autoplay) {
+      resetAndStartCount();
 
-    const cleanUpStarter = () => {
-      if (props.autoplay) {
-        destroyTimer;
-      }
-    };
-
-    start();
-
-    return cleanUpStarter;
+      return () => destroyTimer();
+    }
   }, [state.activeIndex, state.position]);
 
   const countDownSeconds = () => {
@@ -342,7 +332,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
             <Fade
               in={child.props.__index === state.activeIndex}
               timeout={props.timeout}
-              key={child.props.__index}
+              key={i}
             >
               {React.cloneElement(child, {
                 className: getCssClasses(i, child.props.className),
@@ -427,6 +417,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               thumbDimension={thumbnailDimension}
               noOfVisibleThumbs={noOfVisibleThumbs}
               focusThumbs={focusThumbs}
+              standalone={isThumbnailType}
             />
           )}
         </div>
@@ -449,7 +440,7 @@ Slider.defaultProps = {
   width: 600,
   infinite: false,
   pauseOnMouseEnter: false,
-  timeout: 800
+  timeout: 800,
 };
 
 export default Slider;

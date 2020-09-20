@@ -1,10 +1,10 @@
-import { default as ax, AxiosRequestConfig } from "axios";
-import { BEARER } from "../redux/utils/bearer-constant";
+import { default as ax } from "axios";
+import { BEARER } from "../redux/utils/constants";
 
 /**
  *  axios
  */
-export default function axiosClient(token: string) {
+export default function axiosClient(token?: string) {
   const axios = ax.create();
 
   axios.interceptors.request.use((config) => {

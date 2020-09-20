@@ -12,7 +12,7 @@ import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
 import { ajax } from "rxjs/ajax";
 
-export default (
+const locationEpics = (
   action$: ActionsObservable<LocationActionTypes>,
   { http }: EpicDepenciesType
 ) =>
@@ -25,3 +25,5 @@ export default (
       )
     )
   );
+
+  export default locationEpics;

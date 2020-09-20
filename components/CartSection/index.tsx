@@ -16,7 +16,7 @@ import useSelector from "../../redux/utils/useStoreSelector";
 import { CART_STORAGE_KEY } from "./utils";
 import { useProduct } from "../../services";
 import useStyles from "./styles";
-import { useDidUpdate } from "../../utils";
+import { useDidUpdateEffect } from "../../utils";
 
 export default function CartSection() {
   const isLoggedIn = useSelector(({ userAuth }) => userAuth.isLoggedIn);
@@ -24,21 +24,19 @@ export default function CartSection() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const router = useRouter();
-  const { get } = useProduct();
+  const product = useProduct();
 
   const [localCart, setLocalCart] = useState(cart);
 
   useEffect(() => {
-    let parsedCart: Array<CartType> = [];
-
-    if (!isLoggedIn) {
+    if (!isLoggedIn && typeof localStorage !== "undefined") {
       const localStorageCart = localStorage.getItem(CART_STORAGE_KEY);
-      parsedCart = localStorageCart ? JSON.parse(localStorageCart) : null;
+      const parsedCart = localStorageCart && JSON.parse(localStorageCart);
       if (parsedCart) dispatch(loadCart(parsedCart));
     }
   }, []);
 
-  useDidUpdate(() => {
+  useEffect(() => {
     setLocalCart(cart);
   }, [cart]);
 
@@ -46,18 +44,21 @@ export default function CartSection() {
     dispatch(removeItem(params));
   }, []);
 
-  const handleQtyChange = useCallback((qty: number, index?: number) => {
-    const item = localCart.find((cart) => cart.index === index);
-    if (item) {
-      const product = get(item.product);
-      item["quantity"] = qty;
-      if (product) {
-        const price = product.discount || product.price;
-        item["price"] = price * qty;
+  const handleQtyChange = useCallback(
+    (qty: number, index?: number) => {
+      const item = localCart.find((cart) => cart.index === index);
+      if (item) {
+        const _product = product.get(item.product);
+        item["quantity"] = qty;
+        if (_product) {
+          const price = _product.discount || _product.price;
+          item["price"] = price * qty;
+        }
+        dispatch(updateCart(item));
       }
-      dispatch(updateCart(item));
-    }
-  }, [localCart]);
+    },
+    [localCart]
+  );
 
   return (
     <Container>
@@ -80,7 +81,8 @@ export default function CartSection() {
                       className={classes.btn}
                       onClick={() => router.push("/checkout")}
                       variant="contained"
-                      color="secondary"
+                      color="primary"
+                      fullWidth
                     >
                       PROCEED TO CHECKOUT
                     </Button>
@@ -90,7 +92,8 @@ export default function CartSection() {
                       className={classes.btn}
                       onClick={() => router.push("/")}
                       variant="outlined"
-                      color="secondary"
+                      color="primary"
+                      fullWidth
                     >
                       CONTINUE SHOPPING
                     </Button>

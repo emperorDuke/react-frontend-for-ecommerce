@@ -6,16 +6,17 @@ import {
   mergeMap,
   catchError,
   map,
-  withLatestFrom
+  withLatestFrom,
 } from "rxjs/operators";
 import {
   PaymentInformationActionTypes,
   paymentInformation,
   paymentInformationSuceesful,
-  paymentInformationFailed
+  paymentInformationFailed,
 } from "../../actionCreators/PaymenInformation";
 import { RootStoreState } from "../../reducers/RootReducer";
 import { of } from "rxjs";
+import { BEARER } from "../../utils/constants";
 
 type PaymentInformationEpic = Epic<
   PaymentInformationActionTypes,
@@ -33,14 +34,18 @@ const PaymentInformationEpics: PaymentInformationEpic = (
     filter(isOfType(paymentInformation.REQUEST)),
     withLatestFrom(state$),
     mergeMap(([action, { userAuth: { token } }]) =>
-      http.get(action.payload, { Authorization: token }).pipe(
-        map(res =>
-          Array.isArray(res.response)
-            ? paymentInformationSuceesful(res.response)
-            : paymentInformationSuceesful([res.response])
-        ),
-        catchError(err => of(paymentInformationFailed(err.response)))
-      )
+      http
+        .get(action.payload, {
+          headers: { Authorization: `${BEARER} ${token}` },
+        })
+        .pipe(
+          map(({ data: res }) =>
+            Array.isArray(res)
+              ? paymentInformationSuceesful(res)
+              : paymentInformationSuceesful([res])
+          ),
+          catchError((err) => of(paymentInformationFailed(err.response)))
+        )
     )
   );
 

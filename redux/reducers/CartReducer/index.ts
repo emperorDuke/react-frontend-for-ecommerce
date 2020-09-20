@@ -58,7 +58,10 @@ export default function cartReducer(
     case cart.FETCH_SUCCESSFUL:
       return {
         ...state,
-        cart: action.payload,
+        cart: action.payload.map((cart, i) => {
+          cart["index"] = i;
+          return cart;
+        }),
         operations: {
           fetchCart: {
             status: FetchConst.FETCH_SUCCESSFUL,

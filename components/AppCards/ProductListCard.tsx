@@ -4,12 +4,12 @@ import CardActions from "@material-ui/core/CardActions";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import Rating from "../../Rating";
-import Img from "../../Img";
-import Link from "../../Link";
-import useStyles from "../styles";
-import { AppCardProps } from "../@types"
-import { useMerchantStore, EnhancedProductType } from "../../../services";
+import Rating from "../Rating";
+import Img from "../Img";
+import Link from "../Link";
+import useStyles from "./styles";
+import { AppCardProps } from "./@types"
+import { useMerchantStore, EnhancedProductType } from "../../services";
 
 const ListCard: React.ComponentType<EnhancedProductType & AppCardProps> = product => {
   const classes = useStyles();

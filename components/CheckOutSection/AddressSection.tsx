@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Formik, ErrorMessage } from "formik";
-import yup from "yup";
+import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -22,7 +21,6 @@ const schema = yup.object().shape({
     .string()
     .required("first name is required !")
     .min(2, "first name is too short !"),
-  middle_name: yup.string().notRequired(),
   last_name: yup
     .string()
     .required("last name is required !")
@@ -43,11 +41,15 @@ function AddressSection() {
   const [openAddressChangeForm, setAddressChangeForm] = useState(false);
   const buyer = useUser("buyer");
   const dispatch = useDispatch();
-  const defaultAddress = buyer.addressBook && buyer.addressBook.getDefault();
+  const defaultAddress =
+    !!buyer.shippingDetails && buyer.shippingDetails.getDefault();
+  const allAddresses =
+    !!buyer.shippingDetails &&
+    !!buyer.shippingDetails.all().length &&
+    buyer.shippingDetails.all();
 
   const initialValues = {
     first_name: "",
-    middle_name: "",
     last_name: "",
     phone_number: "",
     address: "",
@@ -57,10 +59,10 @@ function AddressSection() {
     zip_code: "",
   };
 
-  const handleAddressForm = (values: typeof initialValues) => {
+  const handleAddressForm = (values: {}) => {
     dispatch(
       Posting({
-        url: apiUrl("postAttributes"),
+        url: apiUrl("postShippingDetail"),
         body: JSON.stringify(values),
         reqAuth: true,
         config: { "Content-type": "application/json" },
@@ -73,7 +75,7 @@ function AddressSection() {
       {/** default address */}
       <Grid container>
         <Grid item>
-          <Typography variant="h4">Delivery Address</Typography>
+          <Typography variant="h6">Delivery Address</Typography>
         </Grid>
         <Grid item>
           <Button
@@ -89,7 +91,7 @@ function AddressSection() {
       <Divider />
       <Grid container>
         <Grid item>
-          {defaultAddress &&
+          {defaultAddress ? (
             Object.keys(defaultAddress)
               .filter((key) => key !== "id")
               .map((key) => (
@@ -102,7 +104,10 @@ function AddressSection() {
                   disabled
                   variant="outlined"
                 />
-              ))}
+              ))
+          ) : (
+            <Typography variant="h5">Add your shipping details</Typography>
+          )}
         </Grid>
       </Grid>
       {/** list of default address and saved addresses */}
@@ -110,6 +115,7 @@ function AddressSection() {
         open={openAddressChangeForm}
         onClose={() => setAddressChangeForm(false)}
         aria-labelledby="dialog-for-address-change"
+        fullWidth
       >
         <DialogTitle>Change Address</DialogTitle>
         <DialogActions>
@@ -125,36 +131,34 @@ function AddressSection() {
         <DialogContent>
           <Divider />
           <Grid container direction="column">
-            {buyer.addressBook &&
-              buyer.addressBook.all().map((address) => (
-                <Grid item>
-                  <Grid container direction="column">
-                    {Object.keys(address)
-                      .filter((key) => key !== "id")
-                      .map((key) => (
-                        <Grid item>
-                          <TextField
-                            id={key}
-                            name={key}
-                            type="text"
-                            label={key}
-                            value={address[key]}
-                            disabled
-                            variant="outlined"
-                          />
-                        </Grid>
-                      ))}
-                  </Grid>
+            {allAddresses ? (
+              allAddresses.map((address) => (
+                <Grid item container direction="column">
+                  {Object.keys(address)
+                    .filter((key) => key !== "id")
+                    .map((key) => (
+                      <Grid item>
+                        <TextField
+                          id={key}
+                          name={key}
+                          type="text"
+                          label={key}
+                          value={address[key]}
+                          disabled
+                          variant="outlined"
+                        />
+                      </Grid>
+                    ))}
                 </Grid>
-              ))}
+              ))
+            ) : (
+              <Typography variant="h5">Add your shipping details</Typography>
+            )}
           </Grid>
         </DialogContent>
       </Dialog>
       {/** form for adding new address */}
-      <Dialog
-        open={openForm}
-        aria-labelledby="dialog-for-address-form"
-      >
+      <Dialog open={openForm} aria-labelledby="dialog-for-address-form" fullWidth>
         <DialogTitle>Add new address</DialogTitle>
         <DialogContent>
           <BuyerSignUpForm

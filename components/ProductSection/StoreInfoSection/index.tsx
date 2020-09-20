@@ -18,7 +18,7 @@ const StoreInfoSection: React.ComponentType<MerchantStore> = (props) => {
             <Img src={props.logo} alt={props.name} className={classes.image} />
           </Grid>
         )}
-        <Grid item container spacing={1} alignItems="center">
+        <Grid item container spacing={1} alignItems="center" xs={12}>
           <Grid item xs={2}>
             <Label>seller:</Label>
           </Grid>
@@ -26,7 +26,7 @@ const StoreInfoSection: React.ComponentType<MerchantStore> = (props) => {
             <Typography variant="subtitle1">{props.name}</Typography>
           </Grid>
         </Grid>
-        <Grid item container spacing={1} alignItems="center">
+        <Grid item container spacing={1} alignItems="center" xs={12}>
           <Grid item xs={2}>
             <Label>rating:</Label>
           </Grid>
@@ -36,8 +36,8 @@ const StoreInfoSection: React.ComponentType<MerchantStore> = (props) => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid item>{props.verified && <p>Verified</p>}</Grid>
-        <Grid item>
+        <Grid item xs={12}>{props.verified && <p>Verified</p>}</Grid>
+        <Grid item xs={12}>
           <Typography variant="body2">44 followers</Typography>
         </Grid>
         <Grid item container xs={12} alignItems="center" spacing={1}>

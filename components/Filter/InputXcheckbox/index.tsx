@@ -11,7 +11,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormLabel from "@material-ui/core/FormLabel";
 import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
-import { useDidUpdate } from "../../../utils";
+import { useDidUpdateEffect } from "../../../utils";
 
 export * from "./@types";
 
@@ -31,7 +31,7 @@ const InputXcheckbox: React.ComponentType<InputXcheckboxProps> = ({
     []
   );
 
-  useDidUpdate(() => {
+  useDidUpdateEffect(() => {
     const idx = localItems["index"];
     const checked = localItems["items"][idx]["checked"];
 

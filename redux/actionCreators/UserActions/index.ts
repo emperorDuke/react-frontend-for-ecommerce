@@ -1,4 +1,5 @@
 import { Action } from "redux";
+import { setCookie } from "../../../cookie";
 
 export interface UserType {
   id?: number;
@@ -13,7 +14,7 @@ export interface UserType {
 export enum user {
   REQUEST = "request",
   FETCH_SUCCESSFUL = "fetch successful",
-  FETCH_FAILED = "fetch failed"
+  FETCH_FAILED = "fetch failed",
 }
 
 export interface UserRequestType extends Action {
@@ -34,21 +35,22 @@ export interface UserFailedType extends Action {
 export function userRequest(payload: string): UserRequestType {
   return {
     type: user.REQUEST,
-    payload
+    payload,
   };
 }
 
 export function userSuccesful(payload: UserType): UserSuccessfulType {
+  setCookie("user_id", String(payload.id));
   return {
     type: user.FETCH_SUCCESSFUL,
-    payload
+    payload,
   };
 }
 
 export function userFailed(payload: string): UserFailedType {
   return {
     type: user.FETCH_FAILED,
-    payload
+    payload,
   };
 }
 

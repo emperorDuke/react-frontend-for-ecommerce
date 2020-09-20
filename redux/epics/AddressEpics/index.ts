@@ -17,7 +17,8 @@ import {
 } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
-import { BEARER } from "../../utils/bearer-constant";
+import { BEARER } from "../../utils/constants";
+import Axios from "axios-observable";
 
 type AddressEpic = Epic<
   AddressActionTypes,
@@ -26,26 +27,21 @@ type AddressEpic = Epic<
   EpicDepenciesType
 >;
 
-const DeliveryAddressEpic: AddressEpic = (action$, state$, { http }) =>
+const DeliveryAddressEpic: AddressEpic = (action$, state$) =>
   action$.pipe(
     filter(isOfType(address.REQUEST)),
     withLatestFrom(state$),
     switchMap(([action, { userAuth: { token } }]) =>
-      http
-        .getJSON<Array<ShippingDetailType> | ShippingDetailType>(
-          action.payload,
-          {
-            Authorization: `${BEARER} ${token}`,
-          }
-        )
-        .pipe(
-          map((res) =>
-            Array.isArray(res)
-              ? addressSuccessful(res)
-              : addressSuccessful([res])
-          ),
-          catchError((err) => of(addressFailed(err.response)))
-        )
+      Axios.get(action.payload, {
+        headers: {
+          Authorization: `${BEARER} ${token}`,
+        },
+      }).pipe(
+        map(({ data: res }) =>
+          Array.isArray(res) ? addressSuccessful(res) : addressSuccessful([res])
+        ),
+        catchError((err) => of(addressFailed(err.response)))
+      )
     )
   );
 

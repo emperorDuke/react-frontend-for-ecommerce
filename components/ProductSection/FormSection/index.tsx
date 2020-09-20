@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import Paper from "@material-ui/core/Paper";
 import clsx from "classnames";
 import InputWidget from "../../InputWidget";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCartOutlined";
@@ -18,7 +19,6 @@ import useStyles from "./styles";
 import { PropsType } from "./@types";
 import Flag from "../../Flag";
 import Link from "../../Link";
-import { StyledButton } from "../../Header";
 
 export default function ProductDetails(props: PropsType) {
   const [variants, setVariants] = useState<VariationType[]>([]);
@@ -28,7 +28,7 @@ export default function ProductDetails(props: PropsType) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const handleOptions = (action: "buyNow" | "addToCart") => {
+  const handleOptions = (action: "buyNow" | "addToCart") => () => {
     const price = props.product.discount || props.product.price;
 
     dispatch(
@@ -43,8 +43,9 @@ export default function ProductDetails(props: PropsType) {
     if (action === "buyNow") router.push("/checkout-page");
   };
 
-  const getVariant = (id?: number) =>
-    variants.filter((v) => v.attribute === id);
+  const getVariant = (id?: number) => {
+    return variants.filter((v) => v.attribute === id);
+  };
 
   const handleVariantChange = (param: VariationType) => () => {
     const tempVariants = variants.slice();
@@ -78,9 +79,10 @@ export default function ProductDetails(props: PropsType) {
           <Grid item>
             {getVariant(attribute.id).map((v) => (
               <Typography
-                variant="body2"
+                variant="subtitle2"
                 className={classes.capText}
                 key={v.vendor_metric}
+                color="secondary"
               >
                 {v.metric_verbose_name || v.vendor_metric}
               </Typography>
@@ -121,7 +123,11 @@ export default function ProductDetails(props: PropsType) {
               {/** next level "availabilty and brand" */}
               <Grid item container alignItems="center" spacing={1}>
                 <Grid item>
-                  <Flag flag={props.product.availability} />
+                  <Paper className={classes.green} elevation={0}>
+                    <Typography variant="subtitle2">
+                      {props.product.availability}
+                    </Typography>
+                  </Paper>
                 </Grid>
                 <Grid item>
                   <Typography variant="body1">|</Typography>
@@ -183,7 +189,10 @@ export default function ProductDetails(props: PropsType) {
               <div className={classes.flexGrow} />
               <Grid item>
                 <Typography variant="caption">
-                  Want to sell ? <Link href="/">Start here</Link>
+                  Want to sell ?{" "}
+                  <Link href="/" color="secondary">
+                    Start here
+                  </Link>
                 </Typography>
               </Grid>
             </Grid>
@@ -219,18 +228,19 @@ export default function ProductDetails(props: PropsType) {
         <Grid item xs={12}>
           <Grid container spacing={1}>
             <Grid item>
-              <StyledButton
-                onClick={() => handleOptions("addToCart")}
+              <Button
+                onClick={handleOptions("addToCart")}
                 variant="contained"
+                color="primary"
                 startIcon={<AddShoppingCartIcon />}
                 className={classes.cartBtn}
               >
                 Add to cart
-              </StyledButton>
+              </Button>
             </Grid>
             <Grid item>
               <Button
-                onClick={() => handleOptions("buyNow")}
+                onClick={handleOptions("buyNow")}
                 variant="contained"
                 color="primary"
               >

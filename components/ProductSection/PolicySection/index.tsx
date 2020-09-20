@@ -8,7 +8,7 @@ const PolicySection = () => {
   return (
     <div style={{ padding: "8px" , flexGrow: 1 }}>
       <Grid container spacing={1} direction="column">
-        <Grid item container>
+        <Grid item container xs={12}>
           <Grid item sm={3} md={3} lg={3}>
             <Typography variant="subtitle2">Return policy:</Typography>
           </Grid>
@@ -19,7 +19,7 @@ const PolicySection = () => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid item container>
+        <Grid item container xs={12}>
           <Grid item sm={3} md={3} lg={3}>
             <Typography variant="subtitle2">Seller guarantees:</Typography>
           </Grid>
@@ -34,7 +34,7 @@ const PolicySection = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item container>
+        <Grid item container xs={12}>
           <Grid item sm={3} md={3} lg={3}>
             <Typography variant="subtitle2">Store promotions:</Typography>
           </Grid>
@@ -44,7 +44,7 @@ const PolicySection = () => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid item container>
+        <Grid item container xs={12}>
           <Grid item sm={3} md={3} lg={3}>
             <Typography variant="subtitle2">Payments:</Typography>
           </Grid>

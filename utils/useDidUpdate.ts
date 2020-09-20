@@ -5,7 +5,7 @@ import React from "react";
  * @param effect effect callback
  * @param deps effect dependencies
  */
-export const useDidUpdate = (
+export const useDidUpdateEffect = (
   effect: React.EffectCallback,
   deps?: React.DependencyList
 ) => {

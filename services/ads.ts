@@ -6,7 +6,7 @@ import { productEnhancer, useProduct } from "./product";
 import { useDispatch } from "react-redux";
 import { extendProducts } from "../redux/actionCreators/ProductActions";
 import { extendStores } from "../redux/actionCreators/StoreActions";
-import { useMemoCompare, useDidUpdate } from "../utils";
+import { useMemoCompare, useDidUpdateEffect } from "../utils";
 
 export function useAds() {
   const internalAds = useSelector(({ carousels }) => carousels.carousels);
@@ -51,7 +51,7 @@ export function useAds() {
 
   const [items, setItems] = useState(mappedItems);
 
-  useDidUpdate(() => setItems(mappedItems), [mappedItems]);
+  useDidUpdateEffect(() => setItems(mappedItems), [mappedItems]);
 
   useEffect(() => {
     const storeProducts = sponsored.sponsoredStores

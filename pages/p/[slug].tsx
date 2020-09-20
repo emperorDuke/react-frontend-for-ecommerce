@@ -18,6 +18,8 @@ import {
   metafailure,
 } from "../../redux/actionCreators/ProductMetaActions";
 import fetch from "../../utils/Fetch";
+import { getCookie } from "../../cookie";
+import { restoreState } from "../../redux/actionCreators/UserAuthActions";
 
 const ProductPage: NextPage<{ id: string }> = ({ id }) => {
   return (
@@ -33,24 +35,27 @@ ProductPage.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
   const { id } = ctx.query;
   const ID = Array.isArray(id) ? id[0] : id;
   const dispatch = ctx.store.dispatch;
+  const token = getCookie("token", ctx.req);
 
-  await fetch(
-    dispatch,
-    { success: productSuccess, failure: productFailure },
-    apiUrl("getProduct", ID)
-  );
+  if (token) dispatch(restoreState(token));
 
-  await fetch(
-    dispatch,
-    { success: attributeSuccess, failure: attributeFailure },
-    apiUrl("getProductAttributes", ID)
-  );
-
-  await fetch(
-    dispatch,
-    { success: metaSucessful, failure: metafailure },
-    apiUrl("getProductMetas", ID)
-  );
+  await Promise.all([
+    fetch(
+      dispatch,
+      { success: productSuccess, failure: productFailure },
+      apiUrl("getProduct", ID)
+    ),
+    fetch(
+      dispatch,
+      { success: attributeSuccess, failure: attributeFailure },
+      apiUrl("getProductAttributes", ID)
+    ),
+    fetch(
+      dispatch,
+      { success: metaSucessful, failure: metafailure },
+      apiUrl("getProductMetas", ID)
+    ),
+  ]);
 
   return { id: ID };
 };

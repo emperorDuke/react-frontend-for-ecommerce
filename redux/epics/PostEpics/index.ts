@@ -9,6 +9,7 @@ import {
   catchError,
   withLatestFrom,
   concatAll,
+  map,
 } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import {
@@ -20,8 +21,7 @@ import {
   Authenticate,
   authenticate,
 } from "../../actionCreators/UserAuthActions";
-import { BEARER } from "../../utils/bearer-constant";
-import { ajax } from "rxjs/ajax";
+import { BEARER } from "../../utils/constants";
 
 type PostEpic = Epic<
   PostActionTypes | Authenticate,
@@ -33,6 +33,8 @@ type PostEpic = Epic<
 type Header = {
   [key: string]: string;
 };
+
+const property = Object.prototype.hasOwnProperty;
 
 const postEpic: PostEpic = (action$, state$, { http }) =>
   action$.pipe(
@@ -54,21 +56,24 @@ const postEpic: PostEpic = (action$, state$, { http }) =>
         headers["Content-Type"] = "application/json";
       }
 
-      return ajax.post(payload.url, payload.body, headers).pipe(
-        mergeMap((res) =>
+      return http.post(payload.url, payload.body, { headers }).pipe(
+        mergeMap(({ data: response }) =>
           iif(
             () =>
-              Object.prototype.hasOwnProperty.call(res.response, "token") &&
-              res.response["token"] !== null &&
-              res.response["token"] !== undefined,
+              property.call(response, "token") &&
+              response["token"] !== null &&
+              response["token"] !== undefined,
             from([
-              of(authenticate(res.response["token"])),
-              of(postingSuccess(res.response)),
+              of(authenticate(response["token"])),
+              of(response).pipe(
+                map(({ token, ...rest }) => rest),
+                map(postingSuccess)
+              ),
             ]).pipe(concatAll()),
-            of(postingSuccess(res.response))
+            of(postingSuccess(response))
           )
         ),
-        catchError((err) => of(postingFailed(err.response)))
+        catchError((err) => of(postingFailed(err.response.data)))
       );
     })
   );

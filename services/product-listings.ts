@@ -3,7 +3,7 @@ import useSelector from "../redux/utils/useStoreSelector";
 import { productEnhancer, useProduct, EnhancedProductType } from "./product";
 import { useDispatch } from "react-redux";
 import { extendProducts } from "../redux/actionCreators/ProductActions";
-import { useMemoCompare, useDidUpdate } from "../utils";
+import { useMemoCompare, useDidUpdateEffect } from "../utils";
 
 export function useListings() {
   const incomingListings = useSelector(({ listings }) => listings.listings);
@@ -37,7 +37,7 @@ export function useListings() {
 
   const [listings, setListings] = React.useState(mappedListings);
 
-  useDidUpdate(() => {
+  useDidUpdateEffect(() => {
     setListings(mappedListings);
   }, [mappedListings]);
 

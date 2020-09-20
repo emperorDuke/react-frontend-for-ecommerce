@@ -1,4 +1,4 @@
-import { CartProps } from "../@types";
+import { CartProps } from "./@types";
 
 export function sum(items: CartProps["items"]) {
   let total = 0;

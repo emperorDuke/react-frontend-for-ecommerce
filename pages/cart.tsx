@@ -10,9 +10,12 @@ import { Container } from "next/app";
 import Header from "../components/Header";
 import CartSection from "../components/CartSection";
 import Footer from "../components/Footer";
-import { apiUrl } from "../services";
-import { BEARER } from "../redux/utils/bearer-constant";
-import axios from "axios";
+import { apiUrl as path } from "../services";
+import { dependencies } from "../redux/epics/CartEpics";
+import Axios from "axios-observable";
+import { BEARER } from "../redux/utils/constants";
+import { map, exhaustMap, takeWhile, toArray } from "rxjs/operators";
+import { of, merge } from "rxjs";
 
 const CartPage: NextPage = () => {
   return (
@@ -26,25 +29,30 @@ const CartPage: NextPage = () => {
 
 CartPage.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
   const dispatch = ctx.store.dispatch;
+  const token = getCookie("token", ctx.req);
 
-  if (ctx.isServer) {
-    const token = getCookie("token", ctx.req);
-    if (token) {
-      dispatch(restoreState(token));
-      
-      try {
-        const response = await axios({
-          url: apiUrl("getCarts"),
-          method: "get",
-          headers: {
-            Authorization: `${BEARER} ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        dispatch(cartRequestSuccessful(response.data));
-      } catch (error) {
-        dispatch(cartRequestFailed(error.response.data));
-      }
+  if (token) {
+    dispatch(restoreState(token));
+    try {
+      const actions = await Axios.get(path("getCarts"), {
+        headers: {
+          Authorization: `${BEARER} ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .pipe(
+          map(({ data: cart }) => cart),
+          takeWhile((cart) => !!cart.length),
+          exhaustMap((cart) =>
+            merge(of(cartRequestSuccessful(cart)), dependencies(cart, Axios))
+          ),
+          toArray()
+        )
+        .toPromise();
+
+      actions.forEach((action) => dispatch(action));
+    } catch (error) {
+      dispatch(cartRequestFailed(error.response.data));
     }
   }
 

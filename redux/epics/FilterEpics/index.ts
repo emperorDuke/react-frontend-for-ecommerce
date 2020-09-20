@@ -2,14 +2,14 @@ import { ActionsObservable } from "redux-observable";
 import {
   FilterActionTypes,
   filter as filterType,
-  FilterKeyTypes
+  FilterKeyTypes,
 } from "../../actionCreators/FilterActions";
 import { EpicDepenciesType } from "../../../store";
 import { filter, switchMap, map, catchError } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import {
   filterSuccess,
-  filterFailure
+  filterFailure,
 } from "../../actionCreators/FilterActions";
 import { of } from "rxjs";
 
@@ -20,11 +20,13 @@ const filterEpic = (
   action$.pipe(
     filter(isOfType(filterType.FILTER_REQUEST)),
     switchMap(({ payload }) =>
-      http.getJSON<FilterKeyTypes>(payload).pipe(
-        map(val => [val]),
-        map(filterSuccess),
-        catchError(err => of(filterFailure(err.response)))
-      )
+      http
+        .get(payload, { headers: { "Content-Type": "application/json" } })
+        .pipe(
+          map(({ data: val }) => [val]),
+          map(filterSuccess),
+          catchError((err) => of(filterFailure(err.response)))
+        )
     )
   );
 

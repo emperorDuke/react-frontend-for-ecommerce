@@ -25,36 +25,41 @@ import {
   sponsoredStoreSuccess,
   sponsoredStoreFailure,
 } from "../redux/actionCreators/SponsoredActions";
+import { getCookie } from "../cookie";
+import { restoreState } from "../redux/actionCreators/UserAuthActions";
 
 class Index extends React.Component {
-  static async getInitialProps({ store }: NextPageContext & NextJSContext) {
+  static async getInitialProps(ctx: NextPageContext & NextJSContext) {
+    const dispatch = ctx.store.dispatch;
+    const token = getCookie("token", ctx.req);
+    if (token) restoreState(token);
 
     await fetch(
-      store.dispatch,
+      dispatch,
       { success: storeSuccess, failure: storeFailure },
       apiUrl("getMerchantStores")
     );
 
     await fetch(
-      store.dispatch,
+      dispatch,
       { success: carouselSuccess, failure: carouselFailure },
       apiUrl("getInternalAds")
     );
 
     await fetch(
-      store.dispatch,
+      dispatch,
       { success: listingSuccessful, failure: listingRequestFailed },
       apiUrl("getListings")
     );
 
     await fetch(
-      store.dispatch,
+      dispatch,
       { success: sponsoredProductSuccess, failure: sponsoredProductFailed },
       apiUrl("getSponsoredProducts")
     );
 
     await fetch(
-      store.dispatch,
+      dispatch,
       { success: sponsoredStoreSuccess, failure: sponsoredStoreFailure },
       apiUrl("getSponsoredStores")
     );

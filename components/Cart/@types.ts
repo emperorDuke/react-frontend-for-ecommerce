@@ -1,4 +1,4 @@
-import { CartType } from "../../../redux/actionCreators/CartActions";
+import { CartType } from "../../redux/actionCreators/CartActions";
 
 export type CartProps = {
     onChange: (qty:number, id?:number) => void;

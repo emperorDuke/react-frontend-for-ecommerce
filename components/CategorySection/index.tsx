@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { productRequest } from "../../redux/actionCreators/ProductActions";
 import Sorter from "../Sorter";
 import useStyles from "./styles";
-import { useDidUpdate } from "../../utils/useDidUpdate";
+import { useDidUpdateEffect } from "../../utils/useDidUpdate";
 
 export * from "./utils";
 export * from "./@types";
@@ -25,7 +25,7 @@ const CategorySection: React.ComponentType<CategorySectionProps> = (props) => {
 
   const dispatch = useDispatch();
 
-  useDidUpdate(() => {
+  useDidUpdateEffect(() => {
     dispatch(productRequest(`/products/?${stateQuery}`));
   }, [stateQuery]);
 

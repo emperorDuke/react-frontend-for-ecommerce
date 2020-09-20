@@ -23,8 +23,12 @@ const CustomSearch: React.ComponentType<SearchBarProps> = ({
   ));
 
   const categoryOptions = categories.map((category) =>
-    category.children.map((child) => (
-      <option value={child.name} key={child.name} className={classes.options}>
+    category.children.map((child, i) => (
+      <option
+        value={child.name}
+        key={`${child.name}${i}`}
+        className={classes.options}
+      >
         {child.name}
       </option>
     ))
@@ -70,7 +74,7 @@ const CustomSearch: React.ComponentType<SearchBarProps> = ({
           </NativeSelect>
         }
         endAdornment={
-          <IconButton onClick={postSearch} >
+          <IconButton onClick={postSearch}>
             <SearchIcon />
           </IconButton>
         }

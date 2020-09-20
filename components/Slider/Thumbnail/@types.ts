@@ -8,4 +8,5 @@ export interface ThumbnailsProps {
   className?: string;
   noOfVisibleThumbs?: number;
   focusThumbs?: boolean;
+  standalone?: boolean;
 }

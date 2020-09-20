@@ -6,15 +6,15 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Img from "../../Img";
-import Link from "../../Link";
-import CurrencyManager from "../../CurrencyManager";
-import Rating from "../../Rating";
-import { EnhancedProductType } from "../../../services";
-import { AppCardProps } from "../@types";
-import useStyles from "../styles";
+import Img from "../Img";
+import Link from "../Link";
+import CurrencyManager from "../CurrencyManager";
+import Rating from "../Rating";
+import { EnhancedProductType } from "../../services";
+import { AppCardProps } from "./@types";
+import useStyles from "./styles";
 import useTheme from "@material-ui/core/styles/useTheme";
-import Flag from "../../Flag";
+import Flag from "../Flag";
 
 type PropsType = EnhancedProductType & AppCardProps;
 

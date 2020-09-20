@@ -29,8 +29,8 @@ const HomeSection: React.ComponentType = () => {
   const randomStores = merchantStore
     .all()
     .filter((store) => !store.verified)
-    .map((store) => (
-      <Grid item key={store.name} xs>
+    .map((store, i) => (
+      <Grid item key={`${store.name}${i}`} xs>
         <Card>
           <Link href={store.href} as={store.as}>
             <CardContent>
