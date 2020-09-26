@@ -5,10 +5,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { getCookie } from "../cookie";
 import { restoreState } from "../redux/actionCreators/UserAuthActions";
-import {
-  orderSuccess,
-  orderFailed,
-} from "../redux/actionCreators/OrderActions";
 import { apiUrl as path } from "../services";
 import { userSuccesful, userFailed } from "../redux/actionCreators/UserActions";
 import {
@@ -20,7 +16,54 @@ import {
   pickUpLocationFailed,
 } from "../redux/actionCreators/PickupLocations";
 import CheckOut from "../components/CheckOutSection/CheckOut";
-import axiosClient from "../axios-client";
+import { TOKEN, USERID } from "../utils/cookieConstants";
+import Axios from "axios-observable";
+import { BEARER } from "../redux/utils/constants";
+import {
+  map,
+  takeWhile,
+  exhaustMap,
+  catchError,
+  toArray,
+} from "rxjs/operators";
+import { merge, of, forkJoin, Observable, EMPTY } from "rxjs";
+import {
+  cartRequestSuccessful,
+  cartRequestFailed,
+  CartType,
+} from "../redux/actionCreators/CartActions";
+import {
+  ProductType,
+  productSuccess,
+} from "../redux/actionCreators/ProductActions";
+import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
+
+function fetchCart(headers: AxiosRequestConfig["headers"]) {
+  return Axios.get(path("getCarts"), {
+    headers,
+  }).pipe(
+    map(({ data: cart }: AxiosResponse<CartType[]>) => cart),
+    takeWhile((cart) => !!cart.length),
+    exhaustMap((cart) =>
+      merge(
+        of(cartRequestSuccessful(cart)),
+        forkJoin(
+          cart.map(
+            ({ product }): Observable<ProductType> =>
+              Axios.get(path("getProduct", product), {
+                headers: headers["Content-Type"],
+              }).pipe(
+                map(({ data }: AxiosResponse<ProductType>) => data),
+                catchError(() => EMPTY)
+              )
+          )
+        ).pipe(map(productSuccess))
+      )
+    ),
+    catchError((err) => of(cartRequestFailed(err.response.data))),
+    toArray()
+  );
+}
 
 const Checkout: NextPage = () => {
   return (
@@ -33,37 +76,37 @@ const Checkout: NextPage = () => {
 };
 
 Checkout.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
-  const { order } = ctx.query;
-  const token = getCookie("token", ctx.req);
-  const userId = getCookie("user_id", ctx.req);
+  const token = getCookie(TOKEN, ctx.req);
+  const userId = getCookie(USERID, ctx.req);
   const dispatch = ctx.store.dispatch;
 
   if (token) {
-    const axios = axiosClient(token);
-    const responses = await Promise.all([
+    dispatch(restoreState(token));
+
+    const headers = {
+      Authorization: `${BEARER} ${token}`,
+      "Content-Type": "application/json",
+    };
+
+    const actions = await Promise.all([
       axios
-        .get(path("getOrder", order as string))
-        .then((response) => orderSuccess(response.data))
-        .catch((error) => orderFailed(error.response.data)),
-      axios
-        .get(path("getShippingDetails"))
+        .get(path("getShippingDetails"), { headers })
         .then((response) => addressSuccessful(response.data))
         .catch((error) => addressFailed(error.response.data)),
       axios
-        .get(path("getBuyer", userId))
+        .get(path("getBuyer", userId), { headers })
         .then((response) => userSuccesful(response.data))
         .catch((error) => userFailed(error.response.data)),
       axios
-        .get(path("getPickupLocation"))
+        .get(path("getPickupLocation"), { headers })
         .then((response) => pickUpLocationSuccessful(response.data))
         .catch((error) => pickUpLocationFailed(error.response.data)),
     ]);
 
-    responses.forEach((response) => {
-      dispatch(response);
-    });
+    const cartActions = await fetchCart(headers).toPromise();
 
-    dispatch(restoreState(token));
+    actions.forEach(dispatch);
+    cartActions.forEach(dispatch);
   }
 
   return {};

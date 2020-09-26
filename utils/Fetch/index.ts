@@ -2,6 +2,8 @@ import { Dispatch, Action } from "redux";
 import axios from "axios";
 import { makeArray } from "../makeArray";
 
+export * from "./@types";
+
 type ActionCreatorType = (arg: any) => Action;
 
 interface ActionType {

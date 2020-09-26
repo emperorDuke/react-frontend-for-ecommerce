@@ -14,8 +14,15 @@ import { apiUrl as path } from "../services";
 import { dependencies } from "../redux/epics/CartEpics";
 import Axios from "axios-observable";
 import { BEARER } from "../redux/utils/constants";
-import { map, exhaustMap, takeWhile, toArray } from "rxjs/operators";
+import {
+  map,
+  exhaustMap,
+  takeWhile,
+  toArray,
+  catchError,
+} from "rxjs/operators";
 import { of, merge } from "rxjs";
+import { TOKEN } from "../utils/cookieConstants";
 
 const CartPage: NextPage = () => {
   return (
@@ -29,31 +36,29 @@ const CartPage: NextPage = () => {
 
 CartPage.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
   const dispatch = ctx.store.dispatch;
-  const token = getCookie("token", ctx.req);
+  const token = getCookie(TOKEN, ctx.req);
 
   if (token) {
     dispatch(restoreState(token));
-    try {
-      const actions = await Axios.get(path("getCarts"), {
-        headers: {
-          Authorization: `${BEARER} ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-        .pipe(
-          map(({ data: cart }) => cart),
-          takeWhile((cart) => !!cart.length),
-          exhaustMap((cart) =>
-            merge(of(cartRequestSuccessful(cart)), dependencies(cart, Axios))
-          ),
-          toArray()
-        )
-        .toPromise();
 
-      actions.forEach((action) => dispatch(action));
-    } catch (error) {
-      dispatch(cartRequestFailed(error.response.data));
-    }
+    const actions = await Axios.get(path("getCarts"), {
+      headers: {
+        Authorization: `${BEARER} ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .pipe(
+        map(({ data: cart }) => cart),
+        takeWhile((cart) => !!cart.length),
+        exhaustMap((cart) =>
+          merge(of(cartRequestSuccessful(cart)), dependencies(cart, Axios))
+        ),
+        catchError((err) => of(cartRequestFailed(err.response.data))),
+        toArray()
+      )
+      .toPromise();
+
+    actions.forEach(dispatch);
   }
 
   return {};

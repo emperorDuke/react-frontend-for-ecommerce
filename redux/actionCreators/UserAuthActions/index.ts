@@ -1,8 +1,9 @@
 import { auth, Authenticate, Deauthenticate, RestoreAuth } from "./@types";
 import { setCookie, removeCookie } from "../../../cookie";
+import { TOKEN } from "../../../utils/cookieConstants";
 
 export function authenticate(token: string): Authenticate {
-  setCookie("token", token);
+  setCookie(TOKEN, token);
   return {
     type: auth.AUTHENTICATE,
     payload: token,
@@ -10,7 +11,7 @@ export function authenticate(token: string): Authenticate {
 }
 
 export function deAuthenticate(): Deauthenticate {
-  removeCookie("token");
+  removeCookie(TOKEN);
   return {
     type: auth.DEAUTHENTICATE,
   };

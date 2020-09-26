@@ -1,5 +1,6 @@
 import { Action } from "redux";
 import { setCookie } from "../../../cookie";
+import { USERID } from "../../../utils/cookieConstants";
 
 export interface UserType {
   id?: number;
@@ -40,7 +41,7 @@ export function userRequest(payload: string): UserRequestType {
 }
 
 export function userSuccesful(payload: UserType): UserSuccessfulType {
-  setCookie("user_id", String(payload.id));
+  setCookie(USERID, String(payload.id));
   return {
     type: user.FETCH_SUCCESSFUL,
     payload,

@@ -16,15 +16,15 @@ import {
   categorySuccess,
   categoryFailure,
 } from "../../redux/actionCreators/CategoryActions";
-import fetch from "../../utils/Fetch";
-import { apiUrl } from "../../services";
+import axios from "axios";
+import { apiUrl as path } from "../../services";
+import { makeArray } from "../../utils";
 
 type Props = {
   ID: string;
 };
 
 const CategoryPage: NextPage<Props> = ({ ID }) => {
-
   return (
     <Container>
       <Header />
@@ -38,24 +38,25 @@ CategoryPage.getInitialProps = async (ctx: NextPageContext & NextJSContext) => {
   const { id } = ctx.query;
   const ID = Array.isArray(id) ? id[0] : id;
   const dispatch = ctx.store.dispatch;
+  const headers = { "Content-Type": "application/json" };
 
-  await fetch(
-    dispatch,
-    { success: productSuccess, failure: productFailure },
-    apiUrl("getProducts") + `?category=${ID}`
-  );
+  const actions = await Promise.all([
+    axios
+      .get(path("getProducts") + `?category=${ID}`, { headers })
+      .then((res) => productSuccess(makeArray(res.data)))
+      .catch((err) => productFailure(err.response.data)),
+    axios
+      .get(path("getFilters", ID), { headers })
+      .then((res) => filterSuccess(makeArray(res.data)))
+      .catch((err) => filterFailure(err.response.data)),
+    axios
+      .get(path("getCategories"), { headers })
+      .then((res) => categorySuccess(makeArray(res.data)))
+      .catch((err) => categoryFailure(err.response.data)),
+  ]);
 
-  await fetch(
-    dispatch,
-    { success: filterSuccess, failure: filterFailure },
-    apiUrl("getFilters", ID)
-  );
+  actions.forEach(dispatch);
 
-  await fetch(
-    dispatch,
-    { success: categorySuccess, failure: categoryFailure },
-    apiUrl("getCategories")
-  );
   return { ID };
 };
 

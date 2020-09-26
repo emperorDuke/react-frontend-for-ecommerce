@@ -14,7 +14,7 @@ export function shallowCompare<T>(previous: T, current: T): boolean {
 }
 
 /**
- * returns a memoized version of the value that only changes if different
+ * Returns a memoized version of the value that only changes if different
  * @param current current value
  * @param equityFn equity function
  */

@@ -1,12 +1,12 @@
 import React from "react";
 import { NextPageContext } from "next";
 import { NextJSContext } from "next-redux-wrapper";
+import axios from "axios";
 import { Container } from "next/app";
 import HomeMainSection from "../components/HomeSection";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import fetch from "../utils/Fetch";
-import { apiUrl } from "../services";
+import { apiUrl as path } from "../services";
 import {
   storeSuccess,
   storeFailure,
@@ -27,42 +27,41 @@ import {
 } from "../redux/actionCreators/SponsoredActions";
 import { getCookie } from "../cookie";
 import { restoreState } from "../redux/actionCreators/UserAuthActions";
+import { makeArray } from "../utils";
+import { TOKEN } from "../utils/cookieConstants";
 
 class Index extends React.Component {
   static async getInitialProps(ctx: NextPageContext & NextJSContext) {
     const dispatch = ctx.store.dispatch;
-    const token = getCookie("token", ctx.req);
+    const token = getCookie(TOKEN, ctx.req);
+    const headers = { "Content-Type": "application/json" };
+
     if (token) restoreState(token);
 
-    await fetch(
-      dispatch,
-      { success: storeSuccess, failure: storeFailure },
-      apiUrl("getMerchantStores")
-    );
+    const actions = await Promise.all([
+      axios
+        .get(path("getMerchantStores"), { headers })
+        .then((res) => storeSuccess(makeArray(res.data)))
+        .catch((err) => storeFailure(err.response.data)),
+      axios
+        .get(path("getInternalAds"), { headers })
+        .then((res) => carouselSuccess(makeArray(res.data)))
+        .catch((err) => carouselFailure(err.response.data)),
+      axios
+        .get(path("getListings"), { headers })
+        .then((res) => listingSuccessful(makeArray(res.data)))
+        .catch((err) => listingRequestFailed(err.response.data)),
+      axios
+        .get(path("getSponsoredProducts"), { headers })
+        .then((res) => sponsoredProductSuccess(makeArray(res.data)))
+        .catch((err) => sponsoredProductFailed(err.response.data)),
+      axios
+        .get(path("getSponsoredStores"), { headers })
+        .then((res) => sponsoredStoreSuccess(makeArray(res.data)))
+        .catch((err) => sponsoredStoreFailure(err.response.data)),
+    ]);
 
-    await fetch(
-      dispatch,
-      { success: carouselSuccess, failure: carouselFailure },
-      apiUrl("getInternalAds")
-    );
-
-    await fetch(
-      dispatch,
-      { success: listingSuccessful, failure: listingRequestFailed },
-      apiUrl("getListings")
-    );
-
-    await fetch(
-      dispatch,
-      { success: sponsoredProductSuccess, failure: sponsoredProductFailed },
-      apiUrl("getSponsoredProducts")
-    );
-
-    await fetch(
-      dispatch,
-      { success: sponsoredStoreSuccess, failure: sponsoredStoreFailure },
-      apiUrl("getSponsoredStores")
-    );
+    actions.forEach(dispatch);
 
     return {};
   }

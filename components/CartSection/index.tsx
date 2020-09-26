@@ -29,14 +29,14 @@ export default function CartSection() {
   const [localCart, setLocalCart] = useState(cart);
 
   useEffect(() => {
-    if (!isLoggedIn && typeof localStorage !== "undefined") {
+    if (!isLoggedIn) {
       const localStorageCart = localStorage.getItem(CART_STORAGE_KEY);
       const parsedCart = localStorageCart && JSON.parse(localStorageCart);
       if (parsedCart) dispatch(loadCart(parsedCart));
     }
   }, []);
 
-  useEffect(() => {
+  useDidUpdateEffect(() => {
     setLocalCart(cart);
   }, [cart]);
 

@@ -5,7 +5,7 @@ import {
   SponsoredStore,
   SponsoredProduct,
 } from "../../actionCreators/SponsoredActions";
-import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
+import { FetchOperationType, FetchConst } from "../../../utils/Fetch";
 
 interface SponsoredItemsState {
   sponsoredStores: Array<SponsoredStore>;

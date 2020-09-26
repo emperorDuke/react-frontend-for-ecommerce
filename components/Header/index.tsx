@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Link from "../Link";
 import { HeaderProps } from "./@types";
 import Logo from "../Logo/Logo";
 import SearchBar from "../SearchBar";
@@ -29,7 +28,7 @@ import { categoryRequest } from "../../redux/actionCreators/CategoryActions";
 import { LocationRequest } from "../../redux/actionCreators/LocationActions";
 import { useDispatch } from "react-redux";
 import { Posting as Post } from "../../redux/actionCreators/PostActions";
-import { CartType, loadCart } from "../../redux/actionCreators/CartActions";
+import { loadCart } from "../../redux/actionCreators/CartActions";
 import { CART_STORAGE_KEY } from "../CartSection/utils";
 import { apiUrl as path, useUser } from "../../services";
 import LoginForm from "../Loginsection/Login";
@@ -37,6 +36,8 @@ import UserRegSection from "../UserRegSection";
 import { StyledButton } from "./customButton";
 import { getCookie } from "../../cookie";
 import { userRequest } from "../../redux/actionCreators/UserActions";
+import { USERID } from "../../utils/cookieConstants";
+import { useRouter } from "next/router";
 
 const Header: React.ComponentType<HeaderProps> = (props) => {
   const cart = useStoreSelector(({ cart }) => cart.cart);
@@ -55,11 +56,13 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
 
   const dispatch = useDispatch();
 
+  const router = useRouter();
+
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const [anchorEl2, setAnchorEl2] = useState<HTMLElement | null>(null);
+  const [anchorEl_2, setAnchorEl_2] = useState<HTMLElement | null>(null);
 
   const [queryStrings, setQueryStrings] = useState<QueryTypes>({
     location: "Region",
@@ -77,7 +80,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
       const parsedCart = localStorageCart && JSON.parse(localStorageCart);
       dispatch(loadCart(parsedCart));
     } else {
-      const userId = getCookie("user_id");
+      const userId = getCookie(USERID);
       dispatch(userRequest(path("getBuyer", userId)));
     }
 
@@ -94,8 +97,6 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
       })
     );
   }, [queryStrings, dispatch]);
-
-  const firstName = buyer.profile().first_name;
 
   return (
     <AppBar position="static" className={classes.header} elevation={2}>
@@ -119,15 +120,15 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
             <Grid item xs={2}>
               <StyledButton
                 endIcon={<ArrowDropDownIcon />}
-                onClick={(e) => setAnchorEl2(e.currentTarget)}
+                onClick={(e) => setAnchorEl_2(e.currentTarget)}
                 fullWidth
               >
-                hi, {firstName || "sign in | join"}
+                hi, {buyer.profile().first_name || "sign in | join"}
               </StyledButton>
               <Popover
-                open={!!anchorEl2}
-                anchorEl={anchorEl2}
-                onClose={() => setAnchorEl2(null)}
+                open={!!anchorEl_2}
+                anchorEl={anchorEl_2}
+                onClose={() => setAnchorEl_2(null)}
                 anchorReference="anchorEl"
                 anchorOrigin={{
                   vertical: "bottom",
@@ -227,11 +228,10 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                 <StyledButton
                   aria-label="Cart"
                   startIcon={<ShoppingCartIcon />}
+                  onClick={() => router.push("/cart")}
                   fullWidth
                 >
-                  <Link href="/cart" color="inherit">
-                    cart
-                  </Link>
+                  cart
                 </StyledButton>
               </Badge>
             </Grid>
