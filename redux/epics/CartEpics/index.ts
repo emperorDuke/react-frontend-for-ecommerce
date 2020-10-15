@@ -159,9 +159,8 @@ export const dependencies = (
   cart: actions.CartType[],
   http: EpicDepenciesType["http"]
 ) => {
-  const headers = {
-    "Content-type": "application/json",
-  };
+  const headers = { "Content-type": "application/json" };
+
   return merge(
     forkJoin(
       cart.map(
@@ -219,9 +218,10 @@ export const dependencies = (
   );
 };
 
-const getCartDepencies: T.CartDepenciesEpic = (action$, state$, { http }) =>
+const getCartDepencies: T.CartDepenciesEpic = (action$, s, { http }) =>
   action$.pipe(
     filter(isOfType(actions.cart.LOAD_CART)),
+    takeWhile(({ payload: cart }) => !!cart),
     exhaustMap(({ payload: cart }) => dependencies(cart, http))
   );
 

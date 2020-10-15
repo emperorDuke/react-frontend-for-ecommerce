@@ -1,7 +1,7 @@
 import { Action } from "redux";
 
 export interface AddressType {
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | undefined;
   id?: number;
   address: string;
   country: string;

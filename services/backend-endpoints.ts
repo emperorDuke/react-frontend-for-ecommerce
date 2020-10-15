@@ -24,7 +24,7 @@ const paths = {
   getBuyer: (ID?: T) => `/buyer/users/${ID}/`,
   postBuyer: "/buyer/users/",
   loginBuyer: "/buyer/users/login/",
-  getPickupLocation: `/location/`,
+  getPickupLocation: `/locations/`,
   getShippingDetails: `/shipping/`,
   postShippingDetail: '/shipping/',
   getCategories: `/categories/`,

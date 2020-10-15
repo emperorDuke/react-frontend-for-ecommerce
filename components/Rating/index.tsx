@@ -52,22 +52,23 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
       }
     }
 
-    rate = (rating: number) => () => {
-      this.setState({ defaultRating: rating, tempRating: rating });
-    };
+    rate(rating: number) {
+      return () => this.setState({ defaultRating: rating, tempRating: rating });
+    }
 
-    starOver = (rating: number) => () => {
-      this.setState((prev) => ({
-        defaultRating: rating,
-        tempRating: prev.defaultRating,
-      }));
-    };
+    starOver(rating: number) {
+      return () =>
+        this.setState((prev) => ({
+          defaultRating: rating,
+          tempRating: prev.defaultRating,
+        }));
+    }
 
-    starOut = () => {
+    starOut() {
       this.setState((prev) => ({ defaultRating: prev.tempRating }));
-    };
+    }
 
-    sortStarType = (rating: number, idx: number) => {
+    sortStarType(rating: number, idx: number) {
       const { classes } = this.props;
 
       let el: JSX.Element;
@@ -83,7 +84,7 @@ const Rating: React.ComponentType<RatingProps> = withStyles(styles)(
       }
 
       return el;
-    };
+    }
 
     render() {
       const { defaultRating } = this.state;

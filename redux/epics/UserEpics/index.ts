@@ -33,9 +33,10 @@ const userEpic = (
     exhaustMap(([{ payload }, state]) => {
       let headers: Header = {};
 
+      headers["Content-Type"] = "application/json";
+
       if (state.userAuth.token) {
         headers["Authorization"] = `${BEARER} ${state.userAuth.token}`;
-        headers["Content-Type"] = "application/json";
       }
       return http.get(payload, { headers }).pipe(
         map(({ data }) => userSuccesful(data)),

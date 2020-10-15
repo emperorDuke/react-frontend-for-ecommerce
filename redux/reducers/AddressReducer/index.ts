@@ -6,14 +6,14 @@ import {
 } from "../../actionCreators/AddressActions";
 
 interface AddressState {
-  shippingDetail: Array<ShippingDetailType>;
+  shipping: Array<ShippingDetailType>;
   operations: {
     [opName: string]: FetchOperationType;
   };
 }
 
 const initialState: AddressState = {
-  shippingDetail: [],
+  shipping: [],
   operations: {
     fetchAddress: {
       error: null,

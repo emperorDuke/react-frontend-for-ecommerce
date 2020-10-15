@@ -47,8 +47,8 @@ class UserRegistration extends React.Component<Props, UserRegState> {
   initialValues = {
     first_name: "",
     last_name: "",
-    phone_number: "",
     email: "",
+    phone_number: "",
     password: "",
   };
 

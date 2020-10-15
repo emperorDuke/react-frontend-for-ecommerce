@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { HeaderProps } from "./@types";
 import Logo from "../Logo/Logo";
-import SearchBar from "../SearchBar";
+import SearchBar from "./SearchBar";
 import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
 import Badge from "@material-ui/core/Badge";
@@ -22,7 +22,7 @@ import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import useStyles from "./styles";
 import NavBar from "../NavBar";
-import { QueryTypes } from "../SearchBar/@types";
+import { QueryTypes } from "./SearchBar/@types";
 import useStoreSelector from "../../redux/utils/useStoreSelector";
 import { categoryRequest } from "../../redux/actionCreators/CategoryActions";
 import { LocationRequest } from "../../redux/actionCreators/LocationActions";
@@ -221,7 +221,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
             </Grid>
             <Grid item xs>
               <Badge
-                badgeContent={cart.length}
+                badgeContent={cart ? cart.length : 0}
                 color="secondary"
                 classes={{ badge: classes.badge }}
               >

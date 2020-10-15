@@ -9,9 +9,6 @@ export default makeStyles((theme: Theme) =>
       alignItems: "center",
       flexWrap: "nowrap",
       marginTop: theme.spacing(1),
-      "& #spacer": {
-        flexGrow: 1,
-      },
     },
     error: {
       height: theme.spacing(2),
@@ -20,6 +17,9 @@ export default makeStyles((theme: Theme) =>
         color: "red",
         ...theme.typography.caption,
       },
+    },
+    spacer: {
+      flexGrow: 1,
     },
   })
 );

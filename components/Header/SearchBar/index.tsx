@@ -74,7 +74,7 @@ const CustomSearch: React.ComponentType<SearchBarProps> = ({
           </NativeSelect>
         }
         endAdornment={
-          <IconButton onClick={postSearch}>
+          <IconButton onClick={postSearch} color="secondary">
             <SearchIcon />
           </IconButton>
         }

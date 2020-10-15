@@ -17,6 +17,7 @@ import {
 import { RootStoreState } from "../../reducers/RootReducer";
 import { of } from "rxjs";
 import { BEARER } from "../../utils/constants";
+import { makeArray } from "../../../utils";
 
 type PaymentInformationEpic = Epic<
   PaymentInformationActionTypes,
@@ -39,11 +40,7 @@ const PaymentInformationEpics: PaymentInformationEpic = (
           headers: { Authorization: `${BEARER} ${token}` },
         })
         .pipe(
-          map(({ data: res }) =>
-            Array.isArray(res)
-              ? paymentInformationSuceesful(res)
-              : paymentInformationSuceesful([res])
-          ),
+          map(({ data: res }) => paymentInformationSuceesful(makeArray(res))),
           catchError((err) => of(paymentInformationFailed(err.response)))
         )
     )

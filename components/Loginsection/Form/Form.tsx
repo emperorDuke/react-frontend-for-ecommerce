@@ -38,53 +38,62 @@ function Form(props: LoginFormProps) {
   };
 
   return (
-    <React.Fragment>
-      <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
-        <Grid container spacing={1}>
-          {Object.keys(props.initialValues).map((key) => (
-            <Grid item container xs={12} direction="column" key={key}>
-              <Grid item>
-                <TextField
-                  id={key}
-                  name={key}
-                  type={getFieldType(key)}
-                  label={key}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values[key]}
-                  required
-                  placeholder={key}
-                  color="primary"
-                  variant="outlined"
-                  fullWidth
-                />
+    <Grid container spacing={1}>
+      <Grid item xs={12}>
+        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+          <Grid container spacing={1}>
+            {Object.keys(props.initialValues).map((key) => (
+              <Grid item container xs={12} direction="column" key={key}>
+                <Grid item>
+                  <TextField
+                    id={key}
+                    name={key}
+                    type={getFieldType(key)}
+                    label={key}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values[key]}
+                    required
+                    placeholder={key}
+                    color="primary"
+                    variant="outlined"
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item>
+                  <div className={classes.error}>
+                    {formik.touched[key] && formik.errors[key] && (
+                      <span>{formik.errors[key]}</span>
+                    )}
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item>
-                <div className={classes.error}>
-                  {formik.touched[key] && formik.errors[key] && (
-                    <span>{formik.errors[key]}</span>
-                  )}
-                </div>
-              </Grid>
+            ))}
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                fullWidth
+              >
+                Login
+              </Button>
             </Grid>
-          ))}
-          <Grid item xs={12}>
-            <Button type="submit" color="primary" variant="contained" fullWidth>
-              Login
-            </Button>
           </Grid>
-        </Grid>
-      </form>
-      <div className={classes.flex}>
-        <div id="spacer" />
-        <Typography variant="caption" component="span">
-          New Member ?{" "}
-          <Link href="/" color="secondary">
-            Create Account
-          </Link>
-        </Typography>
-      </div>
-    </React.Fragment>
+        </form>
+      </Grid>
+      <Grid item xs={12}>
+        <div className={classes.flex}>
+          <div className={classes.spacer} />
+          <Typography variant="body2" component="span">
+            New Member ?{" "}
+            <Link href="/" color="secondary">
+              Create Account
+            </Link>
+          </Typography>
+        </div>
+      </Grid>
+    </Grid>
   );
 }
 

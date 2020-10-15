@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import AddIcon from "@material-ui/icons/Add";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import createStyles from "@material-ui/core/styles/createStyles";
+import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
-import { useUser, apiUrl } from "../../services";
+import { apiUrl } from "../../services";
 import { Posting } from "../../redux/actionCreators/PostActions";
 import { BuyerSignUpForm } from "../BuyerSignUpForm";
+import useSelector from "../../redux/utils/useStoreSelector";
 
 const schema = yup.object().shape({
   first_name: yup
@@ -36,27 +39,46 @@ const schema = yup.object().shape({
   zip_code: yup.string().notRequired(),
 });
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    center: {
+      display: "flex",
+      height: theme.spacing(20),
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      border: `1px solid ${theme.palette.secondary.light}`,
+      borderRadius: theme.shape.borderRadius,
+    },
+    padding: {
+      padding: theme.spacing(1),
+    },
+    grey: {
+      color: theme.palette.grey[500],
+    },
+  })
+);
+
 function AddressSection() {
   const [openForm, setOpenForm] = useState(false);
   const [openAddressChangeForm, setAddressChangeForm] = useState(false);
-  const buyer = useUser("buyer");
   const dispatch = useDispatch();
-  const defaultAddress =
-    !!buyer.shippingDetails && buyer.shippingDetails.getDefault();
-  const allAddresses =
-    !!buyer.shippingDetails &&
-    !!buyer.shippingDetails.all().length &&
-    buyer.shippingDetails.all();
+  const shipping = useSelector(({ addressBook }) => addressBook.shipping);
+  const classes = useStyles();
+
+  const defaultAddress = shipping.length
+    ? shipping.find((s) => s.default === true)
+    : undefined;
+  const allAddresses = shipping.length ? shipping : undefined;
 
   const initialValues = {
     first_name: "",
     last_name: "",
-    phone_number: "",
     address: "",
-    country: "Nigeria",
+    phone_number: "",
     city: "",
     state: "",
-    zip_code: "",
+    country: "Nigeria",
   };
 
   const handleAddressForm = (values: {}) => {
@@ -71,45 +93,62 @@ function AddressSection() {
   };
 
   return (
-    <Paper>
+    <div className={classes.padding}>
       {/** default address */}
-      <Grid container>
-        <Grid item>
-          <Typography variant="h6">Delivery Address</Typography>
+      <Grid container direction="column" spacing={1}>
+        <Grid item container xs={12}>
+          <Grid item>
+            <Typography variant="h6">Delivery Address</Typography>
+          </Grid>
+          <div style={{ flexGrow: 1 }} />
+          <Grid item>
+            {defaultAddress ? (
+              <Button
+                startIcon={<AddIcon />}
+                onClick={() => setAddressChangeForm(true)}
+                color="primary"
+                variant="outlined"
+              >
+                change address
+              </Button>
+            ) : null}
+          </Grid>
         </Grid>
         <Grid item>
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => setAddressChangeForm(true)}
-            color="secondary"
-            variant="outlined"
-          >
-            change
-          </Button>
+          <Divider />
         </Grid>
-      </Grid>
-      <Divider />
-      <Grid container>
         <Grid item>
-          {defaultAddress ? (
-            Object.keys(defaultAddress)
-              .filter((key) => key !== "id")
-              .map((key) => (
-                <TextField
-                  id={key}
-                  name={key}
-                  type="text"
-                  label={key}
-                  value={defaultAddress[key]}
-                  disabled
-                  variant="outlined"
+          <Grid container>
+            <Grid item xs={12}>
+              {defaultAddress ? (
+                <div className={classes.center}>
+                  {Object.keys(defaultAddress)
+                    .filter((key) => key !== "id")
+                    .map((key) => (
+                      <TextField
+                        id={key}
+                        key={key}
+                        name={key}
+                        type="text"
+                        label={key}
+                        value={defaultAddress[key]}
+                        disabled
+                        variant="outlined"
+                      />
+                    ))}
+                </div>
+              ) : (
+                <BuyerSignUpForm
+                  onSubmit={handleAddressForm}
+                  schema={schema}
+                  initialValues={initialValues}
                 />
-              ))
-          ) : (
-            <Typography variant="h5">Add your shipping details</Typography>
-          )}
+              )}
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
+
       {/** list of default address and saved addresses */}
       <Dialog
         open={openAddressChangeForm}
@@ -133,7 +172,7 @@ function AddressSection() {
           <Grid container direction="column">
             {allAddresses ? (
               allAddresses.map((address) => (
-                <Grid item container direction="column">
+                <Grid item container direction="column" key={address.id}>
                   {Object.keys(address)
                     .filter((key) => key !== "id")
                     .map((key) => (
@@ -158,7 +197,11 @@ function AddressSection() {
         </DialogContent>
       </Dialog>
       {/** form for adding new address */}
-      <Dialog open={openForm} aria-labelledby="dialog-for-address-form" fullWidth>
+      <Dialog
+        open={openForm}
+        aria-labelledby="dialog-for-address-form"
+        fullWidth
+      >
         <DialogTitle>Add new address</DialogTitle>
         <DialogContent>
           <BuyerSignUpForm
@@ -169,7 +212,7 @@ function AddressSection() {
           />
         </DialogContent>
       </Dialog>
-    </Paper>
+    </div>
   );
 }
 

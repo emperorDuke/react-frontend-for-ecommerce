@@ -45,8 +45,8 @@ export default makeStyles((theme: Theme) =>
       flexBasis: "100px"
     },
     background: {
-      backgroundColor: theme.palette.primary.light,
-      color: theme.palette.primary.contrastText
+      backgroundColor: theme.palette.grey[200],
+      color: theme.palette.common.black
     },
     toolbarPadding: {
       padding: theme.spacing(1)

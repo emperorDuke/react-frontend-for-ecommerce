@@ -4,6 +4,7 @@ import { EpicDepenciesType } from "../../../store";
 import { filter, switchMap, map, catchError } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
+import { makeArray } from "../../../utils";
 
 const AttributeEpic = (
   action$: ActionsObservable<T.AttributeActionType>,
@@ -19,11 +20,7 @@ const AttributeEpic = (
           },
         })
         .pipe(
-          map(({ data: attribute }) =>
-            Array.isArray(attribute)
-              ? T.attributeSuccess(attribute)
-              : T.attributeSuccess([attribute])
-          ),
+          map(({ data: attribute }) => T.attributeSuccess(makeArray(attribute))),
           catchError((err) => of(T.attributeFailure(err.response)))
         )
     )

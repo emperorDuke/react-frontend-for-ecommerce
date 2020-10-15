@@ -18,7 +18,7 @@ function Form(props: FormProps) {
 
   const selectItems = useMemo(() => {
     return Object.keys(props.initialValues).filter(
-      (key) => key === "country" || key === "state"
+      (key) => key === "state" || key === "country"
     );
   }, [props.initialValues]);
 
@@ -55,6 +55,14 @@ function Form(props: FormProps) {
     }
   };
 
+  const getWidth = (key: string) => {
+    if (key === "address" || key === "email") {
+      return 12;
+    } else {
+      return 6;
+    }
+  };
+
   const changeSnakeCase = (key: string) => {
     return key.split("_").join(" ");
   };
@@ -63,7 +71,7 @@ function Form(props: FormProps) {
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
       <Grid container spacing={1}>
         {fields.map((key) => (
-          <Grid item xs={12} container direction="column">
+          <Grid item xs={getWidth(key)} container direction="column" key={key}>
             <Grid item>
               <TextField
                 id={key}
@@ -90,21 +98,26 @@ function Form(props: FormProps) {
         ))}
         {!!selectItems.length &&
           selectItems.map((key) => (
-            <Grid item container direction="column">
+            <Grid item xs={6} container direction="column" key={key}>
               <Grid item>
                 <TextField
                   select
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   fullWidth
+                  label={key}
                   variant="outlined"
                   SelectProps={{
                     native: true,
                   }}
                 >
-                  <option value={formik.values[key]}>
-                    {formik.values[key]}
-                  </option>
+                  {formik.values[key] ? (
+                    <option value={formik.values[key]}>
+                      {formik.values[key]}
+                    </option>
+                  ) : (
+                    <option defaultValue={key}>{key}</option>
+                  )}
                 </TextField>
               </Grid>
               <Grid item>

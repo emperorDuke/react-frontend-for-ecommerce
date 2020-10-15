@@ -39,8 +39,8 @@ interface Buyer {
 export function useUser<T extends "seller" | "buyer">(userType: T)  {
   const userAuth = useSelector(({ userAuth }) => userAuth);
   const incomingCart = useSelector(({ cart }) => cart.cart);
-  const shippingDetails = useSelector(
-    ({ addressBook }) => addressBook.shippingDetail
+  const shipping = useSelector(
+    ({ addressBook }) => addressBook.shipping
   );
   const user = useSelector(({ user }) => user.user);
   const orders = useSelector(({ orders }) => orders.orders);
@@ -59,9 +59,11 @@ export function useUser<T extends "seller" | "buyer">(userType: T)  {
       cart,
       profile,
       auth,
-      shippingDetails: {
-        all: () => shippingDetails,
-        getDefault: () => shippingDetails.find((a) => a.default === true),
+      shipping: {
+        all: () => shipping,
+        getDefault: () => {
+          return shipping.find((a) => a.default === true)
+        },
       },
       orders: {
         all: () => orders,

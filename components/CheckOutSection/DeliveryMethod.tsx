@@ -86,7 +86,9 @@ function DeliveryMethod() {
           onChange={(e) => setPickupState(e.target.value)}
         >
           {pickupLocations.map((location) => (
-            <option value={location.state}>{location.state}</option>
+            <option value={location.state} key={location.state}>
+              {location.state}
+            </option>
           ))}
         </NativeSelect>
       </Grid>
