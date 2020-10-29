@@ -27,6 +27,7 @@ const paths = {
   getPickupLocation: `/locations/`,
   getShippingDetails: `/shipping/`,
   postShippingDetail: '/shipping/',
+  updateShippingDetail: (ID?: T) => `/shipping/${ID}/`,
   getCategories: `/categories/`,
   getSponsoredStores: '/sponsored/stores/',
   getSponsoredProducts: '/sponsored/products/',

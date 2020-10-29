@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from "axios";
 
 export enum post {
   POST_ITEM = "POST_ITEM",
@@ -7,6 +8,7 @@ export enum post {
 
 export type PostingPayloadType = {
   url: string;
+  method?: AxiosRequestConfig['method'];
   body?: {} | FormData;
   reqAuth?: boolean;
   config?: {
@@ -18,7 +20,7 @@ export type PostStatus = post | null;
 
 export interface PostOperationType {
   status: PostStatus;
-  responseError: string | null | object;
+  error: string | null | object;
 }
 
 export interface PostingType {

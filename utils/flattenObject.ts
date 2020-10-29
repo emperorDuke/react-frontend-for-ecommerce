@@ -9,12 +9,15 @@ type FlattenObject = {
  */
 export function flatten<T>(obj: T, bag: FlattenObject = {}) {
   for (let key in obj) {
-    if (obj[key] instanceof Object) {
-      flatten(obj[key], bag);
+    let value = obj[key];
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean"
+    ) {
+      bag[key] = value;
     } else {
-      Object.defineProperty(bag, key, {
-        value: obj[key],
-      });
+      flatten(value, bag);
     }
   }
   return bag;

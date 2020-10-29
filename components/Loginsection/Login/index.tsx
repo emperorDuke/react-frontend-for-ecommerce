@@ -56,9 +56,9 @@ class Login extends React.Component<LoginProps, LoginState> {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const mapState: MapState = ({ posts }) => ({
-  status: posts.operations.postItem.status,
-  error: posts.operations.postItem.responseError,
-  successMessage: posts.sucessMessage,
+  status: posts.status,
+  error: posts.error,
+  successMessage: posts.success,
 });
 
 const mapDispatch: MapDispatch = (dispatch) => ({

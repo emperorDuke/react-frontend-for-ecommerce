@@ -33,6 +33,9 @@ export default makeStyles((theme: Theme) =>
     },
     btn: {
       width: theme.spacing(5)
+    },
+    pad: {
+      padding: "1px"
     }
   })
 );

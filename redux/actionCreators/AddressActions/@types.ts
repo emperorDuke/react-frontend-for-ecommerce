@@ -27,6 +27,9 @@ export enum address {
   REQUEST = "request",
   FETCH_SUCCESSFUL = "fetch successful",
   FETCH_FAILED = "fetch failed",
+  UPDATE = "update_address",
+  REMOVE = "remove_address",
+  ADD = "add_address"
 }
 
 export interface RequestAddressType extends Action {
@@ -44,7 +47,25 @@ export interface AddressFailedType extends Action {
   payload: string;
 }
 
+export interface UpdateAddressType extends Action {
+  type: address.UPDATE;
+  payload: ShippingDetailType;
+}
+
+export interface RemoveAddressType extends Action {
+  type: address.REMOVE,
+  payload: string;
+}
+
+export interface AddAddressType extends Action {
+  type: address.ADD;
+  payload: ShippingDetailType
+}
+
 export type AddressActionTypes =
   | RequestAddressType
   | AddressSuccessfulType
-  | AddressFailedType;
+  | AddressFailedType
+  | UpdateAddressType
+  | RemoveAddressType
+  | AddAddressType;

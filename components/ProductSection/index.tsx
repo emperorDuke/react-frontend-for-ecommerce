@@ -11,7 +11,7 @@ import {
   useMerchantStore,
   EnhancedMerchantStore,
   useProduct,
-  apiUrl,
+  apiUrl as path,
 } from "../../services";
 import { AttributeType } from "../../redux/actionCreators/AttributeActions";
 import {
@@ -22,7 +22,7 @@ import { useDispatch } from "react-redux";
 import { storeRequest } from "../../redux/actionCreators/StoreActions";
 import PolicySection from "./PolicySection";
 import useStyles from "./styles";
-import CardEnhancer from "../CardEnhancer";
+import CardGroup from "../CardGroup";
 import ModularCard from "../AppCards/ProductModularCard";
 import { productRequest } from "../../redux/actionCreators/ProductActions";
 
@@ -37,11 +37,11 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
 
   useEffect(() => {
     if (item) {
-      const storeUrl = apiUrl("getMerchantStore", item.store);
-      const itemsUrl = apiUrl("getProducts") + `?category=${item.category}`;
+      const storeUrl = path("getMerchantStore", item.store);
+      const itemsUrl = path("getProducts") + `?category=${item.category}`;
 
       dispatch(storeRequest(storeUrl));
-      // dispatch(productRequest(itemsUrl));
+      dispatch(productRequest(itemsUrl));
     }
   }, []);
 
@@ -117,11 +117,11 @@ const ProductSection: React.ComponentType<{ id: string }> = (props) => {
           )}
         </Grid>
         <Grid item>
-          <CardEnhancer>
+          <CardGroup>
             {items.map((p) => (
               <ModularCard {...p} />
             ))}
-          </CardEnhancer>
+          </CardGroup>
         </Grid>
       </Grid>
     </Container>

@@ -1,84 +1,92 @@
-import {products, stores, carousels, categories, dummyFilters as filters} from '../global-data';
+import { FetchOperationType } from "../utils/Fetch";
+import { ShippingDetailType } from "./actionCreators/AddressActions";
 
-
-export function Preloadedstate() {
-
-    const purchaseDetails = {
-        purchaseDetails: [
-            {
-                productId: products[0].id,
-                index: 1,
-                name: products[0].name,
-                image: products[0].image_1,
-                variants: {
-                    colors: products[0].xtics.colors[1],
-                    sizes: products[0].xtics.sizes[2]
-                },
-                qty: 2,
-                subtotalPrice: 2 * Number(products[0].price),
-                unitPrice: Number(products[0].price),
-                seller: 'duktex'
-            },
-            {
-                productId: products[0].id,
-                index: 2,
-                name: products[0].name,
-                image: products[0].image_1,
-                variants: {
-                    colors:products[0].xtics.colors[2],
-                    sizes:products[0].xtics.sizes[4]
-                },
-                qty: 2,
-                subtotalPrice: 2 * Number(products[0].price),
-                unitPrice: Number(products[0].price),
-                seller: 'duktex'
-            }
-        ]
-    }
-
-    const locations = {
-        locations: [
-            {
-                name: "Nigeria",
-                track_id: 'd4f5yg6',
-                children: [
-                    {
-                        name: 'lagos',
-                        track_id: 'f4g66h',
-                        children: null
-                    },
-                    {
-                        name: 'kano',
-                        track_id: 'f4g66h',
-                        children: null
-                    },
-                    {
-                        name: 'calabar',
-                        track_id: 'f4g66h',
-                        children: null
-                    },
-                ]
-            }
-        ]
-    }
-
-    return  ({
-        stores: {
-            stores
-        },
-        carousels: {
-            carousels
-        },
-        products: {
-            products
-        },
-        categories: {
-            categories
-        },
-        filters:{
-            filters
-        },
-        locations,
-        purchaseDetails
-    });
+interface AddressState {
+  shipping: Array<ShippingDetailType>;
+  operations: {
+    [opName: string]: FetchOperationType;
+  };
 }
+
+const shipping: AddressState = {
+  shipping: [
+    {
+      id: 1,
+      buyer: 2,
+      address: {
+        id: 1,
+        address: 'no 34 beckham street off emmanuel edem cresent, ikeja Lagos',
+        state: "Lagos",
+        city: "Ikeja",
+        country: "Nigeria",
+        zip_code: "56777",
+      },
+      default: true,
+      first_name: "duke",
+      last_name: "effiom",
+      phone_number: "+2347037606116",
+      added_at: "yyuguuugug",
+    },
+    {
+      id: 2,
+      buyer: 2,
+      address: {
+        id: 1,
+        address: 'no 34 beckham street, ikeja Lagos',
+        state: "Lagos",
+        city: "Ikeja",
+        country: "Nigeria",
+        zip_code: "56777",
+      },
+      default: false,
+      first_name: "duke",
+      last_name: "effiom",
+      phone_number: "+2347037606116",
+      added_at: "yyuguuugug",
+    },
+    {
+      id: 3,
+      buyer: 2,
+      address: {
+        id: 1,
+        address: 'no 34 beckham street, ikot-ansa calabar',
+        state: "calabar",
+        city: "ikot-ansa",
+        country: "Nigeria",
+        zip_code: "56777",
+      },
+      default: false,
+      first_name: "saint-bassey",
+      last_name: "effiom",
+      phone_number: "+2347037606116",
+      added_at: "yyuguuugug",
+    },
+    {
+      id: 4,
+      buyer: 2,
+      address: {
+        id: 1,
+        address: 'no 34 beckham street, ikeja Lagos',
+        state: "Abuja",
+        city: "kubwa",
+        country: "Nigeria",
+        zip_code: "56777",
+      },
+      default: false,
+      first_name: "duncan",
+      last_name: "effiom",
+      phone_number: "+2347037606116",
+      added_at: "yyuguuugug",
+    },
+  ],
+  operations: {
+    fetchAddress: {
+      error: null,
+      status: null,
+    },
+  },
+};
+
+export const preloadedState = {
+  addressBook: shipping,
+};

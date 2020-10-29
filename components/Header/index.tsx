@@ -23,7 +23,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import useStyles from "./styles";
 import NavBar from "../NavBar";
 import { QueryTypes } from "./SearchBar/@types";
-import useStoreSelector from "../../redux/utils/useStoreSelector";
+import useSelector from "../../redux/utils/useStoreSelector";
 import { categoryRequest } from "../../redux/actionCreators/CategoryActions";
 import { LocationRequest } from "../../redux/actionCreators/LocationActions";
 import { useDispatch } from "react-redux";
@@ -40,19 +40,15 @@ import { USERID } from "../../utils/cookieConstants";
 import { useRouter } from "next/router";
 
 const Header: React.ComponentType<HeaderProps> = (props) => {
-  const cart = useStoreSelector(({ cart }) => cart.cart);
+  const cart = useSelector(({ cart }) => cart.cart);
 
   const buyer = useUser("buyer");
 
-  const storeLocations = useStoreSelector(
-    ({ locations }) => locations.locations
-  );
+  const storeLocations = useSelector(({ locations }) => locations.locations);
 
-  const categories = useStoreSelector(
-    ({ categories }) => categories.categories
-  );
+  const categories = useSelector(({ categories }) => categories.categories);
 
-  const isLoggedIn = useStoreSelector(({ userAuth }) => userAuth.isLoggedIn);
+  const isLoggedIn = useSelector(({ userAuth }) => userAuth.isLoggedIn);
 
   const dispatch = useDispatch();
 
@@ -160,7 +156,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                       >
                         <div className={classes.divider} />
                         <div className={classes.spacer} />
-                        <Typography variant="caption" color="secondary">
+                        <Typography variant="body2" color="secondary">
                           New member ?
                         </Typography>
                         <div className={classes.spacer} />
@@ -190,7 +186,10 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
               >
                 <DialogTitle>Login</DialogTitle>
                 <DialogActions>
-                  <IconButton onClick={() => setOpenLoginForm(false)}>
+                  <IconButton
+                    onClick={() => setOpenLoginForm(false)}
+                    size="small"
+                  >
                     <CloseIcon />
                   </IconButton>
                 </DialogActions>
@@ -240,7 +239,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
       </div>
       <div className={classes.subHeaderWrapper_2}>
         <Container maxWidth="lg">
-          <Grid container alignItems="center">
+          <Grid container alignItems="center" className={classes.pad}>
             <Grid item>
               <StyledButton
                 onClick={(e) => setAnchorEl(e.currentTarget)}

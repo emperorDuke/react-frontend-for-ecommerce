@@ -3,25 +3,36 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import Divider from "@material-ui/core/Divider";
-import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import Radio from "@material-ui/core/Radio";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
 import CloseIcon from "@material-ui/icons/Close";
 import useSelector from "../../redux/utils/useStoreSelector";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+import createStyles from "@material-ui/core/styles/createStyles";
+import { Theme } from "@material-ui/core/styles/createMuiTheme";
 
 type Delivery = "pickupStation" | "doorDelivery";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      padding: theme.spacing(1),
+    },
+  })
+);
 
 function DeliveryMethod() {
   const [pickupState, setPickupState] = useState("");
   const [pickupCity, setPickupCity] = useState("");
   const [deliveryType, setDeliveryType] = useState<Delivery>("doorDelivery");
   const [openPickupStation, setOpenPickupStation] = useState(false);
+
+  const classes = useStyles();
 
   const pickupLocations = useSelector(
     ({ pickUpLocations }) => pickUpLocations.pickUpLocations
@@ -40,7 +51,7 @@ function DeliveryMethod() {
 
   const deliveryMethodJSX = (
     <React.Fragment>
-      <Typography variant="h4">Delivery Method</Typography>
+      <Typography variant="h6">Delivery Method</Typography>
       <Divider />
       <Grid container direction="column">
         <Grid item>
@@ -48,17 +59,19 @@ function DeliveryMethod() {
             control={<Radio />}
             value={deliveryType}
             onChange={handleDeliveryType("doorDelivery")}
-            label={<Typography variant="h6">Door Delivery</Typography>}
+            label={<Typography variant="subtitle1">Door Delivery</Typography>}
           />
         </Grid>
         <Grid item>
-          <Grid container>
+          <Grid container alignItems="center">
             <Grid item>
               <FormControlLabel
                 control={<Radio />}
                 value={deliveryType}
                 onChange={handleDeliveryType("pickupStation")}
-                label={<Typography variant="h6">Pickup station</Typography>}
+                label={
+                  <Typography variant="subtitle1">Pickup station</Typography>
+                }
               />
             </Grid>
             {deliveryType === "pickupStation" && (
@@ -77,12 +90,13 @@ function DeliveryMethod() {
     </React.Fragment>
   );
 
-  const pickUpLocationsJSX = (
+  const pickUpLocationsSelector = (
     <Grid container spacing={1}>
-      <Grid item>
+      <Grid item xs={5}>
         <NativeSelect
           name="pickup-state"
           value={pickupState}
+          fullWidth
           onChange={(e) => setPickupState(e.target.value)}
         >
           {pickupLocations.map((location) => (
@@ -92,11 +106,12 @@ function DeliveryMethod() {
           ))}
         </NativeSelect>
       </Grid>
-      <Grid item>
+      <Grid item xs>
         <Divider orientation="vertical" />
       </Grid>
-      <Grid item>
+      <Grid item xs={5}>
         <NativeSelect
+          fullWidth
           name="pickup-cities"
           value={pickupCity}
           onChange={(e) => setPickupCity(e.target.value)}
@@ -110,30 +125,39 @@ function DeliveryMethod() {
   );
 
   return (
-    <Paper>
+    <Paper className={classes.root}>
       {deliveryMethodJSX}
       <Dialog
         open={openPickupStation}
-        onClose={handleOpenPickupStation(false)}
+        fullWidth
         aria-labelledby="dialog-for-pickup-location"
       >
         <DialogContent>
-          <DialogTitle>Select a Pickup Location</DialogTitle>
-          <DialogContentText>
-            <Typography variant="h6">
-              select a pickup location close to your area
-            </Typography>
-          </DialogContentText>
-          {pickUpLocationsJSX}
-          <DialogActions>
-            <Button
-              startIcon={<CloseIcon />}
-              onClick={handleOpenPickupStation(false)}
-              color="secondary"
-            >
-              close
-            </Button>
-          </DialogActions>
+          <Grid container direction="column" spacing={1}>
+            <Grid item xs={12} container alignItems="center">
+              <Grid item>
+                <Typography variant="h6">
+                  select a pickup location close to your area
+                </Typography>
+              </Grid>
+              <div style={{ flexGrow: 1 }} />
+              <Grid item>
+                <IconButton
+                  onClick={handleOpenPickupStation(false)}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Divider />
+            </Grid>
+            <Grid item>{pickUpLocationsSelector}</Grid>
+            <Grid item>
+              <Divider />
+            </Grid>
+          </Grid>
         </DialogContent>
       </Dialog>
     </Paper>

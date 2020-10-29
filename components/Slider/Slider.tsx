@@ -42,7 +42,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   });
 
   const childrenWithClone = useMemo(() => {
-    const insertNewKey = (el: any, i: number) => {
+    const insertKey = (el: any, i: number) => {
       if (React.isValidElement<SlideProps>(el)) {
         return React.cloneElement(el, {
           key: `clone_${i}`,
@@ -63,12 +63,12 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     const firstIndex = 0;
     const lastIndex = cloneChildren.length - 1;
     const childrenArrayCopy = cloneChildren.slice();
+    const firstChild = cloneChildren[firstIndex];
+    const lastChild = cloneChildren[lastIndex];
 
-    childrenArrayCopy.push(insertNewKey(cloneChildren[firstIndex], firstIndex));
+    childrenArrayCopy.push(insertKey(firstChild, firstIndex));
+    childrenArrayCopy.unshift(insertKey(lastChild, lastIndex));
 
-    childrenArrayCopy.unshift(
-      insertNewKey(cloneChildren[lastIndex], lastIndex)
-    );
     return childrenArrayCopy;
   }, [props.children]);
 
@@ -308,7 +308,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     if (pauseOnMouseEnter) return play();
   };
 
-  const getCssClasses = (i: number, className?: string) => {
+  const getCssClasses = (className?: string) => {
     const isFadeEffect = props.effectType === "fade";
     const isSlideEffect = props.effectType === "slide";
 
@@ -335,7 +335,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               key={i}
             >
               {React.cloneElement(child, {
-                className: getCssClasses(i, child.props.className),
+                className: getCssClasses(child.props.className),
                 ref: slideRef,
               })}
             </Fade>
@@ -343,10 +343,10 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
       );
     }
     return childrenWithClone.map(
-      (child, i) =>
+      (child) =>
         React.isValidElement(child) &&
         React.cloneElement(child, {
-          className: getCssClasses(i, child.props.className),
+          className: getCssClasses(child.props.className),
           ref: slideRef,
         })
     );

@@ -1,8 +1,5 @@
-import { ajax } from "rxjs/ajax";
-import { AjaxCreationMethod } from "rxjs/internal/observable/dom/AjaxObservable";
-import Thunk from "redux-thunk";
 import rootReducer, { RootStoreState } from "../redux/reducers/RootReducer";
-import { Preloadedstate } from "../redux/initialState";
+import { preloadedState } from "../redux/initialState";
 import { createEpicMiddleware, EpicMiddleware } from "redux-observable";
 import { createStore, applyMiddleware, Action } from "redux";
 import rootEpics from "../redux/epics/RootEpics";
@@ -19,7 +16,7 @@ type IEpicMiddleware = EpicMiddleware<
   EpicDepenciesType
 >;
 
-export default (initStore = {}) => {
+export default (initStore = preloadedState) => {
   const epicMiddleware: IEpicMiddleware = createEpicMiddleware({
     dependencies: { http: axios },
   });
@@ -27,7 +24,7 @@ export default (initStore = {}) => {
   const store = createStore(
     rootReducer,
     initStore,
-    applyMiddleware(epicMiddleware, Thunk)
+    applyMiddleware(epicMiddleware)
   );
 
   epicMiddleware.run(rootEpics);

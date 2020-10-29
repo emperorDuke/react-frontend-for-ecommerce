@@ -34,6 +34,7 @@ const SliderWithInput: React.ComponentType<SliderWithInputProps> = (props) => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const slideValue = Math.floor(parseInt(e.target.value) / getInterval());
+    
     if (type === "min") {
       setValue((prev) => ({
         data: [parseInt(e.target.value), prev.data[1]],

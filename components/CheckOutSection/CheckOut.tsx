@@ -9,13 +9,11 @@ import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import useSelector from "../../redux/utils/useStoreSelector";
 import { useRouter } from "next/router";
-import { post } from "../../redux/actionCreators/PostActions";
-import { orderSuccess } from "../../redux/actionCreators/OrderActions";
 import DeliveryMethod from "./DeliveryMethod";
 import AddressSection from "./AddressSection";
 import PaymentMethod from "./PaymentMethod";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,7 +30,7 @@ const getSteps = () => {
 const getStepContent = (step: number) => {
   switch (step) {
     case 0:
-      return <AddressSection />;
+      return AddressSection();
     case 1:
       return <DeliveryMethod />;
     case 2:
@@ -44,43 +42,10 @@ const getStepContent = (step: number) => {
 
 function CheckOut() {
   const router = useRouter();
-  const [postingState, setPostingState] = useState({});
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState(new Set());
   const dispatch = useDispatch();
   const classes = useStyles();
-
-  const incomingPosts = useSelector(({ posts }) => posts);
-
-  useEffect(() => {
-    if (incomingPosts.operations.postItem.status === post.POST_ITEM) {
-      setPostingState({
-        error: null,
-        loading: true,
-        hasLoaded: false,
-        data: null,
-      });
-    } else if (
-      incomingPosts.operations.postItem.status === post.POST_SUCCESSFUL
-    ) {
-      dispatch(orderSuccess(incomingPosts.sucessMessage));
-      setPostingState({
-        error: null,
-        loading: false,
-        hasLoaded: true,
-        data: incomingPosts.sucessMessage,
-      });
-    } else if (
-      incomingPosts.operations.postItem.status === post.POSTING_FAILED
-    ) {
-      setPostingState({
-        error: incomingPosts.operations.postItem.responseError,
-        loading: false,
-        hasLoaded: true,
-        data: null,
-      });
-    }
-  }, [incomingPosts]);
 
   const steps = getSteps();
 
@@ -124,7 +89,7 @@ function CheckOut() {
         <Grid item />
 
         <Grid item container spacing={1} direction="row">
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <Paper>
               <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                 {steps.map((step, index) => {
@@ -141,6 +106,11 @@ function CheckOut() {
                 })}
               </Stepper>
               <div>{getStepContent(activeStep)}</div>
+            </Paper>
+          </Grid>
+          <Grid item xs>
+            <Paper className={classes.stepperRoot}>
+              <Typography variant="h6">order summary</Typography>
             </Paper>
           </Grid>
         </Grid>

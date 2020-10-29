@@ -1,24 +1,17 @@
 import {
   post,
   PostActionTypes,
-  PostOperationType
+  PostOperationType,
 } from "../../actionCreators/PostActions/@types";
 
-export type PostReducerState = {
-  sucessMessage: string | {} | null;
-  operations: {
-    [opName: string]: PostOperationType;
-  };
-};
+export interface PostReducerState extends PostOperationType {
+  success: string | {} | null;
+}
 
 const initialState: PostReducerState = {
-  sucessMessage: null,
-  operations: {
-    postItem: {
-      status: null,
-      responseError: null
-    }
-  }
+  success: null,
+  status: null,
+  error: null,
 };
 
 export default function PostReducer(
@@ -29,34 +22,22 @@ export default function PostReducer(
     case post.POST_ITEM:
       return {
         ...state,
-        operations: {
-          postItem: {
-            status: post.POST_ITEM,
-            responseError: null
-          }
-        }
+        status: post.POST_ITEM,
+        error: null,
       };
     case post.POST_SUCCESSFUL:
       return {
         ...state,
-        sucessMessage: action.payload,
-        operations: {
-          postItem: {
-            status: post.POST_SUCCESSFUL,
-            responseError: null
-          }
-        }
+        success: action.payload,
+        status: post.POST_SUCCESSFUL,
+        error: null,
       };
     case post.POSTING_FAILED:
       return {
         ...state,
-        sucessMessage: null,
-        operations: {
-          postItem: {
-            status: post.POSTING_FAILED,
-            responseError: action.payload
-          }
-        }
+        success: null,
+        status: post.POSTING_FAILED,
+        error: action.payload,
       };
     default:
       return state;

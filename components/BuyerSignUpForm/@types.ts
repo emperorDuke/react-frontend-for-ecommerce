@@ -2,6 +2,7 @@ import Yup from "yup";
 
 interface InitialValues {
   [key: string]: string | undefined;
+  id?: string;
   first_name: string;
   last_name: string;
   phone_number: string;
@@ -14,10 +15,10 @@ interface InitialValues {
   zip_code?: string;
 }
 
-export interface FormProps {
+export interface BuyerSignUpFormProps {
   schema: Yup.ObjectSchema<any>;
   initialValues: InitialValues;
-  onSubmit: (body: InitialValues) => void;
+  onSubmit: (body: InitialValues, id?: string) => void;
   onCancel?: () => void;
   serverErrors?: InitialValues;
   serverSuccessMessage?: InitialValues;

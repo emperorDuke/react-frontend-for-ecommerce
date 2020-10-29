@@ -15,6 +15,9 @@ export default makeStyles((theme: Theme) =>
         color: "red",
         ...theme.typography.caption
       }
+    },
+    label: {
+      textTransform: "capitalize"
     }
   })
 );

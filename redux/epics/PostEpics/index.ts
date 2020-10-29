@@ -22,6 +22,7 @@ import {
   authenticate,
 } from "../../actionCreators/UserAuthActions";
 import { BEARER } from "../../utils/constants";
+import { AxiosRequestConfig } from "axios";
 
 type PostEpic = Epic<
   PostActionTypes | Authenticate,
@@ -47,16 +48,20 @@ const postEpic: PostEpic = (action$, state$, { http }) =>
         headers["Authorization"] = `${BEARER} ${state.userAuth.token}`;
       } else if (payload.config) {
         for (let configKey in payload.config) {
-          Object.defineProperty(headers, configKey, {
-            value: payload.config[configKey],
-            enumerable: true,
-          });
+          headers[configKey] = payload.config[configKey]
         }
       } else {
         headers["Content-Type"] = "application/json";
       }
 
-      return http.post(payload.url, payload.body, { headers }).pipe(
+      const request: AxiosRequestConfig = {
+        method: payload.method || "post",
+        url: payload.url,
+        data: payload.body,
+        headers,
+      }
+
+      return http.request(request).pipe(
         mergeMap(({ data: response }) =>
           iif(
             () =>

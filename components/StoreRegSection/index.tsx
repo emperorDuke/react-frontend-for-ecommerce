@@ -122,9 +122,9 @@ const mapDispatch = (dispatch: Dispatch) => ({
 });
 
 const mapState = ({ posts }: RootStoreState) => ({
-  status: posts.operations.postItem.status,
-  successMessage: posts.sucessMessage,
-  error: posts.operations.postItem.responseError
+  status: posts.status,
+  successMessage: posts.success,
+  error: posts.error
 });
 
 export default compose(

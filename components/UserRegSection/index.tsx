@@ -106,9 +106,9 @@ const mapDispatch: MapDispatch = (dispatch) => ({
 });
 
 const mapProps: MapProps = ({ posts }, { onCancel }) => ({
-  status: posts.operations.postItem.status,
-  error: posts.operations.postItem.responseError,
-  successMessage: posts.sucessMessage,
+  status: posts.status,
+  error: posts.error,
+  successMessage: posts.success,
   onCancel,
 });
 

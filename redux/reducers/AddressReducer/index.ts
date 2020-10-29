@@ -25,7 +25,7 @@ const initialState: AddressState = {
 export default function addressReducer(
   state = initialState,
   action: AddressActionTypes
-) {
+): AddressState {
   switch (action.type) {
     case address.REQUEST:
       return {
@@ -40,7 +40,7 @@ export default function addressReducer(
     case address.FETCH_SUCCESSFUL:
       return {
         ...state,
-        shippingDetail: action.payload,
+        shipping: action.payload,
         operations: {
           fetchAddress: {
             error: null,
@@ -58,6 +58,24 @@ export default function addressReducer(
           }
         }
       };
+    case address.UPDATE:
+      return {
+        ...state,
+        shipping: state.shipping.map(prevShipping => {
+          if (prevShipping.id === action.payload.id) {
+            return {
+              ...prevShipping,
+              ...action.payload
+            }
+          }
+          return prevShipping;
+        })
+      }
+    case address.ADD:
+      return {
+        ...state,
+        shipping: state.shipping.concat([action.payload])
+      }
     default:
       return state;
   }

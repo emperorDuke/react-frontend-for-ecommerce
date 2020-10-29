@@ -64,10 +64,10 @@ export default function ProductDetails(props: PropsType) {
     props.attributes.map((attribute) => (
       <Grid
         item
+        xs={12}
         container
         direction="column"
         spacing={1}
-        xs={12}
         key={attribute.id}
       >
         <Grid item container alignItems="center" spacing={1}>
@@ -209,7 +209,7 @@ export default function ProductDetails(props: PropsType) {
                 <Grid item>
                   <Typography variant="subtitle2">Quantity:</Typography>
                 </Grid>
-                <Grid item container xs={12}>
+                <Grid item xs={12} container>
                   <Grid item xs={4}>
                     <InputWidget
                       quantity={quantity}

@@ -6,7 +6,7 @@ import useStyles from "./styles";
 import { useProduct, useMerchantStore } from "../../services";
 import { Slider, Slide } from "../Slider";
 import Img from "../Img";
-import CardEnhancer from "../CardEnhancer";
+import CardGroup from "../CardGroup";
 import ModularCard from "../AppCards/ProductModularCard";
 
 interface StoreSectionProps {
@@ -36,11 +36,11 @@ const StoreSection: React.ComponentType<StoreSectionProps> = (props) => {
         </Grid>
         <Grid item>
           <Paper>
-            <CardEnhancer size="md">
+            <CardGroup size="md">
               {products.map((product) => (
                 <ModularCard {...product} key={product.id} />
               ))}
-            </CardEnhancer>
+            </CardGroup>
           </Paper>
         </Grid>
       </Grid>

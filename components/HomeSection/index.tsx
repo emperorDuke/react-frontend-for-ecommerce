@@ -6,7 +6,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Paper from "@material-ui/core/Paper";
 import Hidden from "@material-ui/core/Hidden";
-import CardEnhancer from "../CardEnhancer";
+import CardGroup from "../CardGroup";
 import NavBar from "../NavBar";
 import useStyles from "./styles";
 import ModularCard from "../AppCards/ProductModularCard";
@@ -76,11 +76,11 @@ const HomeSection: React.ComponentType = () => {
   const sponsoredStores = ads.getSponsoredItems().shops.map((shop) => (
     <Grid item key={shop.store.name}>
       <Paper className={classes.cardMasterLayout}>
-        <CardEnhancer appBar appBarProps={{ text: shop.store.name, link: "/" }}>
+        <CardGroup appBar appBarProps={{ text: shop.store.name, link: "/" }}>
           {shop.products.map((product) => (
             <ModularCard {...product} key={product.id} />
           ))}
-        </CardEnhancer>
+        </CardGroup>
       </Paper>
     </Grid>
   ));
@@ -145,14 +145,14 @@ const HomeSection: React.ComponentType = () => {
   const sponsoredProducts = ads.getSponsoredItems().products.length > 0 && (
     <Grid item key={9090}>
       <Paper className={classes.cardMasterLayout}>
-        <CardEnhancer
+        <CardGroup
           appBar
           appBarProps={{ text: "Sponsored products", link: "/" }}
         >
           {ads.getSponsoredItems().products.map((product) => (
             <ModularCard {...product.product} key={product.id} />
           ))}
-        </CardEnhancer>
+        </CardGroup>
       </Paper>
     </Grid>
   );
@@ -164,11 +164,11 @@ const HomeSection: React.ComponentType = () => {
           <Typography variant="h5" className={classes.t}>
             {key}
           </Typography>
-          <CardEnhancer>
+          <CardGroup>
             {listing[key].map((product) => (
               <ModularCard {...product} key={product.id} />
             ))}
-          </CardEnhancer>
+          </CardGroup>
         </Paper>
       </Grid>
     ))

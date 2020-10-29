@@ -6,3 +6,4 @@ export * from "./useWindowResize";
 export * from "./useWidth";
 export * from "./makeArray";
 export * from "./flattenObject";
+export * from "./useRequest";

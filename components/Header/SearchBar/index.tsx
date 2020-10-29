@@ -1,28 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
+import clsx from "classnames";
 import InputBase from "@material-ui/core/InputBase";
 import IconButton from "@material-ui/core/IconButton";
 import NativeSelect from "@material-ui/core/NativeSelect";
-import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
 import { SearchBarProps } from "./@types";
 import SearchIcon from "@material-ui/icons/Search";
 
-const CustomSearch: React.ComponentType<SearchBarProps> = ({
-  locations,
-  categories,
-  queries,
-  onChange,
-  postSearch,
-}) => {
+const CustomSearch: React.ComponentType<SearchBarProps> = (props) => {
   const classes = useStyles();
-
-  const LocationOptions = locations.map((location) => (
-    <option value={location} key={location}>
-      {location}
-    </option>
-  ));
-
-  const categoryOptions = categories.map((category) =>
+  const [isFocused, setIsFocused] = useState(false);
+  
+  const categoryOptions = props.categories.map((category) =>
     category.children.map((child, i) => (
       <option
         value={child.name}
@@ -35,46 +24,37 @@ const CustomSearch: React.ComponentType<SearchBarProps> = ({
   );
 
   return (
-    // <Grid container spacing={1}>
-    //   <Grid item>
-    <div className={classes.wrapper} tabIndex={0}>
+    <div
+      className={clsx(classes.wrapper, { [classes.focus]: isFocused })}
+      tabIndex={0}
+    >
       <InputBase
         id="search-input"
         type="text"
         className={classes.inputField}
-        value={queries["query"]}
-        onChange={(e) => onChange({ ...queries, query: e.target.value })}
+        value={props.queries["query"]}
+        onChange={(e) => props.onChange({ ...props.queries, query: e.target.value })}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         placeholder="search for any product or store in any location"
-        // startAdornment={
-        //   <NativeSelect
-        //     disableUnderline
-        //     value={queries["location"]}
-        //     onChange={e => onChange({ ...queries, location: e.target.value })}
-        //     className={classes.selectLeft}
-        //     classes={{
-        //       select: classes.selectRootLeft
-        //     }}
-        //   >
-        //     <option value={queries["location"]}>{queries["location"]}</option>
-        //     {LocationOptions}
-        //   </NativeSelect>
-        // }
         startAdornment={
           <NativeSelect
             disableUnderline
-            value={queries["category"]}
-            onChange={(e) => onChange({ ...queries, category: e.target.value })}
+            value={props.queries["category"]}
+            onChange={(e) => props.onChange({ ...props.queries, category: e.target.value })}
             className={classes.selectRight}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             classes={{
               select: classes.selectRootRight,
             }}
           >
-            <option value={queries["category"]}>{queries["category"]}</option>
+            <option value={props.queries["category"]}>{props.queries["category"]}</option>
             {categoryOptions}
           </NativeSelect>
         }
         endAdornment={
-          <IconButton onClick={postSearch} color="secondary">
+          <IconButton onClick={props.postSearch}>
             <SearchIcon />
           </IconButton>
         }
@@ -84,18 +64,6 @@ const CustomSearch: React.ComponentType<SearchBarProps> = ({
         }}
       />
     </div>
-    //  </Grid>
-    //   <Grid item>
-    //     <Button
-    //       onClick={postSearch}
-    //       className={classes.button}
-    //       variant="contained"
-    //       color="secondary"
-    //     >
-    //       <SearchIcon />
-    //     </Button>
-    //   </Grid>
-    // </Grid>
   );
 };
 

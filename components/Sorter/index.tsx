@@ -10,7 +10,7 @@ import ViewListIcon from "@material-ui/icons/ViewListOutlined";
 import { useProduct } from "../../services";
 import ModularCard from "../AppCards/ProductModularCard";
 import { sortParameters } from "./utils";
-import CardEnhancer from "../CardEnhancer";
+import CardGroup from "../CardGroup";
 import useStyles from "./styles";
 
 export * from "./utils";
@@ -70,7 +70,7 @@ function Sorter() {
       </Grid>
       <Grid item>
         <Paper className={classes.layout}>
-          <CardEnhancer size="lg" disableToggler cardType={typeOfCard}>
+          <CardGroup size="lg" disableToggler cardType={typeOfCard}>
             {product.all().map(product =>
               typeOfCard === "list" ? (
                 <ListCard {...product} key={product.id} />
@@ -78,7 +78,7 @@ function Sorter() {
                 <ModularCard {...product} key={product.id} />
               )
             )}
-          </CardEnhancer>
+          </CardGroup>
         </Paper>
       </Grid>
     </Grid>

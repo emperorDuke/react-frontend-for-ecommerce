@@ -17,7 +17,7 @@ import { useWidth } from "../../utils";
 import { fromEvent } from "rxjs";
 import { map, debounceTime } from "rxjs/operators";
 
-const CardEnhancer: React.ComponentType<CardEnhancerProps> = (props) => {
+const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
   const CARD_SIZE = props.size || "md";
 
   const theme = useTheme();
@@ -224,7 +224,7 @@ const CardEnhancer: React.ComponentType<CardEnhancerProps> = (props) => {
   );
 };
 
-CardEnhancer.defaultProps = {
+CardGroup.defaultProps = {
   size: "md",
   disableToggler: false,
   appBar: false,
@@ -235,4 +235,4 @@ CardEnhancer.defaultProps = {
   },
 };
 
-export default CardEnhancer;
+export default CardGroup;

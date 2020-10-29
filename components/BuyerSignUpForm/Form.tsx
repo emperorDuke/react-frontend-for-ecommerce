@@ -3,28 +3,76 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { useFormik } from "formik";
-import { FormProps } from "./@types";
+import { BuyerSignUpFormProps } from "./@types";
 import useStyles from "./styles";
 import { useDidUpdateEffect } from "../../utils";
+import { sortFunction } from "./utils";
 
-function Form(props: FormProps) {
+function Form(props: BuyerSignUpFormProps) {
   const classes = useStyles();
 
-  const fields = useMemo(() => {
-    return Object.keys(props.initialValues).filter(
-      (key) => key !== "country" && key !== "state"
-    );
+  const sortedInitialValues = useMemo(() => {
+    const obj: any = {};
+
+    Object.keys(props.initialValues)
+      .sort(sortFunction)
+      .forEach((key) => {
+        obj[key] = props.initialValues[key];
+      });
+
+    return obj as BuyerSignUpFormProps["initialValues"];
   }, [props.initialValues]);
 
-  const selectItems = useMemo(() => {
-    return Object.keys(props.initialValues).filter(
-      (key) => key === "state" || key === "country"
-    );
-  }, [props.initialValues]);
+  const textFields = useMemo(() => {
+    const EXCLUDE_FIELDS = [
+      "country",
+      "state",
+      "id",
+      "zip_code",
+      "shipping_id",
+    ];
+
+    const filterFunc = (key: string) => {
+      if (EXCLUDE_FIELDS.includes(key)) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    return Object.keys(sortedInitialValues).filter(filterFunc);
+  }, [sortedInitialValues]);
+
+  const selectFields = useMemo(() => {
+    const ONLY_FIELDS = ["state", "country"];
+    const filterFunc = (key: string) => ONLY_FIELDS.includes(key);
+
+    return Object.keys(sortedInitialValues).filter(filterFunc);
+  }, [sortedInitialValues]);
+
+  const formValues = useMemo(() => {
+    const obj: any = {};
+
+    textFields.concat(selectFields).forEach((field) => {
+      obj[field] = sortedInitialValues[field];
+    });
+
+    return obj as BuyerSignUpFormProps["initialValues"];
+  }, [textFields, selectFields, sortedInitialValues]);
+
+  const getId = () => {
+    if (sortedInitialValues.shipping_id) {
+      return sortedInitialValues.shipping_id;
+    }
+  };
+
+  const handleSubmit = (values: BuyerSignUpFormProps["initialValues"]) => {
+    props.onSubmit(values, getId());
+  };
 
   const formik = useFormik({
-    initialValues: props.initialValues,
-    onSubmit: props.onSubmit,
+    initialValues: formValues,
+    onSubmit: handleSubmit,
     validationSchema: props.schema,
   });
 
@@ -70,7 +118,7 @@ function Form(props: FormProps) {
   return (
     <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
       <Grid container spacing={1}>
-        {fields.map((key) => (
+        {textFields.map((key) => (
           <Grid item xs={getWidth(key)} container direction="column" key={key}>
             <Grid item>
               <TextField
@@ -85,6 +133,9 @@ function Form(props: FormProps) {
                 fullWidth
                 placeholder={changeSnakeCase(key)}
                 variant="outlined"
+                InputLabelProps={{
+                  className: classes.label,
+                }}
               />
             </Grid>
             <Grid item>
@@ -96,8 +147,8 @@ function Form(props: FormProps) {
             </Grid>
           </Grid>
         ))}
-        {!!selectItems.length &&
-          selectItems.map((key) => (
+        {!!selectFields.length &&
+          selectFields.map((key) => (
             <Grid item xs={6} container direction="column" key={key}>
               <Grid item>
                 <TextField
@@ -107,6 +158,9 @@ function Form(props: FormProps) {
                   fullWidth
                   label={key}
                   variant="outlined"
+                  InputLabelProps={{
+                    className: classes.label,
+                  }}
                   SelectProps={{
                     native: true,
                   }}
@@ -129,7 +183,7 @@ function Form(props: FormProps) {
               </Grid>
             </Grid>
           ))}
-        <Grid item container xs={12}>
+        <Grid item xs={12} container>
           {props.onCancel && (
             <Grid item xs={6}>
               <Button
@@ -142,11 +196,11 @@ function Form(props: FormProps) {
               </Button>
             </Grid>
           )}
-        </Grid>
-        <Grid item xs>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            {formik.isSubmitting ? "sending" : "submit"}
-          </Button>
+          <Grid item xs>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              {formik.isSubmitting ? "sending" : "submit"}
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </form>
