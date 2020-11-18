@@ -97,7 +97,7 @@ const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
     });
   };
 
-  const renderCards = () => {
+  const Cards = () => {
     const { children, appBar, disableToggler, size, cardType } = props;
 
     const wrap = appBar || !disableToggler ? "nowrap" : "wrap";
@@ -149,13 +149,13 @@ const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
     </IconButton>
   );
 
-  const enhancementType = () => {
+  const CardEnhancement = () => {
     const { appBar, appBarProps, disableToggler } = props;
 
     if (!disableToggler && !appBar) {
       return (
         <div style={{ position: "relative" }}>
-          {renderCards()}
+          <Cards />
           {state.nChildren > state.numberOfCards && (
             <Paper className={clsx(classes.btn, classes.leftBtn)} elevation={5}>
               {buttonRight}
@@ -206,11 +206,13 @@ const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
               </AppBar>
             </div>
           </Grid>
-          <Grid item>{renderCards()}</Grid>
+          <Grid item>
+            <Cards />
+          </Grid>
         </Grid>
       );
     } else {
-      return renderCards();
+      return <Cards />;
     }
   };
 
@@ -219,7 +221,7 @@ const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
       style={{ overflow: "hidden", maxWidth: state.parentElWidth }}
       ref={wrapperRef}
     >
-      {enhancementType()}
+      <CardEnhancement />
     </div>
   );
 };
