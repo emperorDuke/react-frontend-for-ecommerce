@@ -4,25 +4,12 @@ import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
 import ListSubHeader from "@material-ui/core/ListSubheader";
 import ListItemText from "@material-ui/core/ListItemText";
-import ChevronRight from "@material-ui/icons/ChevronRight";
 import Popover from "@material-ui/core/Popover";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import useStyles from "./styles";
 import Link from "../Link";
 
-function S() {
-  const one = "-";
-  const two = " & ";
-
-  const re1 = " ";
-
-
-  return {
-    strip: (s: string) => s.replace(" and ", two),
-    unStrip: (s: string) => s.replace(two, " and ").replace(one, re1),
-  };
-}
 
 function SideBar(props: SideBarProps) {
   const [index, setIndex] = useState<string | null>(null);
@@ -37,6 +24,11 @@ function SideBar(props: SideBarProps) {
       setHeight(paperRef.current.clientHeight);
     }
   }, []);
+
+  const concise = (s: string) => {
+    const two = " & ";
+    return s.replace(" and ", two);
+  }
 
   const handleOpen = (name: string) => () => {
     setAnchorEl(paperRef.current);
@@ -56,7 +48,7 @@ function SideBar(props: SideBarProps) {
           <React.Fragment key={name}>
             <ListItem button onClick={handleOpen(name)}>
               <ListItemText
-                primary={S().strip(name)}
+                primary={concise(name)}
                 classes={{
                   primary: classes.fonts,
                 }}
@@ -80,11 +72,9 @@ function SideBar(props: SideBarProps) {
                       <ListSubHeader disableSticky className={classes.fonts}>
                         <Link
                           href="/items/[slug]"
-                          as={`/items/${child.name}?id=${
-                            child.id
-                          }`}
+                          as={`/items/${child.name}?id=${child.id}`}
                         >
-                          {S().strip(child.name)}
+                          {concise(child.name)}
                         </Link>
                       </ListSubHeader>
                       {child.children.map((grandChild) => (
@@ -94,7 +84,7 @@ function SideBar(props: SideBarProps) {
                             as={`/items/${grandChild.name}?id=${grandChild.id}`}
                           >
                             <ListItemText
-                              primary={S().strip(grandChild.name)}
+                              primary={concise(grandChild.name)}
                               classes={{
                                 primary: classes.fonts,
                               }}
