@@ -174,37 +174,29 @@ const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
     } else if (appBar) {
       return (
         <Grid container direction="column">
-          <Grid item>
-            <div
-              style={{
-                width: state.parentElWidth,
-              }}
-            >
-              <AppBar position="static" color="secondary">
-                <Toolbar>
-                  <Typography variant="h6">
-                    {appBarProps && appBarProps.text}
-                  </Typography>
-                  <div style={{ flexGrow: 1 }} />
-                  <div style={{ paddingRight: theme.spacing(1) }}>
-                    {appBarProps && appBarProps.link && (
-                      <Link href={appBarProps.link}>
-                        <Typography variant="subtitle1">View all</Typography>
-                      </Link>
-                    )}
-                  </div>
-
-                  {appBarProps && !appBarProps.disableToggler && (
-                    <div
-                      style={{ display: "inline-flex", flexDirection: "row" }}
-                    >
-                      {buttonLeft}
-                      {buttonRight}
-                    </div>
+          <Grid item xs={12}>
+            <AppBar position="static" color="secondary">
+              <Toolbar>
+                <Typography variant="h6">
+                  {appBarProps && appBarProps.text}
+                </Typography>
+                <div style={{ flexGrow: 1 }} />
+                <div style={{ paddingRight: theme.spacing(1) }}>
+                  {appBarProps && appBarProps.link && (
+                    <Link href={appBarProps.link}>
+                      <Typography variant="subtitle1">View all</Typography>
+                    </Link>
                   )}
-                </Toolbar>
-              </AppBar>
-            </div>
+                </div>
+
+                {appBarProps && !appBarProps.disableToggler && (
+                  <div style={{ display: "inline-flex", flexDirection: "row" }}>
+                    {buttonLeft}
+                    {buttonRight}
+                  </div>
+                )}
+              </Toolbar>
+            </AppBar>
           </Grid>
           <Grid item>
             <Cards />
