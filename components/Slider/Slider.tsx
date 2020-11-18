@@ -26,11 +26,11 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const isThumbnailType = props.type === "thumbnail";
   const infinite = !!props.infinite;
-  const focusThumbs = !isThumbnailType || !!props.focusThumbs;
   const isManual = !infinite && !props.autoplay;
   const pauseOnMouseEnter = props.autoplay && !!props.pauseOnMouseEnter;
   const nChildren = Children.count(props.children) || 0;
   const count = props.interval ? Math.floor(props.interval / SECONDS) : 5;
+  const initFocusThumb = !isThumbnailType || !!props.focusThumbOnMount;
 
   const [state, dispatch] = useReducer(reducer, {
     slideNo: 1,
@@ -59,12 +59,12 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
         : child
     );
 
-    const cloneChildren = Children.toArray(children);
+    const childrenArray = Children.toArray(children);
     const firstIndex = 0;
-    const lastIndex = cloneChildren.length - 1;
-    const childrenArrayCopy = cloneChildren.slice();
-    const firstChild = cloneChildren[firstIndex];
-    const lastChild = cloneChildren[lastIndex];
+    const lastIndex = childrenArray.length - 1;
+    const childrenArrayCopy = childrenArray.slice();
+    const firstChild = childrenArray[firstIndex];
+    const lastChild = childrenArray[lastIndex];
 
     childrenArrayCopy.push(insertKey(firstChild, firstIndex));
     childrenArrayCopy.unshift(insertKey(lastChild, lastIndex));
@@ -107,6 +107,8 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
 
   const onTransitionEndRef = useRef(() => {});
 
+  const highlightThumb = useRef(initFocusThumb);
+
   const classes = useStyles({
     ...state,
     thumbHeight: thumbnailDimension.height,
@@ -120,6 +122,12 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
     onSwipedLeft: () => call(next)(),
     onSwipedRight: () => call(previous)(),
   });
+
+  useEffect(() => {
+    if (state.activeIndex !== 0 && !highlightThumb.current) {
+      highlightThumb.current = true;
+    }
+  }, [state.activeIndex]);
 
   useEffect(() => {
     const handleTransitionEnd = () => {
@@ -316,39 +324,46 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
       {
         [classes.activeFade]: isFadeEffect,
         [classes.activeSlide]: isSlideEffect,
-        [classes.spaceSlides]: !isThumbnailType && isSlideEffect,
       },
       className
     );
   };
 
-  const renderItem = () => {
+  const Slides = () => {
     const isFadeEffect = props.effectType === "fade";
 
     if (isFadeEffect) {
-      return childrenWithClone.map(
-        (child, i) =>
-          React.isValidElement(child) && (
-            <Fade
-              in={child.props.__index === state.activeIndex}
-              timeout={props.timeout}
-              key={i}
-            >
-              {React.cloneElement(child, {
-                className: getCssClasses(child.props.className),
-                ref: slideRef,
-              })}
-            </Fade>
-          )
+      return (
+        <React.Fragment>
+          {childrenWithClone.map(
+            (child, i) =>
+              React.isValidElement(child) && (
+                <Fade
+                  in={child.props.__index === state.activeIndex}
+                  timeout={props.timeout}
+                  key={i}
+                >
+                  {React.cloneElement(child, {
+                    className: getCssClasses(child.props.className),
+                    ref: slideRef,
+                  })}
+                </Fade>
+              )
+          )}
+        </React.Fragment>
       );
     }
-    return childrenWithClone.map(
-      (child) =>
-        React.isValidElement(child) &&
-        React.cloneElement(child, {
-          className: getCssClasses(child.props.className),
-          ref: slideRef,
-        })
+    return (
+      <React.Fragment>
+        {childrenWithClone.map(
+          (child) =>
+            React.isValidElement(child) &&
+            React.cloneElement(child, {
+              className: getCssClasses(child.props.className),
+              ref: slideRef,
+            })
+        )}
+      </React.Fragment>
     );
   };
 
@@ -363,9 +378,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
   return (
     <div
       ref={sliderRef}
-      className={clsx(classes.wrapper, props.className, {
-        [classes.noOverflow]: !isThumbnailType,
-      })}
+      className={clsx(classes.wrapper, props.className)}
     >
       {props.children && (
         <div aria-label="slider" className={classes.container}>
@@ -377,7 +390,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               aria-label="slider-wrapper"
               className={classes.slider}
             >
-              {renderItem()}
+              <Slides />
               {!props.disableButtons && !shouldHide && (
                 <ButtonBase
                   onClick={call(previous)}
@@ -399,7 +412,7 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
               {/** dot indicator */}
               {(!props.disableIndicator || shouldHide) && (
                 <Indicator
-                  children={props.children}
+                  nChildren={nChildren}
                   setIndex={goToIndex}
                   activeIndex={state.activeIndex}
                   dotDimension={dotDimension}
@@ -411,14 +424,15 @@ const Slider: React.ComponentType<SliderProps> = (props) => {
           {/** thumbs  */}
           {(isThumbnailType || (props.showThumbs && !shouldHide)) && (
             <Thumbnail
-              children={props.children}
               setIndex={goToIndex}
               activeIndex={state.activeIndex}
               thumbDimension={thumbnailDimension}
               noOfVisibleThumbs={noOfVisibleThumbs}
-              focusThumbs={focusThumbs}
+              focusThumbOnMount={highlightThumb.current}
               standalone={isThumbnailType}
-            />
+            >
+              {props.children}
+            </Thumbnail>
           )}
         </div>
       )}
@@ -441,6 +455,7 @@ Slider.defaultProps = {
   infinite: false,
   pauseOnMouseEnter: false,
   timeout: 800,
+  focusThumbOnMount: false,
 };
 
 export default Slider;

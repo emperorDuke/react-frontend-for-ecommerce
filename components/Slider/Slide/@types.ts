@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 
 export interface SlideProps {
-  __showCaption?: boolean;
+  __parent?: "sliderComponent" | "thumbnailComponent";
   __setIndex?: (i: number) => void;
   __index?: number;
   className?: string;

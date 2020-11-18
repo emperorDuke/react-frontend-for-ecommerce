@@ -1,5 +1,3 @@
-
-import AxiosClient from '../../axios-client';
 import { postingFailed, postingSuccess, Posting } from '../../redux/actionCreators/PostActions';
 import { REQ } from './@types';
 import { ThunkDispatch } from 'redux-thunk';

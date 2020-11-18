@@ -27,18 +27,6 @@ const getSteps = () => {
   return ["Address Details", "Delivery Method", "Payment Method"];
 };
 
-const getStepContent = (step: number) => {
-  switch (step) {
-    case 0:
-      return AddressSection();
-    case 1:
-      return <DeliveryMethod />;
-    case 2:
-      return <PaymentMethod />;
-    default:
-      throw new Error("Unknown step");
-  }
-};
 
 function CheckOut() {
   const router = useRouter();
@@ -83,6 +71,19 @@ function CheckOut() {
     setCompleted(new Set());
   };
 
+  const getStepContent = (step: number) => {
+    switch (step) {
+      case 0:
+        return <AddressSection />;
+      case 1:
+        return <DeliveryMethod />;
+      case 2:
+        return <PaymentMethod />;
+      default:
+        throw new Error("Unknown step");
+    }
+  };
+  
   return (
     <Container>
       <Grid container direction="column" spacing={1}>

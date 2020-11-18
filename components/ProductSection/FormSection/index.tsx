@@ -60,56 +60,58 @@ export default function ProductDetails(props: PropsType) {
     setVariants(tempVariants);
   };
 
-  const attributesAndvariants = () =>
-    props.attributes.map((attribute) => (
-      <Grid
-        item
-        xs={12}
-        container
-        direction="column"
-        spacing={1}
-        key={attribute.id}
-      >
-        <Grid item container alignItems="center" spacing={1}>
-          <Grid item>
-            <Typography variant="subtitle2" className={classes.capText}>
-              {attribute.name}:
-            </Typography>
-          </Grid>
-          <Grid item>
-            {getVariant(attribute.id).map((v) => (
-              <Typography
-                variant="subtitle2"
-                className={classes.capText}
-                key={v.vendor_metric}
-                color="secondary"
-              >
-                {v.metric_verbose_name || v.vendor_metric}
+  const AttributesAndvariants = () => (
+    <React.Fragment>
+      {props.attributes.map((attribute) => (
+        <Grid
+          item
+          xs={12}
+          container
+          direction="column"
+          spacing={1}
+          key={attribute.id}
+        >
+          <Grid item container alignItems="center" spacing={1}>
+            <Grid item>
+              <Typography variant="subtitle2" className={classes.capText}>
+                {attribute.name}:
               </Typography>
-            ))}
+            </Grid>
+            <Grid item>
+              {getVariant(attribute.id).map((v) => (
+                <Typography
+                  variant="subtitle2"
+                  className={classes.capText}
+                  key={v.vendor_metric}
+                  color="secondary"
+                >
+                  {v.metric_verbose_name || v.vendor_metric}
+                </Typography>
+              ))}
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Slider
+              type="thumbnail"
+              className={classes.thumnbnail}
+            >
+              {attribute.variants.map((variant) => (
+                <Slide onClick={handleVariantChange(variant)} key={variant.id}>
+                  {variant.attachment ? (
+                    <Img src={variant.attachment} alt={variant.vendor_metric} />
+                  ) : (
+                    <div className={classes.textWrapper}>
+                      <p className={classes.text}>{variant.vendor_metric}</p>
+                    </div>
+                  )}
+                </Slide>
+              ))}
+            </Slider>
           </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Slider
-            type="thumbnail"
-            className={classes.thumnbnail}
-            focusThumbs={!!getVariant(attribute.id).length}
-          >
-            {attribute.variants.map((variant) => (
-              <Slide onClick={handleVariantChange(variant)} key={variant.id}>
-                {variant.attachment ? (
-                  <Img src={variant.attachment} alt={variant.vendor_metric} />
-                ) : (
-                  <div className={classes.textWrapper}>
-                    <p className={classes.text}>{variant.vendor_metric}</p>
-                  </div>
-                )}
-              </Slide>
-            ))}
-          </Slider>
-        </Grid>
-      </Grid>
-    ));
+      ))}
+    </React.Fragment>
+  );
 
   return (
     <div className={clsx(classes.flexGrow, classes.padding)}>
@@ -204,7 +206,7 @@ export default function ProductDetails(props: PropsType) {
         <Grid item xs={12}>
           <div className={classes.greyWrapper}>
             <Grid container spacing={1} direction="column">
-              {attributesAndvariants()}
+              <AttributesAndvariants />
               <Grid item container direction="column" spacing={1}>
                 <Grid item>
                   <Typography variant="subtitle2">Quantity:</Typography>

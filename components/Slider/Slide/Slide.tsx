@@ -4,6 +4,8 @@ import clsx from "classnames";
 import { SlideProps } from "./@types";
 
 const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
+  const thumbnailComponent = props.__parent === "thumbnailComponent";
+
   const classes = useStyles();
 
   const captionEl = (
@@ -13,7 +15,9 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
   );
 
   const handleClick = (event?: React.MouseEvent<HTMLDivElement>) => {
-    if (props.onClick && event) props.onClick(event);
+    if (props.onClick && event && !thumbnailComponent) {
+      props.onClick(event);
+    }
 
     if (props.__setIndex && typeof props.__index === "number") {
       props.__setIndex(props.__index);
@@ -30,14 +34,14 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
       role="button"
       tabIndex={0}
     >
-      {props.__showCaption && props.caption && captionEl}
+      {thumbnailComponent && props.caption && captionEl}
       {props.children}
     </div>
   );
 });
 
 Slide.defaultProps = {
-  __showCaption: true,
+  __parent: "sliderComponent",
 };
 
 export default Slide;

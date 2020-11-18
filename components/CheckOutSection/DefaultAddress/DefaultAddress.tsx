@@ -13,151 +13,17 @@ import DialogContent from "@material-ui/core/DialogContent";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 import CheckIcon from "@material-ui/icons/Check";
-import makeStyles from "@material-ui/core/styles/makeStyles";
-import createStyles from "@material-ui/core/styles/createStyles";
-import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import {
-  ShippingDetailType,
-  updateAddress,
-  requestAddress,
-} from "../../redux/actionCreators/AddressActions";
-import { BuyerSignUpForm, BuyerSignUpFormProps } from "../BuyerSignUpForm";
-import { flatten, useRequest } from "../../utils";
+import * as actions from "../../../redux/actionCreators/AddressActions";
+import * as T from "./@types";
+import { BuyerSignUpForm } from "../../BuyerSignUpForm";
+import { flatten, useRequest } from "../../../utils";
 import { useDispatch } from "react-redux";
-import { apiUrl as path } from "../../services";
+import { apiUrl as path } from "../../../services";
 import { serialize } from "object-to-formdata";
+import { useStyles } from "./styles";
+import { constructShippingData, formLabels } from "./utils";
 
-type FormPropsRequired = Pick<
-  BuyerSignUpFormProps,
-  "initialValues" | "onSubmit" | "schema" | "serverErrors"
->;
-
-type InitialValues = BuyerSignUpFormProps["initialValues"];
-
-interface Props extends FormPropsRequired {
-  defaultAddress: ShippingDetailType;
-  addresses?: ShippingDetailType[];
-}
-
-interface AddressDialogFormProps extends FormPropsRequired {
-  dialogState: boolean;
-  setDialogState: (param: boolean) => void;
-}
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      padding: theme.spacing(1),
-      border: `1px solid ${theme.palette.primary.main}`,
-      borderRadius: theme.shape.borderRadius,
-      width: "100%",
-    },
-    text: {
-      textTransform: "capitalize",
-    },
-    textColor: {
-      color: theme.palette.grey[500],
-    },
-    tooltip: {
-      ...theme.typography.caption,
-      textTransform: "capitalize",
-    },
-  })
-);
-
-/**
- * sort form fields
- */
-const formLabels = ({ minimal = false, excludeID = true }) => {
-  const LABELS = ["first_name", "last_name", "address", "phone_number"];
-  const EXTRALABELS = ["city", "state", "country"];
-
-  let value = LABELS;
-
-  if (!minimal) {
-    value = LABELS.concat(EXTRALABELS);
-  }
-
-  if (!excludeID) {
-    value = value.concat(["id"]);
-  }
-
-  return value;
-};
-
-/**
- * unflattens the shipping object
- * @param values object
- */
-export function constructShippingData(values: any) {
-  const addressObj: any = {};
-  const shippingObj: any = {};
-  const addressFields = ["address", "city", "state", "country"];
-
-  const filterFunc = (key: string) => {
-    if (addressFields.includes(key)) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  addressFields.forEach((field) => {
-    addressObj[field] = values[field];
-  });
-
-  Object.keys(values)
-    .filter(filterFunc)
-    .forEach((key) => {
-      shippingObj[key] = values[key];
-    });
-
-  shippingObj["address"] = addressObj;
-
-  return shippingObj as ShippingDetailType;
-}
-
-/**
- * Dialog for the shipping form
- * @param props
- */
-function AddressDialogForm(props: AddressDialogFormProps) {
-  return (
-    <Dialog
-      open={props.dialogState}
-      aria-labelledby="dialog-for-new-address"
-      fullWidth
-    >
-      <DialogContent>
-        <Grid container direction="column" spacing={1}>
-          <Grid item xs={12} container alignItems="center">
-            <Grid item>
-              <Typography variant="h6">Delivery Address</Typography>
-            </Grid>
-            <div style={{ flexGrow: 1 }} />
-            <Grid item>
-              <IconButton onClick={() => props.setDialogState(false)}>
-                <CloseIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Divider />
-          </Grid>
-          <Grid item>
-            <BuyerSignUpForm
-              onSubmit={props.onSubmit}
-              schema={props.schema}
-              initialValues={props.initialValues}
-            />
-          </Grid>
-        </Grid>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-export default function DefaultAddresses(props: Props) {
+export default function DefaultAddresses(props: T.DefaultAddressProps) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [openNewAddress, setOpenNewAddress] = useState(false);
@@ -172,6 +38,7 @@ export default function DefaultAddresses(props: Props) {
     const flatObject = flatten(defaultAddress);
 
     flatObject["shipping_id"] = defaultAddress.id;
+
     return flatObject;
   }, [props.defaultAddress]);
 
@@ -185,7 +52,7 @@ export default function DefaultAddresses(props: Props) {
           const flatObject = flatten(address);
           flatObject["shipping_id"] = address.id;
           return flatObject;
-        }) as InitialValues[])
+        }) as T.InitialValues[])
     );
   }, [props.addresses, defaultAddress]);
 
@@ -198,7 +65,7 @@ export default function DefaultAddresses(props: Props) {
         obj[key] = defaultAddress[key];
       });
 
-    return obj as InitialValues;
+    return obj as T.InitialValues;
   }, [defaultAddress]);
 
   useEffect(() => {
@@ -207,7 +74,7 @@ export default function DefaultAddresses(props: Props) {
     const data = onAddressEdit.data;
 
     if (status === "success" && data) {
-      dispatch(updateAddress(data));
+      dispatch(actions.updateAddress(data));
     }
     if (status === "failed" && error) {
       setEditError(error);
@@ -218,7 +85,7 @@ export default function DefaultAddresses(props: Props) {
     const status = onAddressDefault.status;
 
     if (status === "success") {
-      dispatch(updateAddress(onAddressDefault.data));
+      dispatch(actions.updateAddress(onAddressDefault.data));
     }
   }, [onAddressDefault.status]);
 
@@ -226,7 +93,7 @@ export default function DefaultAddresses(props: Props) {
     const status = onAddressDelete.status;
 
     if (status === "success") {
-      dispatch(requestAddress(path("getShippingDetails")));
+      dispatch(actions.requestAddress(path("getShippingDetails")));
     }
 
     if (status === "failed") {
@@ -268,7 +135,43 @@ export default function DefaultAddresses(props: Props) {
     });
   };
 
-  const defaultAddressJSX = (
+  const AddressDialogForm = (props: T.AddressDialogFormProps) => {
+    return (
+      <Dialog
+        open={props.dialogState}
+        aria-labelledby="dialog-for-new-address"
+        fullWidth
+      >
+        <DialogContent>
+          <Grid container direction="column" spacing={1}>
+            <Grid item xs={12} container alignItems="center">
+              <Grid item>
+                <Typography variant="h6">Delivery Address</Typography>
+              </Grid>
+              <div style={{ flexGrow: 1 }} />
+              <Grid item>
+                <IconButton onClick={() => props.setDialogState(false)}>
+                  <CloseIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Divider />
+            </Grid>
+            <Grid item>
+              <BuyerSignUpForm
+                onSubmit={props.onSubmit}
+                schema={props.schema}
+                initialValues={props.initialValues}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  const DefaultAddress = () => (
     <React.Fragment>
       <Grid item container alignItems="center">
         <Grid item>
@@ -352,7 +255,7 @@ export default function DefaultAddresses(props: Props) {
 
   return (
     <Grid container spacing={1}>
-      {defaultAddressJSX}
+      <DefaultAddress />
       <Grid item xs={12}>
         <Typography variant="h6">Addresses</Typography>
       </Grid>
@@ -402,7 +305,7 @@ export default function DefaultAddresses(props: Props) {
                         aria-label="delete"
                         onClick={handleAddressDelete(address.id)}
                       >
-                        <DeleteIcon />
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </Grid>

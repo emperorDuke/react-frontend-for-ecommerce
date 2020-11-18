@@ -8,7 +8,7 @@ import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import { apiUrl } from "../../services";
 import { BuyerSignUpForm } from "../BuyerSignUpForm";
 import useSelector from "../../redux/utils/useStoreSelector";
-import DefaultAddresses, { constructShippingData } from "./DefaultAddress";
+import { DefaultAddress , constructShippingData } from "./DefaultAddress";
 import { addAddress } from "../../redux/actionCreators/AddressActions";
 import { serialize } from "object-to-formdata";
 import { useRequest } from "../../utils";
@@ -99,7 +99,7 @@ function AddressSection() {
         <Grid item container>
           <Grid item xs={12}>
             {defaultAddress ? (
-              <DefaultAddresses
+              <DefaultAddress
                 defaultAddress={defaultAddress}
                 addresses={allAddresses}
                 onSubmit={handleAddressForm}

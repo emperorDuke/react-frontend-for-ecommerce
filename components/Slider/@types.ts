@@ -42,7 +42,7 @@ export interface PayloadArgument {
 }
 
 export interface SliderProps
-  extends Pick<ThumbnailsProps, "noOfVisibleThumbs" | "focusThumbs"> {
+  extends Pick<ThumbnailsProps, "noOfVisibleThumbs" | "focusThumbOnMount"> {
   children?: React.ReactNodeArray;
   /**
    * Css class

@@ -39,11 +39,11 @@ export default makeStyles((theme: Theme) =>
       flexWrap: "nowrap",
       borderRadius: theme.shape.borderRadius,
     },
-    noOverflow: {
-      [theme.breakpoints.down("sm")]: {
-        overflow: "visible",
-      },
-    },
+    // noOverflow: {
+    //   [theme.breakpoints.down("sm")]: {
+    //     overflow: "visible",
+    //   },
+    // },
     slider: {
       display: "flex",
       position: "relative",
@@ -61,21 +61,12 @@ export default makeStyles((theme: Theme) =>
         },
       },
       [theme.breakpoints.down("sm")]: {
-        // the spacing(1) at marginLeft of slide is substracted from
-        // the incoming width to balance it out
-        width: (state: StyleProps) => `${state.width - theme.spacing(1)}px`,
         height: (state: StyleProps) => `${state.height}px`,
       },
     },
     activeSlide: {
       transform: getTransform,
       transition: getSlideEffectTransition,
-    },
-    spaceSlides: {
-      [theme.breakpoints.down("sm")]: {
-        // space the image
-        margin: theme.spacing(0, 0, 0, 1),
-      },
     },
     activeFade: {
       transform: getTransform,

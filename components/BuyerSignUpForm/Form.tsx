@@ -32,13 +32,7 @@ function Form(props: BuyerSignUpFormProps) {
       "shipping_id",
     ];
 
-    const filterFunc = (key: string) => {
-      if (EXCLUDE_FIELDS.includes(key)) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+    const filterFunc = (key: string) => !EXCLUDE_FIELDS.includes(key);
 
     return Object.keys(sortedInitialValues).filter(filterFunc);
   }, [sortedInitialValues]);

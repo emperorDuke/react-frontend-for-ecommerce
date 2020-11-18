@@ -1,7 +1,7 @@
 import { Dimension } from "../@types";
 
 export interface IndicatorProps {
-    children?: React.ReactNodeArray;
+    nChildren?: number;
     activeIndex: number;
     setIndex: (i:number) => void;
     dotDimension: Dimension;

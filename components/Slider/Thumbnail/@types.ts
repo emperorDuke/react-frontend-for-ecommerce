@@ -7,6 +7,9 @@ export interface ThumbnailsProps {
   thumbDimension: Dimension;
   className?: string;
   noOfVisibleThumbs?: number;
-  focusThumbs?: boolean;
   standalone?: boolean;
+  /**
+   * focus the thumb on the first mount
+   */
+  focusThumbOnMount?: boolean;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Children } from "react";
+import React, { useState, useEffect } from "react";
 import useStyles from "./styles";
 import clsx from "classnames";
 import ButtonBase from "@material-ui/core/ButtonBase";
@@ -14,13 +14,15 @@ const Indicators: React.ComponentType<IndicatorProps> = (props) => {
 
   useEffect(() => setIdx(props.activeIndex), [props.activeIndex]);
 
+  const handleClick = (i: number) => () => props.setIndex(i);
+
   return (
     <div className={classes.indicatorWrapper} aria-label="indicator">
       <div className={classes.dotsWrapper} aria-label="dots-wrapper">
-        {Children.map(props.children, (c, i) => (
+        {Array.apply(null, Array(props.nChildren)).map((c, i) => (
           <ButtonBase
             key={i}
-            onClick={() => props.setIndex(i)}
+            onClick={handleClick(i)}
             aria-label="dot"
             className={clsx(classes.dot, {
               [classes.activeDot]: idx === i,

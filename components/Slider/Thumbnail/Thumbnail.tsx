@@ -13,7 +13,7 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
   const noOfVisibleThumbs = props.noOfVisibleThumbs || 4;
   const offsetX = props.thumbDimension.width;
   const offsetY = props.thumbDimension.height;
-  const focusThumbs = !!props.focusThumbs;
+  const focusThumbs = !!props.focusThumbOnMount;
 
   const [value, setValue] = useState({
     activeIndex: props.activeIndex,
@@ -165,34 +165,29 @@ const Thumbnails: React.ComponentType<ThumbnailsProps> = (props) => {
 
   const rightBtn = {
     [classes.disabledBtn]: activeGroup.current === groups.current.length,
-    [classes.onHoverRightBtn]: props.standalone
+    [classes.onHoverRightBtn]: props.standalone,
   };
 
   const leftBtn = {
     [classes.disabledBtn]: activeGroup.current === 1,
-    [classes.onHoverLeftBtn]: props.standalone
+    [classes.onHoverLeftBtn]: props.standalone,
   };
 
   return (
     <div className={classes.thumbnailsWrapper}>
       <div className={classes.thumbnails} {...handlers}>
         {Children.map(props.children, (child, i) => (
-          <ButtonBase
-            className={classes.thumbWrapper}
-            key={`child-${i}`}
-          >
+          <ButtonBase className={classes.thumbWrapper} key={`child-${i}`}>
             <div
               className={clsx(classes.thumb, {
                 [classes.notActiveThumb]: i !== props.activeIndex,
                 [classes.activeThumb]:
-                  i === props.activeIndex &&
-                  props.focusThumbs &&
-                  props.standalone,
+                  i === props.activeIndex && focusThumbs && props.standalone,
               })}
             >
               {React.isValidElement(child) &&
                 React.cloneElement(child, {
-                  __showCaption: false,
+                  __parent: "thumbnailComponent",
                   __index: i,
                   __setIndex: props.setIndex,
                 })}
