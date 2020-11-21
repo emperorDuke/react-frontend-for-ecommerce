@@ -8,9 +8,8 @@ type FormPropsRequired = Pick<
 
 export type InitialValues = BuyerSignUpFormProps["initialValues"];
 
-export interface DefaultAddressProps extends FormPropsRequired {
-  defaultAddress: ShippingDetailType;
-  addresses?: ShippingDetailType[];
+export interface DefaultAddressProps {
+  shipping: ShippingDetailType[];
 }
 
 export interface AddressDialogFormProps extends FormPropsRequired {

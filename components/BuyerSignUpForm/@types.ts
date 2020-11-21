@@ -1,8 +1,8 @@
 import Yup from "yup";
 
 interface InitialValues {
-  [key: string]: string | undefined;
-  id?: string;
+  [key: string]: string | number |  undefined ;
+  id?: string | number;
   first_name: string;
   last_name: string;
   phone_number: string;
@@ -18,7 +18,7 @@ interface InitialValues {
 export interface BuyerSignUpFormProps {
   schema: Yup.ObjectSchema<any>;
   initialValues: InitialValues;
-  onSubmit: (body: InitialValues, id?: string) => void;
+  onSubmit: (body: InitialValues, id?: string | number) => void;
   onCancel?: () => void;
   serverErrors?: InitialValues;
   serverSuccessMessage?: InitialValues;

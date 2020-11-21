@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import Grid from "@material-ui/core/Grid";
+import useSelector from "../../redux/utils/useStoreSelector";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepButton from "@material-ui/core/StepButton";
@@ -9,32 +9,58 @@ import Paper from "@material-ui/core/Paper";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import { useRouter } from "next/router";
-import DeliveryMethod from "./DeliveryMethod";
-import AddressSection from "./AddressSection";
+import { DeliverySection, Delivery } from "./DeliverySection";
+import { AddressSection } from "./AddressSection";
 import PaymentMethod from "./PaymentMethod";
 import Typography from "@material-ui/core/Typography";
+import { requestStatus$, Status } from "../../utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    stepperRoot: {
+    orderSummary: {
       minHeight: theme.spacing(50),
+    },
+    orderText: {
+      textAlign: "center",
+      textTransform: "capitalize",
     },
   })
 );
 
-const getSteps = () => {
-  return ["Address Details", "Delivery Method", "Payment Method"];
-};
-
-
 function CheckOut() {
-  const router = useRouter();
+  const shipping = useSelector(({ addressBook }) => addressBook.shipping);
+  const pickupStations = useSelector(
+    ({ pickUpLocations }) => pickUpLocations.pickUpLocations
+  );
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState(new Set());
-  const dispatch = useDispatch();
+  const [status, setStatus] = useState<Status>("idle");
+  const [pickupLocationId, setPickupLocationId] = useState<string | number>(-1);
+  const [deliveryType, setDeliveryType] = useState<Delivery | null>(null);
   const classes = useStyles();
 
+  useEffect(() => {
+    const defaultAddress = () => {
+      if (shipping.length) {
+        return shipping.find((s) => !!s.default);
+      }
+    };
+
+    if (defaultAddress() && activeStep === 0) {
+      handleComplete();
+      handleNext();
+    }
+
+    const status$ = requestStatus$.subscribe(setStatus);
+
+    return () => status$.unsubscribe();
+  }, []);
+
+  const getSteps = () => {
+    return ["Address Details", "Delivery Method", "Payment Method"];
+  };
+
+  
   const steps = getSteps();
 
   const isLastStep = () => activeStep === totalSteps() - 1;
@@ -66,24 +92,27 @@ function CheckOut() {
     setCompleted(newCompleted);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted(new Set());
-  };
-
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return <AddressSection />;
+        return <AddressSection shipping={shipping} />;
       case 1:
-        return <DeliveryMethod />;
+        return (
+          <DeliverySection
+            pickupStationId={pickupLocationId}
+            setPickupStationId={setPickupLocationId}
+            pickupStations={pickupStations}
+            deliveryType={deliveryType}
+            setDeliveryType={setDeliveryType}
+          />
+        );
       case 2:
         return <PaymentMethod />;
       default:
         throw new Error("Unknown step");
     }
   };
-  
+
   return (
     <Container>
       <Grid container direction="column" spacing={1}>
@@ -110,8 +139,21 @@ function CheckOut() {
             </Paper>
           </Grid>
           <Grid item xs>
-            <Paper className={classes.stepperRoot}>
-              <Typography variant="h6">order summary</Typography>
+            <Paper className={classes.orderSummary}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    className={classes.orderText}
+                    component="h4"
+                  >
+                    order summary
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <div></div>
+                </Grid>
+              </Grid>
             </Paper>
           </Grid>
         </Grid>

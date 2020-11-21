@@ -1,12 +1,6 @@
-import { FetchOperationType } from "../utils/Fetch";
-import { ShippingDetailType } from "./actionCreators/AddressActions";
-
-interface AddressState {
-  shipping: Array<ShippingDetailType>;
-  operations: {
-    [opName: string]: FetchOperationType;
-  };
-}
+import { PickUpLocationState } from "./reducers/PickupLocationReducer";
+import { AddressState } from "./reducers/AddressReducer";
+import { RootStoreState } from "./reducers/RootReducer";
 
 const shipping: AddressState = {
   shipping: [
@@ -15,7 +9,7 @@ const shipping: AddressState = {
       buyer: 2,
       address: {
         id: 1,
-        address: 'no 34 beckham street off emmanuel edem cresent, ikeja Lagos',
+        address: "no 34 beckham street off emmanuel edem cresent, ikeja Lagos",
         state: "Lagos",
         city: "Ikeja",
         country: "Nigeria",
@@ -32,7 +26,7 @@ const shipping: AddressState = {
       buyer: 2,
       address: {
         id: 1,
-        address: 'no 34 beckham street, ikeja Lagos',
+        address: "no 34 beckham street, ikeja Lagos",
         state: "Lagos",
         city: "Ikeja",
         country: "Nigeria",
@@ -49,7 +43,7 @@ const shipping: AddressState = {
       buyer: 2,
       address: {
         id: 1,
-        address: 'no 34 beckham street, ikot-ansa calabar',
+        address: "no 34 beckham street, ikot-ansa calabar",
         state: "calabar",
         city: "ikot-ansa",
         country: "Nigeria",
@@ -66,7 +60,7 @@ const shipping: AddressState = {
       buyer: 2,
       address: {
         id: 1,
-        address: 'no 34 beckham street, ikeja Lagos',
+        address: "no 34 beckham street, ikeja Lagos",
         state: "Abuja",
         city: "kubwa",
         country: "Nigeria",
@@ -79,14 +73,89 @@ const shipping: AddressState = {
       added_at: "yyuguuugug",
     },
   ],
-  operations: {
-    fetchAddress: {
-      error: null,
-      status: null,
-    },
-  },
+  operations: { error: null, status: null },
 };
 
-export const preloadedState = {
+const pickupLocations: PickUpLocationState = {
+  pickUpLocations: [
+    {
+      id: "1",
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja Lagos",
+      state: "Lagos",
+      city: "Ikeja",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: "2",
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Lagos",
+      city: "Idimu",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: "3",
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Maitama",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: "4",
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Kubwa",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: "5",
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Utako",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: 6,
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Kubwa",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: 7,
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Utako",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    
+    {
+      id: 8,
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Kubwa",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+    {
+      id: 9,
+      address: "No 34 beckham street off emmanuel edem cresent, ikeja",
+      state: "Abuja",
+      city: "Utako",
+      country: "Nigeria",
+      zip_code: "56777",
+    },
+  ],
+  operations: { error: null, status: null },
+};
+
+export const preloadedState: Partial<RootStoreState> = {
   addressBook: shipping,
+  pickUpLocations: pickupLocations
 };

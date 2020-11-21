@@ -2,7 +2,7 @@ import { Action } from "redux";
 
 export interface AddressType {
   [key: string]: string | number | undefined;
-  id?: number;
+  id?: number | string;
   address: string;
   country: string;
   city: string;
@@ -12,7 +12,7 @@ export interface AddressType {
 
 export interface ShippingDetailType {
   [key: string]: string | number | boolean | undefined | AddressType;
-  id?: number;
+  id?: number | string;
   buyer?: number;
   address: AddressType;
   default?: boolean;

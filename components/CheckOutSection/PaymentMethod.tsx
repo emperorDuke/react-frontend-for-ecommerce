@@ -21,7 +21,7 @@ function PaymentMethod() {
             control={<Radio />}
             value={paymentMethod}
             onChange={() => setPaymentMethod("Pay now")}
-            label={<Typography variant="h6">Pay now</Typography>}
+            label={<Typography variant="subtitle1">Pay now</Typography>}
           />
         </Grid>
         <Grid item>
@@ -31,7 +31,7 @@ function PaymentMethod() {
                 control={<Radio />}
                 value={paymentMethod}
                 onChange={() => setPaymentMethod("Pay on Delivery")}
-                label={<Typography variant="h6">Pay on delivery</Typography>}
+                label={<Typography variant="subtitle1">Pay on delivery</Typography>}
               />
             </Grid>
           </Grid>

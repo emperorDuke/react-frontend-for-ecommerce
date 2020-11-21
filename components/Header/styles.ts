@@ -21,7 +21,8 @@ export default makeStyles((theme: Theme) =>
     },
     loginPaper: {
       width: theme.spacing(30),
-      overflow: "hidden"
+      overflow: "hidden",
+      padding: theme.spacing(0, 1)
     },
     divider: {
       height: "1px",

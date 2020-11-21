@@ -2,24 +2,17 @@ import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 import {
   AddressActionTypes,
   address,
-  ShippingDetailType
+  ShippingDetailType,
 } from "../../actionCreators/AddressActions";
 
-interface AddressState {
+export interface AddressState {
   shipping: Array<ShippingDetailType>;
-  operations: {
-    [opName: string]: FetchOperationType;
-  };
+  operations: FetchOperationType;
 }
 
 const initialState: AddressState = {
   shipping: [],
-  operations: {
-    fetchAddress: {
-      error: null,
-      status: null
-    }
-  }
+  operations: { error: null, status: null },
 };
 
 export default function addressReducer(
@@ -30,52 +23,37 @@ export default function addressReducer(
     case address.REQUEST:
       return {
         ...state,
-        operations: {
-          fetchAddress: {
-            error: null,
-            status: FetchConst.FETCH_IN_PROCESS
-          }
-        }
+        operations: { error: null, status: FetchConst.FETCH_IN_PROCESS },
       };
     case address.FETCH_SUCCESSFUL:
       return {
         ...state,
         shipping: action.payload,
-        operations: {
-          fetchAddress: {
-            error: null,
-            status: FetchConst.FETCH_SUCCESSFUL
-          }
-        }
+        operations: { error: null, status: FetchConst.FETCH_SUCCESSFUL },
       };
     case address.FETCH_FAILED:
       return {
         ...state,
-        operations: {
-          fetchAddress: {
-            error: action.payload,
-            status: FetchConst.FETCH_FAILED
-          }
-        }
+        operations: { error: action.payload, status: FetchConst.FETCH_FAILED },
       };
     case address.UPDATE:
       return {
         ...state,
-        shipping: state.shipping.map(prevShipping => {
+        shipping: state.shipping.map((prevShipping) => {
           if (prevShipping.id === action.payload.id) {
             return {
               ...prevShipping,
-              ...action.payload
-            }
+              ...action.payload,
+            };
           }
           return prevShipping;
-        })
-      }
+        }),
+      };
     case address.ADD:
       return {
         ...state,
-        shipping: state.shipping.concat([action.payload])
-      }
+        shipping: state.shipping.concat([action.payload]),
+      };
     default:
       return state;
   }

@@ -1,28 +1,32 @@
 import { ActionsObservable } from "redux-observable";
 import {
-  PickupLocationActionTypes,
+  PickupLocationAction,
   PickupLocation,
-  PickupLocations,
   pickUpLocationSuccessful,
-  pickUpLocationFailed
+  pickUpLocationFailed,
 } from "../../actionCreators/PickupLocations";
 import { EpicDepenciesType } from "../../../store";
 import { filter, switchMap, map, catchError } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import { of } from "rxjs";
-import { ajax } from "rxjs/ajax";
 
 export default function PickupLocationEpic(
-  action$: ActionsObservable<PickupLocationActionTypes>,
+  action$: ActionsObservable<PickupLocationAction>,
   { http }: EpicDepenciesType
 ) {
   return action$.pipe(
     filter(isOfType(PickupLocation.REQUEST)),
-    switchMap(action =>
-      ajax.getJSON<Array<PickupLocations>>(action.payload).pipe(
-        map(res => pickUpLocationSuccessful(res)),
-        catchError(err => of(pickUpLocationFailed(err.response)))
-      )
+    switchMap((action) =>
+      http
+        .get(action.payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .pipe(
+          map(({ data }) => pickUpLocationSuccessful(data)),
+          catchError((err) => of(pickUpLocationFailed(err.response)))
+        )
     )
   );
 }

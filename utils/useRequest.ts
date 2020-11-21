@@ -2,13 +2,13 @@ import React from "react";
 import Axios from "axios-observable";
 import { AxiosRequestConfig } from "axios";
 import { map, catchError } from "rxjs/operators";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { useDidUpdateEffect } from "./useDidUpdate";
 import useSelector from "../redux/utils/useStoreSelector";
 import { BEARER } from "../redux/utils/constants";
 import { useMemoCompare } from "./useMemoCompare";
 
-type Status = "idle" | "loading" | "success" | "failed";
+export type Status = "idle" | "loading" | "success" | "failed";
 type RequestConfig = Pick<
   AxiosRequestConfig,
   "method" | "url" | "data" | "headers"
@@ -57,6 +57,10 @@ function actionCreator(param: {}) {
   return param as Action;
 }
 
+const status$ = new Subject<Status>();
+
+export const requestStatus$ = status$.asObservable();
+
 export function useRequest({ auth = false }) {
   const authToken = useSelector(({ userAuth }) => userAuth.token);
   const [state, dispatch] = React.useReducer(reducer, {
@@ -71,22 +75,27 @@ export function useRequest({ auth = false }) {
       .pipe(
         map((response) => {
           if (response.status === 204) {
+            status$.next("success");
             return actionCreator({
               type: "onSuccess",
               payload: "deleted",
             });
           }
+          status$.next("success");
           return actionCreator({
             type: "onSuccess",
             payload: response.data,
           });
         }),
-        catchError((err) =>
-          of(actionCreator({
-            type: "onFailed",
-            payload: err.response.data,
-          }))
-        )
+        catchError((err) => {
+          status$.next("failed");
+          return of(
+            actionCreator({
+              type: "onFailed",
+              payload: err.response.data,
+            })
+          );
+        })
       )
       .subscribe(dispatch);
 
@@ -113,6 +122,8 @@ export function useRequest({ auth = false }) {
         headers: handler.headers || defaultHeaders,
       };
 
+      status$.next("loading");
+
       dispatch({
         type: "initRequest",
         payload: requestConfig,
@@ -124,8 +135,7 @@ export function useRequest({ auth = false }) {
   const metas = React.useMemo(() => {
     const { requestConfig, ...object } = state;
     return object;
-  }, [state])
-
+  }, [state]);
 
   return useMemoCompare({
     request,

@@ -119,7 +119,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                 onClick={(e) => setAnchorEl_2(e.currentTarget)}
                 fullWidth
               >
-                hi, {buyer.profile().first_name || "sign in | join"}
+                hi, {buyer.profile().first_name || "sign in / join"}
               </StyledButton>
               <Popover
                 open={!!anchorEl_2}
@@ -135,16 +135,14 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                   <Grid container spacing={1} direction="column">
                     <Grid item />
                     <Grid item xs={12}>
-                      <div style={{ padding: "0px 8px" }}>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          color="primary"
-                          onClick={() => setOpenLoginForm(true)}
-                        >
-                          Login
-                        </Button>
-                      </div>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        color="primary"
+                        onClick={() => setOpenLoginForm(true)}
+                      >
+                        Login
+                      </Button>
                     </Grid>
                     <Grid item xs={12}>
                       <div
@@ -164,16 +162,14 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                       </div>
                     </Grid>
                     <Grid item xs={12}>
-                      <div style={{ padding: "0px 8px" }}>
-                        <Button
-                          variant="outlined"
-                          fullWidth
-                          color="primary"
-                          onClick={() => setOpenSignUpForm(true)}
-                        >
-                          create account
-                        </Button>
-                      </div>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        color="primary"
+                        onClick={() => setOpenSignUpForm(true)}
+                      >
+                        create account
+                      </Button>
                     </Grid>
                     <Grid item />
                   </Grid>
@@ -243,7 +239,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
             <Grid item>
               <StyledButton
                 onClick={(e) => setAnchorEl(e.currentTarget)}
-                startIcon={<MenuIcon />}
+                endIcon={<MenuIcon />}
                 variant="outlined"
                 disabled={props.disableCategoryButton}
               >

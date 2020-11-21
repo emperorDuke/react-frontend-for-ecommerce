@@ -33,7 +33,7 @@ export default makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
       borderRadius: theme.shape.borderRadius,
       "&:active": {
-        border: `1px solid ${theme.palette.secondary.main}`,
+        border: `2px solid ${theme.palette.secondary.main}`,
       },
     },
     options: {

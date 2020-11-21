@@ -82,7 +82,7 @@ function Form(props: BuyerSignUpFormProps) {
     const onError = props.serverErrors;
 
     if (onError && !!Object.keys(onError).length) {
-      formik.setErrors(onError);
+      formik.setErrors(onError as any);
     }
   }, [props.serverErrors]);
 
@@ -150,6 +150,7 @@ function Form(props: BuyerSignUpFormProps) {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   fullWidth
+                  value={formik.values[key]}
                   label={key}
                   variant="outlined"
                   InputLabelProps={{

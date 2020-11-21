@@ -2,6 +2,7 @@ import Button from "@material-ui/core/Button";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
 import createStyles from "@material-ui/core/styles/createStyles";
+import { blueGrey } from "@material-ui/core/colors";
 
 export const StyledButton = withStyles((theme: Theme) =>
   createStyles({
@@ -19,7 +20,8 @@ export const StyledButton = withStyles((theme: Theme) =>
         borderColor: theme.palette.grey[400],
       },
       "&:hover": {
-        borderColor: theme.palette.grey[300],
+        borderColor: theme.palette.grey[200],
+        backgroundColor: blueGrey[800]
       },
     },
     containedPrimary: {

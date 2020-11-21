@@ -2,9 +2,9 @@ import { Action } from "redux";
 import { AddressType } from "../AddressActions";
 
 export enum PickupLocation {
-  REQUEST = "REQUEST",
-  REQUEST_SUCCESSFUL = "REQUEST_SUCCESSFUL",
-  REQUEST_FAILED = "REQUEST_FAILED"
+  REQUEST = "pickup_location_REQUEST",
+  REQUEST_SUCCESSFUL = "pickup_location_REQUEST_SUCCESSFUL",
+  REQUEST_FAILED = "pickup_location_REQUEST_FAILED"
 }
 
 export type PickupLocations = AddressType
@@ -47,7 +47,7 @@ export function pickUpLocationFailed(payload: string): PickUpLocationFailed {
   };
 }
 
-export type PickupLocationActionTypes =
+export type PickupLocationAction =
   | RequestPickupLocation
   | PickUpLocationFailed
   | PickupLocationSuccessful;
