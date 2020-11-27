@@ -7,7 +7,9 @@ export enum PickupLocation {
   REQUEST_FAILED = "pickup_location_REQUEST_FAILED"
 }
 
-export type PickupLocations = AddressType
+export interface PickupStation extends AddressType {
+  phone_number: string
+}
 
 interface PickUpLocationFailed extends Action {
   type: PickupLocation.REQUEST_FAILED;
@@ -21,7 +23,7 @@ interface RequestPickupLocation extends Action {
 
 interface PickupLocationSuccessful extends Action {
   type: PickupLocation.REQUEST_SUCCESSFUL;
-  payload: Array<PickupLocations>;
+  payload: Array<PickupStation>;
 }
 
 export function requestPickupLocations(payload: string): RequestPickupLocation {
@@ -32,7 +34,7 @@ export function requestPickupLocations(payload: string): RequestPickupLocation {
 }
 
 export function pickUpLocationSuccessful(
-  payload: Array<PickupLocations>
+  payload: Array<PickupStation>
 ): PickupLocationSuccessful {
   return {
     type: PickupLocation.REQUEST_SUCCESSFUL,

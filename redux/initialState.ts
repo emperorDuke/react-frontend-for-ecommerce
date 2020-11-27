@@ -85,6 +85,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Ikeja",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: "2",
@@ -93,6 +94,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Idimu",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: "3",
@@ -101,6 +103,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Maitama",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: "4",
@@ -109,6 +112,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Kubwa",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: "5",
@@ -117,6 +121,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Utako",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: 6,
@@ -125,6 +130,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Kubwa",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: 7,
@@ -133,6 +139,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Utako",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     
     {
@@ -142,6 +149,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Kubwa",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
     {
       id: 9,
@@ -150,6 +158,7 @@ const pickupLocations: PickUpLocationState = {
       city: "Utako",
       country: "Nigeria",
       zip_code: "56777",
+      phone_number: "+234546467558588"
     },
   ],
   operations: { error: null, status: null },

@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import clsx from "classnames";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
@@ -16,11 +15,12 @@ import CloseIcon from "@material-ui/icons/Close";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import { useStyles } from "./styles";
 import Highlighter from "../Highlighter";
-import CheckerIcon from "../Checker";
+import CheckerIcon from "../CheckerIcon";
 import { DeliverySectionProps, Delivery } from "./@types";
 
 function DeliveryMethod(props: DeliverySectionProps) {
-  const FIELDS = ["address", "city", "state", "country"];
+  const FIELDS = ["address", "city", "state", "country", "phone_number"];
+  const isPickupStation = props.deliveryType === "pickupStation";
 
   const [pickupState, setPickupState] = useState("");
   const [pickupCity, setPickupCity] = useState("");
@@ -66,16 +66,18 @@ function DeliveryMethod(props: DeliverySectionProps) {
   }, [props.pickupStationId]);
 
   useEffect(() => {
-    if (pickupStationStates.length) {
-      setPickupState("Lagos");
+    if (pickupStationStates.length && props.defaultState) {
+      setPickupState(props.defaultState);
     }
   }, []);
 
-  const handleDeliveryType = (arg: Delivery) => () =>
-    props.setDeliveryType(arg);
+  const handleDeliveryType = (param: Delivery) => () => {
+    props.setDeliveryType(param);
+  };
 
-  const handleOpenPickupStation = (arg: typeof openPickupStation) => () =>
-    setOpenPickupStation(arg);
+  const handleOpenPickupStation = (param: boolean) => () => {
+    setOpenPickupStation(param);
+  };
 
   const handlePickupState = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -94,33 +96,51 @@ function DeliveryMethod(props: DeliverySectionProps) {
     if (id) props.setPickupStationId(id);
   };
 
+  const removeUnderscore = (key: string) => {
+    return key.split("_").join(" ");
+  };
+
   const DeliveryMethod = () => (
     <React.Fragment>
-      <Typography variant="h6">Delivery Method</Typography>
+      <Typography variant="subtitle1">Your Delivery Options</Typography>
       <Divider />
-      <Grid container direction="column">
-        <Grid item>
-          <FormControlLabel
-            control={<Radio checked={props.deliveryType === "doorDelivery"} />}
-            value={props.deliveryType}
-            onChange={handleDeliveryType("doorDelivery")}
-            label={<Typography variant="subtitle1">Door Delivery</Typography>}
-          />
+      <Grid container direction="column" spacing={1}>
+        <Grid item container alignItems="center" spacing={1}>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Radio checked={!isPickupStation} />}
+              value={props.deliveryType}
+              onChange={handleDeliveryType("doorDelivery")}
+              label={<Typography variant="subtitle1">Door Delivery</Typography>}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.pickupStationInfo}>
+              Delivered between Thursday 3 Dec and Monday 7 Dec for ₦ 1,500 *
+              Large items (e.g. Freezers) may arrive 2 business days later than
+              other products. * Living in Lagos, Abuja or Ibadan, JUMIA PRIME
+              Members enjoy Free Delivery on Jumia Express Items (excluding
+              bulky items). Kindly confirm your delivery address is accessible
+              before placing your order * Receive free delivery on your Jumia
+              Express orders above N12,000 in Lagos The International Shipping
+              and custom Fee is NON-REFUNDABLE in case of a return
+            </div>
+          </Grid>
         </Grid>
         <Grid item container alignItems="center" spacing={1}>
           <Grid item>
             <FormControlLabel
-              control={
-                <Radio checked={props.deliveryType === "pickupStation"} />
-              }
+              control={<Radio checked={isPickupStation} />}
               value={props.deliveryType}
               onChange={handleDeliveryType("pickupStation")}
               label={
-                <Typography variant="subtitle1">Pickup station</Typography>
+                <Typography variant="subtitle1">
+                  Pickup station (Cheaper Shipping Fees)
+                </Typography>
               }
             />
           </Grid>
-          {props.deliveryType === "pickupStation" && (
+          {isPickupStation && (
             <Grid item>
               <Button
                 variant="outlined"
@@ -128,35 +148,92 @@ function DeliveryMethod(props: DeliverySectionProps) {
                 color="secondary"
                 size="small"
               >
-                Pickup station
+                select Pickup station
               </Button>
             </Grid>
           )}
           <Grid item xs={12}>
-            {selectedPickupStation && props.deliveryType === "pickupStation" && (
-              <div className={classes.currentPickupStationCard}>
-                <Grid container>
-                  {FIELDS.map((field) => (
-                    <Grid item container>
-                      <Grid item xs={2}>
-                        <Typography
-                          variant="caption"
-                          className={clsx(classes.text, classes.textColor)}
-                          noWrap
-                        >
-                          {field}:
-                        </Typography>
+            <div className={classes.pickupStationInfo}>
+              <Grid container spacing={1} direction="column">
+                <Grid item xs={6}>
+                  <div className={classes.extraInfo}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} container>
+                        <Grid item xs={1}>
+                          <Typography variant="body2" component="span">
+                            -
+                          </Typography>
+                        </Grid>
+                        <Grid item xs>
+                          <Typography variant="body2" component="p">
+                            Your package will be available for pick-up between{" "}
+                            <span>Friday 27 Nov to Wednesday 2 Dec</span>
+                          </Typography>
+                        </Grid>
                       </Grid>
-                      <Grid item xs>
-                        <Typography variant="caption">
-                          {selectedPickupStation[field]}
-                        </Typography>
+                      <Grid item xs={12} container>
+                        <Grid item xs={1}>
+                          <Typography variant="body2" component="span">
+                            -
+                          </Typography>
+                        </Grid>
+                        <Grid item xs>
+                          <Typography variant="body2" component="p">
+                            Select pick-up station to enjoy - Cheaper shipping
+                            fees + stand a chance to win 10K shopping voucher -
+                            Scheduled pickup at your own convenience
+                          </Typography>
+                        </Grid>
                       </Grid>
                     </Grid>
-                  ))}
+                  </div>
                 </Grid>
-              </div>
-            )}
+                {selectedPickupStation && isPickupStation && (
+                  <React.Fragment>
+                    <Grid item xs={12} container spacing={1}>
+                      <Grid item xs={6}>
+                        <div className={classes.currentPickupStationCard}>
+                          <Grid container>
+                            {FIELDS.map((field) => (
+                              <Grid item container spacing={3} key={field}>
+                                <Grid item xs={3}>
+                                  <Typography
+                                    variant="caption"
+                                    noWrap
+                                    className={clsx(
+                                      classes.text,
+                                      classes.textColor
+                                    )}
+                                  >
+                                    {removeUnderscore(field)}:
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs>
+                                  <Typography variant="caption">
+                                    {selectedPickupStation[field]}
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            ))}
+                          </Grid>
+                        </div>
+                      </Grid>
+                      <Grid item xs>
+                        <div className={classes.padding}>
+                          <Typography variant="body2" gutterBottom>
+                            We are open Mon-Fri 8AM-6PM; Sat 9am-4pm.
+                          </Typography>
+                          <Typography variant="body2" gutterBottom>
+                            We accept Cash On Delivery, Debit Card and Bank
+                            Transfer.
+                          </Typography>
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </React.Fragment>
+                )}
+              </Grid>
+            </div>
           </Grid>
         </Grid>
       </Grid>
@@ -170,6 +247,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
           select
           onChange={handlePickupState}
           fullWidth
+          size="small"
           color="secondary"
           label="State"
           variant="filled"
@@ -195,6 +273,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
           select
           onChange={handlePickupCity}
           fullWidth
+          size="small"
           color="secondary"
           variant="filled"
           value={pickupCity}
@@ -215,7 +294,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
   );
 
   const PickupStations = () => (
-    <React.Fragment>
+    <Grid container spacing={1} alignItems="stretch">
       {filteredPickupStations.map((station) => (
         <Grid item xs={6} key={station.id}>
           <Highlighter
@@ -229,14 +308,14 @@ function DeliveryMethod(props: DeliverySectionProps) {
               <Grid container spacing={1}>
                 <Grid item xs={11}>
                   {FIELDS.map((field) => (
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} key={field}>
                       <Grid item container>
-                        <Grid item xs={2}>
+                        <Grid item xs={3}>
                           <Typography
                             variant="caption"
                             className={clsx(classes.text, classes.textColor)}
                           >
-                            {field}:
+                            {removeUnderscore(field)}:
                           </Typography>
                         </Grid>
                         <Grid item xs>
@@ -259,11 +338,11 @@ function DeliveryMethod(props: DeliverySectionProps) {
           </Highlighter>
         </Grid>
       ))}
-    </React.Fragment>
+    </Grid>
   );
 
   return (
-    <Paper className={classes.root}>
+    <React.Fragment>
       <DeliveryMethod />
       <Dialog
         open={openPickupStation}
@@ -277,9 +356,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
           <Grid container spacing={1}>
             <Grid item xs={12} container alignItems="center">
               <Grid item>
-                <Typography variant="h6">
-                  Select a pickup location close to your area
-                </Typography>
+                <Typography variant="h6">Select a pickup station</Typography>
               </Grid>
               <div style={{ flexGrow: 1 }} />
               <Grid item>
@@ -300,12 +377,10 @@ function DeliveryMethod(props: DeliverySectionProps) {
           </Grid>
         </DialogTitle>
         <DialogContent dividers id="pickup-locations">
-          <Grid container spacing={1} alignItems="stretch">
-            <PickupStations />
-          </Grid>
+          <PickupStations />
         </DialogContent>
       </Dialog>
-    </Paper>
+    </React.Fragment>
   );
 }
 

@@ -11,6 +11,7 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import * as actions from "../../../redux/actionCreators/AddressActions";
 import * as T from "./@types";
@@ -20,11 +21,45 @@ import { useDispatch } from "react-redux";
 import { apiUrl as path } from "../../../services";
 import { serialize } from "object-to-formdata";
 import { useStyles } from "./styles";
-import { constructShippingData, formLabels } from "./utils";
+import { constructShippingData, FIELDS } from "./utils";
 import Highlighter from "../Highlighter";
-import CheckerIcon from "../Checker";
+import CheckerIcon from "../CheckerIcon";
 import { addAddress } from "../../../redux/actionCreators/AddressActions";
 import { shippingSchema } from "./schema";
+
+function AddressDialogForm(props: T.AddressDialogFormProps) {
+  return (
+    <Dialog
+      open={props.dialogState}
+      aria-labelledby="address-title"
+      aria-describedby="dialog-for-new-address"
+      fullWidth
+    >
+      <DialogTitle id="address-title">
+        <Grid container direction="column" spacing={1}>
+          <Grid item xs={12} container alignItems="center">
+            <Grid item>
+              <Typography variant="h6">Delivery Address</Typography>
+            </Grid>
+            <div style={{ flexGrow: 1 }} />
+            <Grid item>
+              <IconButton onClick={() => props.setDialogState(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </Grid>
+      </DialogTitle>
+      <DialogContent dividers id="dialog-for-new-address">
+        <BuyerSignUpForm
+          onSubmit={props.onSubmit}
+          schema={props.schema}
+          initialValues={props.initialValues}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function AddressSection(props: T.DefaultAddressProps) {
   const allAddresses = props.shipping.length ? props.shipping : undefined;
@@ -43,6 +78,7 @@ function AddressSection(props: T.DefaultAddressProps) {
   const classes = useStyles();
   const [openNewAddress, setOpenNewAddress] = useState(false);
   const [openEditAddress, setOpenEditAddress] = useState(false);
+  const [openChangeAddress, setOpenChangeAddress] = useState(false);
   const [shippingId, setShippingId] = useState<string | number>(-1);
   const [editError, setEditError] = useState<any>({});
   const [addressError, setAddressError] = useState<any>({});
@@ -80,7 +116,7 @@ function AddressSection(props: T.DefaultAddressProps) {
 
     if (defaultAddress) {
       Object.keys(defaultAddress)
-        .filter((key) => formLabels({ excludeID: false }).includes(key))
+        .filter((key) => FIELDS({ excludeID: false }).includes(key))
         .forEach((key) => {
           obj[key] = defaultAddress[key];
         });
@@ -123,10 +159,12 @@ function AddressSection(props: T.DefaultAddressProps) {
 
   useEffect(() => {
     const status = onAddressDefault.status;
-    const data = onAddressDefault.data as actions.ShippingDetailType;
+    const data = onAddressDefault.data;
 
     if (status === "success") {
       dispatch(actions.updateAddress(data));
+
+      // server will return data with `id` not `shipping_id`
       if (data.id) setShippingId(data.id);
     }
   }, [onAddressDefault.status]);
@@ -145,6 +183,16 @@ function AddressSection(props: T.DefaultAddressProps) {
 
   const removeUnderscore = (key: string) => {
     return key.split("_").join(" ");
+  };
+
+  const handleOpenNewAddress = (param: boolean) => () => {
+    setOpenNewAddress(param);
+    setOpenChangeAddress(false);
+  };
+
+  const handleCloseNewAddress = (param: boolean) => {
+    setOpenNewAddress(param);
+    setOpenChangeAddress(true);
   };
 
   const handleEditAddressForm = (values: any, id?: string | number) => {
@@ -190,64 +238,139 @@ function AddressSection(props: T.DefaultAddressProps) {
     });
   };
 
-  const AddressDialogForm = (props: T.AddressDialogFormProps) => {
-    return (
-      <Dialog
-        open={props.dialogState}
-        aria-labelledby="address-title"
-        aria-aria-describedby="dialog-for-new-address"
-        fullWidth
-      >
-        <DialogTitle id="address-title">
-          <Grid container direction="column" spacing={1}>
-            <Grid item xs={12} container alignItems="center">
-              <Grid item>
-                <Typography variant="h6">Delivery Address</Typography>
-              </Grid>
-              <div style={{ flexGrow: 1 }} />
-              <Grid item>
-                <IconButton onClick={() => props.setDialogState(false)}>
-                  <CloseIcon />
-                </IconButton>
-              </Grid>
+  const OtherAddressesDialog = (
+    <Dialog
+      open={openChangeAddress}
+      fullWidth
+      maxWidth="md"
+      scroll="paper"
+      aria-labelledby="saved-addresses"
+      aria-describedby="addresses"
+    >
+      <DialogTitle id="saved-addresses">
+        <Grid container direction="column" spacing={1}>
+          <Grid item xs={12} container alignItems="center">
+            <Grid item>
+              <Typography variant="h6">Saved Addresses</Typography>
+            </Grid>
+            <div style={{ flexGrow: 1 }} />
+            <Grid item>
+              <IconButton onClick={() => setOpenChangeAddress(false)}>
+                <CloseIcon />
+              </IconButton>
             </Grid>
           </Grid>
-        </DialogTitle>
-        <DialogContent dividers id="dialog-for-new-address">
-          <BuyerSignUpForm
-            onSubmit={props.onSubmit}
-            schema={props.schema}
-            initialValues={props.initialValues}
-          />
-        </DialogContent>
-      </Dialog>
-    );
-  };
+        </Grid>
+      </DialogTitle>
+      <DialogContent dividers id="addresses">
+        <Grid container spacing={1}>
+          {addresses && addresses.length ? (
+            addresses.map(({ shipping_id, ...address }) => (
+              <Grid item xs={4} key={shipping_id}>
+                <Highlighter
+                  open={shippingId === shipping_id}
+                  close={shippingId !== shipping_id}
+                >
+                  <div className={classes.addressCard}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={10}>
+                        {FIELDS({ minimal: true }).map((key) => (
+                          <Grid container spacing={1} wrap="nowrap" key={key}>
+                            <Grid item>
+                              <Typography
+                                variant="caption"
+                                noWrap
+                                className={clsx(
+                                  classes.text,
+                                  classes.textColor
+                                )}
+                              >
+                                {removeUnderscore(key)}:
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={10}>
+                              <Typography
+                                variant="subtitle2"
+                                noWrap
+                                className={classes.text}
+                              >
+                                {address[key]}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Grid item xs>
+                        <CheckerIcon
+                          open={shippingId === shipping_id}
+                          close={shippingId !== shipping_id}
+                        />
+                      </Grid>
+                      <Grid item xs={12} container spacing={2}>
+                        <Grid item>
+                          <Button
+                            size="small"
+                            color="primary"
+                            aria-label="delete"
+                            onClick={handleAddressDelete(shipping_id)}
+                            startIcon={<DeleteIcon />}
+                          >
+                            delete
+                          </Button>
+                        </Grid>
+                        {filterdDefaultAddress &&
+                          filterdDefaultAddress.id !== shipping_id && (
+                            <Grid item>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                color="primary"
+                                aria-label="use as default"
+                                onClick={handleMarkAsDefault(shipping_id)}
+                              >
+                                use as default
+                              </Button>
+                            </Grid>
+                          )}
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Highlighter>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="h6">You have no saved address</Typography>
+          )}
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          startIcon={<AddIcon />}
+          color="primary"
+          onClick={handleOpenNewAddress(true)}
+          variant="contained"
+        >
+          add address
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   const DefaultAddress = () => (
     <React.Fragment>
       <Grid item container alignItems="center">
         <Grid item>
-          <Typography variant="h6">Default Address</Typography>
+          <Typography variant="subtitle1">Default Address</Typography>
         </Grid>
         <div style={{ flexGrow: 1 }} />
         <Grid item>
           <Button
-            startIcon={<AddIcon />}
             color="primary"
             variant="outlined"
-            onClick={() => setOpenNewAddress(true)}
+            onClick={() => setOpenChangeAddress(true)}
           >
-            add address
+            change address
           </Button>
-          <AddressDialogForm
-            dialogState={openNewAddress}
-            setDialogState={setOpenNewAddress}
-            schema={shippingSchema}
-            onSubmit={handleAddAddressForm}
-            initialValues={INITIALVALUES}
-            serverErrors={addressError}
-          />
         </Grid>
       </Grid>
       <Grid item xs={12}>
@@ -258,11 +381,11 @@ function AddressSection(props: T.DefaultAddressProps) {
           <Grid container>
             <Grid item container xs={10}>
               <Grid item container xs={12} spacing={1}>
-                {formLabels({}).map((key) => (
+                {FIELDS({}).map((key) => (
                   <Grid item container spacing={1} wrap="nowrap" key={key}>
                     <Grid item>
                       <Typography
-                        variant="subtitle2"
+                        variant="body2"
                         className={clsx(classes.text, classes.textColor)}
                         noWrap
                       >
@@ -271,7 +394,7 @@ function AddressSection(props: T.DefaultAddressProps) {
                     </Grid>
                     <Grid item xs={10}>
                       <Typography
-                        variant="body1"
+                        variant="body2"
                         className={classes.text}
                         noWrap
                       >
@@ -291,16 +414,6 @@ function AddressSection(props: T.DefaultAddressProps) {
               >
                 edit
               </Button>
-              {filterdDefaultAddress && (
-                <AddressDialogForm
-                  dialogState={openEditAddress}
-                  setDialogState={setOpenEditAddress}
-                  schema={shippingSchema}
-                  onSubmit={handleEditAddressForm}
-                  initialValues={filterdDefaultAddress}
-                  serverErrors={editError}
-                />
-              )}
             </Grid>
           </Grid>
         </div>
@@ -308,123 +421,54 @@ function AddressSection(props: T.DefaultAddressProps) {
     </React.Fragment>
   );
 
-  const OtherAddresses = () => (
-    <React.Fragment>
-      <Grid item xs={12}>
-        <Typography variant="h6">Addresses</Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Divider />
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        container
-        spacing={1}
-        className={classes.addressWrapper}
-      >
-        {addresses &&
-          addresses.map((address) => (
-            <Grid item xs={4} key={address.shipping_id}>
-              <Highlighter
-                open={shippingId === address.shipping_id}
-                close={shippingId !== address.shipping_id}
-              >
-                <div className={classes.addressCard}>
-                  <Grid container>
-                    <Grid item xs={11}>
-                      {formLabels({ minimal: true }).map((key) => (
-                        <Grid container spacing={1} wrap="nowrap" key={key}>
-                          <Grid item>
-                            <Typography
-                              variant="caption"
-                              noWrap
-                              className={clsx(classes.text, classes.textColor)}
-                            >
-                              {removeUnderscore(key)}:
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={10}>
-                            <Typography
-                              variant="subtitle2"
-                              noWrap
-                              className={classes.text}
-                            >
-                              {address[key]}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      ))}
-                    </Grid>
-                    <Grid item xs={1}>
-                      <CheckerIcon
-                        open={shippingId === address.shipping_id}
-                        close={shippingId !== address.shipping_id}
-                      />
-                    </Grid>
-                    <Grid item xs={12} container spacing={2}>
-                      <Grid item>
-                        <Button
-                          size="small"
-                          color="primary"
-                          aria-label="delete"
-                          onClick={handleAddressDelete(address.shipping_id)}
-                          startIcon={<DeleteIcon />}
-                        >
-                          delete
-                        </Button>
-                      </Grid>
-                      {filterdDefaultAddress &&
-                        filterdDefaultAddress.id !== address.shipping_id && (
-                          <Grid item>
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              color="primary"
-                              aria-label="mark as default"
-                              onClick={handleMarkAsDefault(address.shipping_id)}
-                            >
-                              mark as default
-                            </Button>
-                          </Grid>
-                        )}
-                    </Grid>
-                  </Grid>
-                </div>
-              </Highlighter>
-            </Grid>
-          ))}
-      </Grid>
-    </React.Fragment>
-  );
-
-  const AddressStep = () => (
+  const AddressStep = (
     <Grid container spacing={1}>
       <DefaultAddress />
-      {addresses && <OtherAddresses />}
+
+      {/* dialog open form for adding a new address */}
+
+      <AddressDialogForm
+        dialogState={openNewAddress}
+        setDialogState={handleCloseNewAddress}
+        schema={shippingSchema}
+        onSubmit={handleAddAddressForm}
+        initialValues={INITIALVALUES}
+        serverErrors={addressError}
+      />
+
+      {/* dialog open form for editing address */}
+
+      {filterdDefaultAddress && (
+        <AddressDialogForm
+          dialogState={openEditAddress}
+          setDialogState={setOpenEditAddress}
+          schema={shippingSchema}
+          onSubmit={handleEditAddressForm}
+          initialValues={filterdDefaultAddress}
+          serverErrors={editError}
+        />
+      )}
+
+      {/* dialog open saved addressing */}
+
+      {OtherAddressesDialog}
     </Grid>
   );
 
   return (
-    <div className={classes.root}>
-      <Grid container direction="column" spacing={1}>
-        <Grid item container>
-          <Grid item xs={12}>
-            {defaultAddress ? (
-              <AddressStep />
-            ) : (
-              <BuyerSignUpForm
-                onSubmit={handleAddAddressForm}
-                schema={shippingSchema}
-                initialValues={INITIALVALUES}
-                serverErrors={addressError}
-              />
-            )}
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
+    <React.Fragment>
+      {defaultAddress ? (
+        AddressStep
+      ) : (
+        <BuyerSignUpForm
+          onSubmit={handleAddAddressForm}
+          schema={shippingSchema}
+          initialValues={INITIALVALUES}
+          serverErrors={addressError}
+        />
+      )}
+    </React.Fragment>
   );
 }
 
-export default React.memo(AddressSection);
+export default AddressSection;

@@ -1,12 +1,12 @@
 import {
-  PickupLocations,
+  PickupStation,
   PickupLocationAction,
   PickupLocation,
 } from "../../actionCreators/PickupLocations";
 import { FetchOperationType, FetchConst } from "../../../utils/Fetch/@types";
 
 export interface PickUpLocationState {
-  pickUpLocations: Array<PickupLocations>;
+  pickUpLocations: Array<PickupStation>;
   operations: FetchOperationType;
 }
 

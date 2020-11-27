@@ -3,7 +3,7 @@ import { ShippingDetailType } from "../../../redux/actionCreators/AddressActions
 /**
  * sort form fields
  */
-export const formLabels = ({ minimal = false, excludeID = true }) => {
+export const FIELDS = ({ minimal = false, excludeID = true }) => {
   const LABELS = ["first_name", "last_name", "address", "phone_number"];
   const EXTRALABELS = ["city", "state", "country"];
 

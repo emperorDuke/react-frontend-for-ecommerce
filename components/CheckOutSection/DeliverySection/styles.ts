@@ -5,9 +5,6 @@ import { orange } from "@material-ui/core/colors";
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      padding: theme.spacing(1),
-    },
     pickupSite: {
       padding: theme.spacing(1),
       borderRadius: theme.shape.borderRadius,
@@ -20,11 +17,20 @@ export const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.grey[500],
     },
     currentPickupStationCard: {
-      width: "40%",
-      marginLeft: "5%",
       border: `1px solid ${orange[500]}`,
       padding: theme.spacing(1),
       borderRadius: theme.shape.borderRadius,
-    }
+    },
+    pickupStationInfo: {
+      marginLeft: "5%",
+    },
+    extraInfo: {
+      backgroundColor: theme.palette.grey[50],
+      padding: theme.spacing(2),
+      borderRadius: theme.shape.borderRadius,
+    },
+    padding: {
+      padding: theme.spacing(1),
+    },
   })
 );

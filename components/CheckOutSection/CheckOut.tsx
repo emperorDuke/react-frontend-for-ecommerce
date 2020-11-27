@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import useSelector from "../../redux/utils/useStoreSelector";
+import Button from "@material-ui/core/Button";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepButton from "@material-ui/core/StepButton";
+import Divider from "@material-ui/core/Divider";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
+import ChevronRightIcon from "@material-ui/icons/ChevronRightOutlined";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
@@ -14,15 +17,20 @@ import { AddressSection } from "./AddressSection";
 import PaymentMethod from "./PaymentMethod";
 import Typography from "@material-ui/core/Typography";
 import { requestStatus$, Status } from "../../utils";
+import { OrderSummary } from "./Orders";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     orderSummary: {
-      minHeight: theme.spacing(50),
+      height: theme.spacing(50),
+      padding: theme.spacing(1),
     },
     orderText: {
       textAlign: "center",
       textTransform: "capitalize",
+    },
+    root: {
+      padding: theme.spacing(2),
     },
   })
 );
@@ -36,31 +44,26 @@ function CheckOut() {
   const [completed, setCompleted] = useState(new Set());
   const [status, setStatus] = useState<Status>("idle");
   const [pickupLocationId, setPickupLocationId] = useState<string | number>(-1);
-  const [deliveryType, setDeliveryType] = useState<Delivery | null>(null);
+  const [deliveryType, setDeliveryType] = useState<Delivery | undefined>();
   const classes = useStyles();
 
   useEffect(() => {
-    const defaultAddress = () => {
-      if (shipping.length) {
-        return shipping.find((s) => !!s.default);
-      }
-    };
-
-    if (defaultAddress() && activeStep === 0) {
+    if (getDefaultAddress() && activeStep === 0) {
       handleComplete();
       handleNext();
     }
-
-    const status$ = requestStatus$.subscribe(setStatus);
-
-    return () => status$.unsubscribe();
   }, []);
+
+  const getDefaultAddress = () => {
+    if (shipping.length) {
+      return shipping.find((s) => !!s.default);
+    }
+  };
 
   const getSteps = () => {
     return ["Address Details", "Delivery Method", "Payment Method"];
   };
 
-  
   const steps = getSteps();
 
   const isLastStep = () => activeStep === totalSteps() - 1;
@@ -92,6 +95,14 @@ function CheckOut() {
     setCompleted(newCompleted);
   };
 
+  const getDefaultState = () => {
+    const defaultAddress = getDefaultAddress();
+
+    if (defaultAddress) {
+      return defaultAddress.address.state;
+    }
+  };
+
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -104,6 +115,7 @@ function CheckOut() {
             pickupStations={pickupStations}
             deliveryType={deliveryType}
             setDeliveryType={setDeliveryType}
+            defaultState={getDefaultState()}
           />
         );
       case 2:
@@ -118,9 +130,12 @@ function CheckOut() {
       <Grid container direction="column" spacing={1}>
         <Grid item />
 
-        <Grid item container spacing={1} direction="row">
+        <Grid item container spacing={1}>
           <Grid item xs={9}>
-            <Paper>
+            <Typography variant="h6" gutterBottom>
+              Checkout
+            </Typography>
+            <Paper className={classes.root}>
               <Stepper activeStep={activeStep} alternativeLabel nonLinear>
                 {steps.map((step, index) => {
                   return (
@@ -135,26 +150,43 @@ function CheckOut() {
                   );
                 })}
               </Stepper>
-              <div>{getStepContent(activeStep)}</div>
-            </Paper>
-          </Grid>
-          <Grid item xs>
-            <Paper className={classes.orderSummary}>
-              <Grid container spacing={1}>
+              <Grid container direction="column" spacing={1}>
                 <Grid item xs={12}>
-                  <Typography
-                    variant="h6"
-                    className={classes.orderText}
-                    component="h4"
-                  >
-                    order summary
-                  </Typography>
+                  {getStepContent(activeStep)}
                 </Grid>
                 <Grid item xs={12}>
-                  <div></div>
+                  <Divider />
+                </Grid>
+                <Grid item xs={12} container spacing={2}>
+                  <div style={{ flexGrow: 1 }} />
+                  {activeStep !== 0 && (
+                    <Grid item>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleBack}
+                      >
+                        back
+                      </Button>
+                    </Grid>
+                  )}
+                  <Grid item>
+                    <Button
+                      variant="contained"
+                      endIcon={<ChevronRightIcon />}
+                      color="primary"
+                      onClick={handleNext}
+                    >
+                      next
+                    </Button>
+                  </Grid>
                 </Grid>
               </Grid>
             </Paper>
+          </Grid>
+
+          <Grid item xs>
+            <OrderSummary />
           </Grid>
         </Grid>
 

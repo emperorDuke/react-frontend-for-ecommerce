@@ -152,6 +152,7 @@ function Form(props: BuyerSignUpFormProps) {
                   fullWidth
                   value={formik.values[key]}
                   label={key}
+                  name={key}
                   variant="outlined"
                   InputLabelProps={{
                     className: classes.label,

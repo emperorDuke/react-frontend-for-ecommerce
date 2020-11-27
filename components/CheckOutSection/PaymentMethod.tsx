@@ -1,26 +1,25 @@
 import React, { useState } from "react";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Radio from "@material-ui/core/Radio";
 import Divider from "@material-ui/core/Divider";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Typography from "@material-ui/core/Typography";
 
-type PaymentMethod = "Pay now" | "Pay on Delivery";
+type Payment = "Pay now" | "Pay on Delivery";
 
 function PaymentMethod() {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("Pay now");
+  const [paymentType, setPaymentType] = useState<Payment>("Pay now");
 
   return (
-    <Paper>
+    <div>
       <Typography>Payment method</Typography>
       <Divider />
       <Grid container direction="column">
         <Grid item>
           <FormControlLabel
             control={<Radio />}
-            value={paymentMethod}
-            onChange={() => setPaymentMethod("Pay now")}
+            value={paymentType}
+            onChange={() => setPaymentType("Pay now")}
             label={<Typography variant="subtitle1">Pay now</Typography>}
           />
         </Grid>
@@ -29,15 +28,15 @@ function PaymentMethod() {
             <Grid item>
               <FormControlLabel
                 control={<Radio />}
-                value={paymentMethod}
-                onChange={() => setPaymentMethod("Pay on Delivery")}
+                value={paymentType}
+                onChange={() => setPaymentType("Pay on Delivery")}
                 label={<Typography variant="subtitle1">Pay on delivery</Typography>}
               />
             </Grid>
           </Grid>
         </Grid>
       </Grid>
-    </Paper>
+    </div>
   );
 }
 

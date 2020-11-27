@@ -9,7 +9,6 @@ import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import CloseIcon from "@material-ui/icons/CloseOutlined";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Container from "@material-ui/core/Container";
 import IconButton from "@material-ui/core/IconButton";
@@ -180,16 +179,22 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                 aria-labelledby="dialog-for-login-form"
                 fullWidth
               >
-                <DialogTitle>Login</DialogTitle>
-                <DialogActions>
-                  <IconButton
-                    onClick={() => setOpenLoginForm(false)}
-                    size="small"
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </DialogActions>
-                <DialogContent>
+                <DialogTitle>
+                  <Grid container direction="column" spacing={1}>
+                    <Grid item xs={12} container alignItems="center">
+                      <Grid item>
+                        <Typography variant="h6">Login</Typography>
+                      </Grid>
+                      <div style={{ flexGrow: 1 }} />
+                      <Grid item>
+                        <IconButton onClick={() => setOpenLoginForm(false)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </DialogTitle>
+                <DialogContent dividers>
                   <LoginForm />
                 </DialogContent>
               </Dialog>
@@ -198,13 +203,22 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
                 aria-labelledby="dialog-for-signUp-form"
                 fullWidth
               >
-                <DialogTitle>Sign Up</DialogTitle>
-                <DialogActions>
-                  <IconButton onClick={() => setOpenSignUpForm(false)}>
-                    <CloseIcon />
-                  </IconButton>
-                </DialogActions>
-                <DialogContent>
+                <DialogTitle>
+                  <Grid container direction="column" spacing={1}>
+                    <Grid item xs={12} container alignItems="center">
+                      <Grid item>
+                        <Typography variant="h6">Sign Up</Typography>
+                      </Grid>
+                      <div style={{ flexGrow: 1 }} />
+                      <Grid item>
+                        <IconButton onClick={() => setOpenSignUpForm(false)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </DialogTitle>
+                <DialogContent dividers>
                   <UserRegSection />
                 </DialogContent>
               </Dialog>
