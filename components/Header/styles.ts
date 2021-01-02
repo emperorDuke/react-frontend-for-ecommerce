@@ -11,7 +11,7 @@ export default makeStyles((theme: Theme) =>
       border: `2px solid ${theme.palette.grey[200]}`,
     },
     header: {
-      backgroundColor: "#FFF",
+      backgroundColor: theme.palette.background.paper,
     },
     subHeaderWrapper_1: {
       backgroundColor: theme.palette.primary.main,
@@ -32,11 +32,11 @@ export default makeStyles((theme: Theme) =>
     spacer: {
       width: theme.spacing(1)
     },
-    btn: {
-      width: theme.spacing(5)
-    },
     pad: {
       padding: "1px"
+    },
+    categoryPopover: {
+      width: theme.spacing(32 + 4)
     }
   })
 );

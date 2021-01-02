@@ -93,7 +93,7 @@ const SliderWithInput: React.ComponentType<SliderWithInputProps> = (props) => {
             onChange={handleInputChange("min")}
             startAdornment={
               <InputAdornment position="start">
-                <CurrencyManager customSize={2} />
+                <CurrencyManager />
               </InputAdornment>
             }
           />
@@ -109,7 +109,7 @@ const SliderWithInput: React.ComponentType<SliderWithInputProps> = (props) => {
             onChange={handleInputChange("max")}
             startAdornment={
               <InputAdornment position="start">
-                <CurrencyManager customSize={2} />
+                <CurrencyManager />
               </InputAdornment>
             }
           />

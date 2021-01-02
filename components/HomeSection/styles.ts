@@ -11,7 +11,7 @@ export default makeStyles((theme: Theme) =>
       width: "100%",
       height: theme.spacing(15),
     },
-    t: {
+    title: {
       padding: theme.spacing(1),
       textTransform: "capitalize",
     },

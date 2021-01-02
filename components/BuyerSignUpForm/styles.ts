@@ -11,8 +11,8 @@ export default makeStyles((theme: Theme) =>
     error: {
       height: theme.spacing(2),
       flexGrow: 1,
+      color: theme.palette.error.main,
       "& span": {
-        color: "red",
         ...theme.typography.caption
       }
     },

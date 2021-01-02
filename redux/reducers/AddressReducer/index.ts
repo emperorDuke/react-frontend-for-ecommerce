@@ -52,7 +52,17 @@ export default function addressReducer(
     case address.ADD:
       return {
         ...state,
-        shipping: state.shipping.concat([action.payload]),
+        shipping: state.shipping
+          .map((prevShipping) => {
+            if (prevShipping.default) {
+              return {
+                ...prevShipping,
+                default: false,
+              };
+            }
+            return prevShipping;
+          })
+          .concat([action.payload]),
       };
     default:
       return state;

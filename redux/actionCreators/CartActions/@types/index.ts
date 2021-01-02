@@ -18,7 +18,7 @@ export interface CartType {
   quantity: number;
   price: string | number;
   variants: Array<VariationType>;
-  index?: number;
+  _index?: number;
 }
 
 export interface AddToCartType extends Action {
@@ -52,7 +52,7 @@ export interface LoadCartType extends Action {
 
 export interface RemoveCartType extends Action {
   type: cart.REMOVE_ITEM;
-  payload: Pick<CartType, "index" | "id">;
+  payload: Pick<CartType, "_index" | "id">;
 }
 
 export type CartActionTypes =

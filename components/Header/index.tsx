@@ -261,6 +261,7 @@ const Header: React.ComponentType<HeaderProps> = (props) => {
               </StyledButton>
               {!props.disableCategoryButton && (
                 <Popover
+                  PaperProps={{ className: classes.categoryPopover}}
                   open={!!anchorEl}
                   anchorEl={anchorEl}
                   onClose={() => setAnchorEl(null)}

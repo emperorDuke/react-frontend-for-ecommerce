@@ -34,7 +34,7 @@ const Filters: React.ComponentType<FilterProps> = (props) => {
 
     if (filterKey === "price") {
       attributeFilter.push(
-        <>
+        <React.Fragment>
           <Grid item>
             <Grid container direction="column">
               <Grid item>
@@ -52,11 +52,11 @@ const Filters: React.ComponentType<FilterProps> = (props) => {
           <Grid item>
             <Divider />
           </Grid>
-        </>
+        </React.Fragment>
       );
     } else if (filterKey === "brand") {
       attributeFilter.push(
-        <>
+        <React.Fragment>
           <Grid item>
             <InputXcheckbox
               label={filterKey}
@@ -67,11 +67,11 @@ const Filters: React.ComponentType<FilterProps> = (props) => {
           <Grid item>
             <Divider />
           </Grid>
-        </>
+        </React.Fragment>
       );
     } else {
       attributeFilter.push(
-        <>
+        <React.Fragment>
           <Grid item>
             <InputXcheckbox
               label={filterKey}
@@ -83,7 +83,7 @@ const Filters: React.ComponentType<FilterProps> = (props) => {
           <Grid item>
             <Divider />
           </Grid>
-        </>
+        </React.Fragment>
       );
     }
   }

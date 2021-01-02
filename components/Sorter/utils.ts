@@ -1,4 +1,4 @@
-import { ProductFiltersType } from "../@types";
+import { ProductFiltersType } from "./@types";
  
 export const sort = {
   ascending: (a: any, b: any) => {

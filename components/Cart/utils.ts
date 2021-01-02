@@ -1,6 +1,6 @@
 import { CartProps } from "./@types";
 
-export function sum(items: CartProps["items"]) {
+export function sum(items: CartProps["cart"]) {
   let total = 0;
 
   if (items.length > 0) {

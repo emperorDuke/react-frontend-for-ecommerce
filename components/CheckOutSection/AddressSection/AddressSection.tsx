@@ -24,10 +24,12 @@ import { useStyles } from "./styles";
 import { constructShippingData, FIELDS } from "./utils";
 import Highlighter from "../Highlighter";
 import CheckerIcon from "../CheckerIcon";
-import { addAddress } from "../../../redux/actionCreators/AddressActions";
 import { shippingSchema } from "./schema";
 
 function AddressDialogForm(props: T.AddressDialogFormProps) {
+
+  const handleClose = () => props.setDialogState(false);
+
   return (
     <Dialog
       open={props.dialogState}
@@ -43,7 +45,7 @@ function AddressDialogForm(props: T.AddressDialogFormProps) {
             </Grid>
             <div style={{ flexGrow: 1 }} />
             <Grid item>
-              <IconButton onClick={() => props.setDialogState(false)}>
+              <IconButton onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
             </Grid>
@@ -136,7 +138,7 @@ function AddressSection(props: T.DefaultAddressProps) {
     const onSuccess = onAddressAdd.status === "success";
 
     if (onSuccess && onAddressAdd.data) {
-      dispatch(addAddress(onAddressAdd.data));
+      dispatch(actions.addAddress(onAddressAdd.data));
     }
 
     if (onFailed && onAddressAdd.error) {
@@ -203,7 +205,7 @@ function AddressSection(props: T.DefaultAddressProps) {
       url: path("updateShippingDetail", id),
       data: serialize(shippingObj, { indices: true }),
       headers: {
-        "Content-type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     });
   };
@@ -233,7 +235,7 @@ function AddressSection(props: T.DefaultAddressProps) {
       url: path("postShippingDetail"),
       data: serialize(shippingData, { indices: true }),
       headers: {
-        "Content-type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     });
   };
@@ -356,7 +358,7 @@ function AddressSection(props: T.DefaultAddressProps) {
     </Dialog>
   );
 
-  const DefaultAddress = () => (
+  const DefaultAddress = (
     <React.Fragment>
       <Grid item container alignItems="center">
         <Grid item>
@@ -423,7 +425,7 @@ function AddressSection(props: T.DefaultAddressProps) {
 
   const AddressStep = (
     <Grid container spacing={1}>
-      <DefaultAddress />
+      {DefaultAddress}
 
       {/* dialog open form for adding a new address */}
 

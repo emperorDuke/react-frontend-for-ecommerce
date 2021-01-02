@@ -3,34 +3,46 @@ import React from "react";
 export type SizeTypes = "md" | "sm" | "lg";
 
 export interface CardEnhancerProps {
-  size?: SizeTypes;
-  disableToggler?: boolean;
-  appBar?: boolean;
-  appBarProps?: {
-    text?: string;
-    disableToggler?: boolean;
-    link?: string;
-  };
-  children: React.ReactNodeArray;
-  cardType?: "list" | "module";
+	size?: SizeTypes;
+	disableToggler?: boolean;
+	appBar?: boolean;
+	appBarProps?: {
+		text?: string;
+		disableToggler?: boolean;
+		link?: string;
+	};
+	children: React.ReactNodeArray;
+	cardType?: "list" | "module";
 }
 
 export type State = {
-  parentElWidth: number;
-  position: number;
-  activeIndex: number;
-  numberOfCards: number;
-  nChildren: number;
-  transition: boolean;
+	parentElWidth: number;
+	position: number;
+	activeIndex: number;
+	transition: boolean;
 };
 
-export interface OnResizePayload {
-  width: number;
-  nCards: number;
-}
-
 export type Action =
-  | { type: "moveforward" }
-  | { type: "movebackward" }
-  | { type: "update"; payload: Partial<State> }
-  | { type: "onResize"; payload: OnResizePayload };
+	| {
+			type: "moveforward";
+			payload: {
+				cardWidth: number;
+				nChildren: number;
+			};
+	  }
+	| {
+			type: "movebackward";
+			payload: {
+				cardWidth: number;
+				numberOfCards: number;
+			};
+	  }
+	| { type: "update"; payload: Partial<State> }
+	| {
+			type: "onResize";
+			payload: {
+				numberOfCards: number;
+				cardWidth: number;
+				parentElWidth: number;
+			};
+	  };

@@ -1,26 +1,22 @@
-import React, { useMemo } from "react";
-import { sortCurrencySymbol } from "./utils";
-import { CurrencyManagerProps, CurrencyTypes } from "./@types";
-import useStyles from "./styles";
+import React from "react";
+import { currencySymbol } from "./utils";
+import { CurrencyManagerProps, Currency } from "./@types";
 
 export * from "./@types";
 
-const CurrencyManager: React.ComponentType<CurrencyManagerProps> = props => {
-  const currencySymbol = useMemo(() => sortCurrencySymbol(props.currencyType), [
-    props.currencyType
-  ]);
+const formatter = new Intl.NumberFormat("en-US");
 
+const CurrencyManager: React.ComponentType<CurrencyManagerProps> = (props) => {
   return (
-    <>
-      {currencySymbol}
-      {props.price && new Intl.NumberFormat("en-US").format(props.price)}
-    </>
+    <React.Fragment>
+      {currencySymbol(props.currencyType)}
+      {props.price && formatter.format(Number(props.price))}
+    </React.Fragment>
   );
 };
 
 CurrencyManager.defaultProps = {
-  customSize: 0,
-  currencyType: CurrencyTypes.NAIRA
+  currencyType: Currency.NAIRA,
 };
 
 export default CurrencyManager;

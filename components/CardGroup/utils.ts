@@ -10,56 +10,29 @@ export const SIZES = {
 };
 
 const onResize = (state: State, payload: OnResizePayload) => {
-  const childrenOverflowed = state.nChildren > payload.nCards;
-  const isLastIndex = state.activeIndex === state.nChildren;
-  const transition = false;
-  const cardWidth = payload.width / payload.nCards;
+  
+  const nTime = state.activeIndex - payload.numberOfCards;
+  const position = 0 - payload.cardWidth * nTime;
 
-  if (childrenOverflowed) {
-    let activeIndex = 0;
-    let position = 0;
-
-    if (isLastIndex) {
-      activeIndex = state.activeIndex;
-      const slots = activeIndex - payload.nCards;
-      position = JB(0, cardWidth, slots);
-    } else {
-      const otherSlots = state.numberOfCards - 1;
-      const firstIndex = state.activeIndex - otherSlots;
-      activeIndex = firstIndex + payload.nCards - 1;
-      
-      if (activeIndex >= state.nChildren) {
-        const extra = activeIndex - state.nChildren;
-        const slots = activeIndex - payload.nCards - extra;
-        position = JB(0, cardWidth, slots);
-        activeIndex = activeIndex - extra;
-      } else {
-        position = firstIndex <= 1 ? 0 : JB(0, cardWidth, firstIndex);
-      }
-    }
-    return {
-      activeIndex,
-      position,
-      transition,
-    };
+  return {
+    position,
+    transition: false,
+    parentElWidth: payload.parentElWidth
   }
-
-  return;
 };
 
 export function reducer(state: State, action: Action) {
-  const cardWidth = state.parentElWidth / state.numberOfCards;
 
   switch (action.type) {
     case "moveforward":
       return {
         ...state,
         position:
-          state.activeIndex === state.nChildren
+          state.activeIndex === action.payload.nChildren
             ? state.position
-            : state.position + -cardWidth,
+            : state.position + -action.payload.cardWidth,
         activeIndex:
-          state.activeIndex === state.nChildren
+          state.activeIndex === action.payload.nChildren
             ? state.activeIndex
             : state.activeIndex + 1,
         transition: true,
@@ -68,12 +41,12 @@ export function reducer(state: State, action: Action) {
       return {
         ...state,
         position:
-          state.activeIndex === state.numberOfCards
+          state.activeIndex === action.payload.numberOfCards
             ? 0
-            : state.position + cardWidth,
+            : state.position + action.payload.cardWidth,
         activeIndex:
-          state.activeIndex === state.numberOfCards
-            ? state.numberOfCards
+          state.activeIndex === action.payload.numberOfCards
+            ? action.payload.numberOfCards
             : state.activeIndex - 1,
         transition: true,
       };
@@ -85,8 +58,6 @@ export function reducer(state: State, action: Action) {
     case "onResize":
       return {
         ...state,
-        parentElWidth: action.payload.width,
-        numberOfCards: action.payload.nCards,
         ...onResize(state, action.payload),
       };
     default:

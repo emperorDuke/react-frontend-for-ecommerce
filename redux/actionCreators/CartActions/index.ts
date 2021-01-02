@@ -43,7 +43,7 @@ export function loadCart(payload: Array<T.CartType>): T.LoadCartType {
   };
 }
 
-export function removeItem(payload: Pick<T.CartType, "index" | "id">): T.RemoveCartType {
+export function removeItem(payload: Pick<T.CartType, "_index" | "id">): T.RemoveCartType {
   return {
     type: T.cart.REMOVE_ITEM,
     payload,

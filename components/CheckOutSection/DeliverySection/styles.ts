@@ -31,6 +31,12 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     padding: {
       padding: theme.spacing(1),
+      '& > p': {
+        fontWeight: theme.typography.fontWeightBold
+      }
     },
+    font: {
+      fontWeight: theme.typography.fontWeightBold
+    }
   })
 );

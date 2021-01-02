@@ -34,8 +34,6 @@ export default makeStyles((theme: Theme) =>
     },
     caption: {
       ...theme.typography.subtitle1,
-      color: "white",
-      margin: "2px",
     },
   })
 );

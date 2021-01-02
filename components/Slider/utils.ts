@@ -23,7 +23,7 @@ export function getNextPayload({
 }: PayloadArgument) {
   let activeIndex =
     state.activeIndex === nChildren - 1 ? 0 : state.activeIndex + 1;
-  let transition = true;;
+  let transition = true;
   let slideNo = 0;
   let position = 0;
   const width = state.width;

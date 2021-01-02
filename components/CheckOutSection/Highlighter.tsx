@@ -16,6 +16,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       borderRadius: theme.shape.borderRadius,
       padding: "1px",
       height: "100%",
+      width: "100%"
     },
     notActiveCardWrapper: {
       border: `2px solid transparent`,

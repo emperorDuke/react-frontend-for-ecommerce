@@ -100,7 +100,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
     return key.split("_").join(" ");
   };
 
-  const DeliveryMethod = () => (
+  const DeliveryMethod = (
     <React.Fragment>
       <Typography variant="subtitle1">Your Delivery Options</Typography>
       <Divider />
@@ -118,12 +118,8 @@ function DeliveryMethod(props: DeliverySectionProps) {
             <div className={classes.pickupStationInfo}>
               Delivered between Thursday 3 Dec and Monday 7 Dec for ₦ 1,500 *
               Large items (e.g. Freezers) may arrive 2 business days later than
-              other products. * Living in Lagos, Abuja or Ibadan, JUMIA PRIME
-              Members enjoy Free Delivery on Jumia Express Items (excluding
-              bulky items). Kindly confirm your delivery address is accessible
-              before placing your order * Receive free delivery on your Jumia
-              Express orders above N12,000 in Lagos The International Shipping
-              and custom Fee is NON-REFUNDABLE in case of a return
+              other products. Kindly confirm your delivery address is accessible
+              before placing your order
             </div>
           </Grid>
         </Grid>
@@ -167,7 +163,9 @@ function DeliveryMethod(props: DeliverySectionProps) {
                         <Grid item xs>
                           <Typography variant="body2" component="p">
                             Your package will be available for pick-up between{" "}
-                            <span>Friday 27 Nov to Wednesday 2 Dec</span>
+                            <span className={classes.font}>
+                              Friday 27 Nov to Wednesday 2 Dec
+                            </span>
                           </Typography>
                         </Grid>
                       </Grid>
@@ -220,10 +218,18 @@ function DeliveryMethod(props: DeliverySectionProps) {
                       </Grid>
                       <Grid item xs>
                         <div className={classes.padding}>
-                          <Typography variant="body2" gutterBottom>
+                          <Typography
+                            variant="body2"
+                            gutterBottom
+                            component="p"
+                          >
                             We are open Mon-Fri 8AM-6PM; Sat 9am-4pm.
                           </Typography>
-                          <Typography variant="body2" gutterBottom>
+                          <Typography
+                            variant="body2"
+                            gutterBottom
+                            component="p"
+                          >
                             We accept Cash On Delivery, Debit Card and Bank
                             Transfer.
                           </Typography>
@@ -240,7 +246,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
     </React.Fragment>
   );
 
-  const PickUpStationFilter = () => (
+  const PickUpStationFilter = (
     <Grid container spacing={1}>
       <Grid item xs={6}>
         <TextField
@@ -293,7 +299,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
     </Grid>
   );
 
-  const PickupStations = () => (
+  const PickupStations = (
     <Grid container spacing={1} alignItems="stretch">
       {filteredPickupStations.map((station) => (
         <Grid item xs={6} key={station.id}>
@@ -343,7 +349,7 @@ function DeliveryMethod(props: DeliverySectionProps) {
 
   return (
     <React.Fragment>
-      <DeliveryMethod />
+      {DeliveryMethod}
       <Dialog
         open={openPickupStation}
         fullWidth
@@ -372,12 +378,12 @@ function DeliveryMethod(props: DeliverySectionProps) {
               <Divider />
             </Grid>
             <Grid item xs={12}>
-              <PickUpStationFilter />
+              {PickUpStationFilter}
             </Grid>
           </Grid>
         </DialogTitle>
         <DialogContent dividers id="pickup-locations">
-          <PickupStations />
+          {PickupStations}
         </DialogContent>
       </Dialog>
     </React.Fragment>

@@ -1,4 +1,4 @@
-import React, { useRef, Children, useReducer, useEffect } from "react";
+import React, { useRef, Children, useReducer, useEffect, useMemo } from "react";
 import clsx from "classnames";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
@@ -18,215 +18,296 @@ import { fromEvent } from "rxjs";
 import { map, debounceTime } from "rxjs/operators";
 
 const CardGroup: React.ComponentType<CardEnhancerProps> = (props) => {
-  const CARD_SIZE = props.size || "md";
+	const CARD_SIZE = props.size || "md";
+	const nChildren = Children.count(props.children);
 
-  const theme = useTheme();
+	const theme = useTheme();
 
-  const viewport = useWidth();
+	const viewport = useWidth();
 
-  const [state, dispatch] = useReducer(reducer, {
-    activeIndex: SIZES[viewport][CARD_SIZE],
-    position: 0,
-    parentElWidth: 0,
-    numberOfCards: SIZES[viewport][CARD_SIZE],
-    nChildren: Children.count(props.children),
-    transition: true,
-  });
+	const [state, dispatch] = useReducer(reducer, {
+		activeIndex: 0,
+		position: 0,
+		parentElWidth: 0,
+		transition: true,
+	});
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+	const cardWidth = useMemo(() => {
+		const numberOfCards = SIZES[viewport][CARD_SIZE];
 
-  const numberOfCardsRef = useRef(SIZES[viewport][CARD_SIZE]);
+		return state.parentElWidth / numberOfCards;
+	}, [state.parentElWidth, viewport]);
 
-  const classes = useStyles({
-    cardWidth: state.parentElWidth / state.numberOfCards,
-    position: state.position,
-    transition: state.transition,
-  });
+	const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    numberOfCardsRef.current = SIZES[viewport][CARD_SIZE];
-  }, [viewport]);
+	const onResizeRef = useRef({
+		numberOfCards: SIZES[viewport][CARD_SIZE],
+		cardWidth,
+	});
 
-  useEffect(() => {
-    dispatch({
-      type: "update",
-      payload: {
-        activeIndex: SIZES[viewport][CARD_SIZE],
-        parentElWidth: getElWidth(),
-        numberOfCards: SIZES[viewport][CARD_SIZE],
-        transition: false,
-      },
-    });
+	const previousViewport = useRef(viewport);
 
-    const event = fromEvent(window, "resize")
-      .pipe(
-        debounceTime(250),
-        map(getElWidth),
-        map((width) => ({ width, nCards: numberOfCardsRef.current }))
-      )
-      .subscribe(({ width, nCards }) =>
-        dispatch({
-          type: "onResize",
-          payload: {
-            width,
-            nCards,
-          },
-        })
-      );
+	const classes = useStyles({
+		cardWidth: state.parentElWidth / SIZES[viewport][CARD_SIZE],
+		position: state.position,
+		transition: state.transition,
+	});
 
-    return event.unsubscribe;
-  }, []);
+	useEffect(() => {
+		const payload = {
+			numberOfCards: SIZES[viewport][CARD_SIZE],
+			cardWidth,
+		};
 
-  const getElWidth = () => {
-    if (wrapperRef.current && wrapperRef.current.parentElement) {
-      return wrapperRef.current.parentElement.clientWidth;
-    } else {
-      return 0;
-    }
-  };
+		onResizeRef.current = payload;
+	}, [viewport, cardWidth]);
 
-  const nextGroup = () => {
-    dispatch({
-      type: "moveforward",
-    });
-  };
+	useEffect(() => {
+		const previousSize = SIZES[previousViewport.current][CARD_SIZE];
+		const currentSize = SIZES[viewport][CARD_SIZE];
 
-  const previousGroup = () => {
-    dispatch({
-      type: "movebackward",
-    });
-  };
+		if (currentSize < previousSize) {
+			//screen was minimized //
 
-  const Cards = () => {
-    const { children, appBar, disableToggler, size, cardType } = props;
+			if (state.activeIndex <= previousSize) {
+				dispatch({
+					type: "update",
+					payload: {
+						position: 0,
+						activeIndex: currentSize,
+						transition: true,
+					},
+				});
+			} else {
+				const prevPosition = getPrevPosition(previousSize);
+				const nTime = previousSize - currentSize;
 
-    const wrap = appBar || !disableToggler ? "nowrap" : "wrap";
+				dispatch({
+					type: "update",
+					payload: {
+						position: prevPosition - cardWidth * nTime,
+						transition: true,
+					},
+				});
+			}
+		} else {
+			// screen was expanded //
 
-    const direction = cardType && cardType === "list" ? "column" : "row";
+			if (state.activeIndex <= currentSize) {
+				dispatch({
+					type: "update",
+					payload: {
+						position: 0,
+						activeIndex: currentSize,
+						transition: true,
+					},
+				});
+			} else {
+				const nTime = state.activeIndex - currentSize;
 
-    let enhancedChildren: JSX.Element[] | undefined | null;
+				dispatch({
+					type: "update",
+					payload: {
+						position: 0 - cardWidth * nTime,
+						transition: true,
+					},
+				});
+			}
+		}
 
-    if (cardType && cardType === "list") {
-      enhancedChildren = Children.map(children, (child, i) => (
-        <Grid item key={i}>
-          {child}
-        </Grid>
-      ));
-    } else {
-      enhancedChildren = Children.map(children, (child, i) => (
-        <Grid item key={i} className={classes.cardWrapper}>
-          {React.isValidElement(child) &&
-            React.cloneElement(child, {
-              classes: { img: classes.cardImage },
-              size: size,
-            })}
-        </Grid>
-      ));
-    }
+		previousViewport.current = viewport;
+	}, [viewport]);
 
-    return (
-      <Grid container spacing={1} wrap={wrap} direction={direction}>
-        {enhancedChildren}
-      </Grid>
-    );
-  };
+	useEffect(() => {
+		dispatch({
+			type: "update",
+			payload: {
+				activeIndex: SIZES[viewport][CARD_SIZE],
+				parentElWidth: getElWidth(),
+				transition: false,
+			},
+		});
 
-  const buttonRight = (
-    <IconButton
-      onClick={nextGroup}
-      disabled={state.activeIndex === state.nChildren}
-    >
-      <ChevronRightIcon />
-    </IconButton>
-  );
+		const event = fromEvent(window, "resize")
+			.pipe(
+				debounceTime(150),
+				map(getElWidth),
+				map((parentElWidth) => ({ parentElWidth, ...onResizeRef.current }))
+			)
+			.subscribe((payload) =>
+				dispatch({
+					type: "onResize",
+					payload,
+				})
+			);
 
-  const buttonLeft = (
-    <IconButton
-      onClick={previousGroup}
-      disabled={state.activeIndex === state.numberOfCards}
-    >
-      <ChevronLeftIcon />
-    </IconButton>
-  );
+		return event.unsubscribe;
+	}, []);
 
-  const CardEnhancement = () => {
-    const { appBar, appBarProps, disableToggler } = props;
+	const getElWidth = () => {
+		if (wrapperRef.current && wrapperRef.current.parentElement) {
+			return wrapperRef.current.parentElement.clientWidth;
+		} else {
+			return 0;
+		}
+	};
 
-    if (!disableToggler && !appBar) {
-      return (
-        <div style={{ position: "relative" }}>
-          <Cards />
-          {state.nChildren > state.numberOfCards && (
-            <Paper className={clsx(classes.btn, classes.leftBtn)} elevation={5}>
-              {buttonRight}
-            </Paper>
-          )}
-          {state.nChildren > state.numberOfCards && (
-            <Paper
-              className={clsx(classes.btn, classes.rightBtn)}
-              elevation={5}
-            >
-              {buttonLeft}
-            </Paper>
-          )}
-        </div>
-      );
-    } else if (appBar) {
-      return (
-        <Grid container direction="column">
-          <Grid item xs={12}>
-            <AppBar position="static" color="secondary">
-              <Toolbar>
-                <Typography variant="h6">
-                  {appBarProps && appBarProps.text}
-                </Typography>
-                <div style={{ flexGrow: 1 }} />
-                <div style={{ paddingRight: theme.spacing(1) }}>
-                  {appBarProps && appBarProps.link && (
-                    <Link href={appBarProps.link}>
-                      <Typography variant="subtitle1">View all</Typography>
-                    </Link>
-                  )}
-                </div>
+	const nextGroup = () => {
+		dispatch({
+			type: "moveforward",
+			payload: {
+				cardWidth,
+				nChildren,
+			},
+		});
+	};
 
-                {appBarProps && !appBarProps.disableToggler && (
-                  <div style={{ display: "inline-flex", flexDirection: "row" }}>
-                    {buttonLeft}
-                    {buttonRight}
-                  </div>
-                )}
-              </Toolbar>
-            </AppBar>
-          </Grid>
-          <Grid item>
-            <Cards />
-          </Grid>
-        </Grid>
-      );
-    } else {
-      return <Cards />;
-    }
-  };
+	const previousGroup = () => {
+		const numberOfCards = SIZES[viewport][CARD_SIZE];
 
-  return (
-    <div
-      style={{ overflow: "hidden", maxWidth: state.parentElWidth }}
-      ref={wrapperRef}
-    >
-      <CardEnhancement />
-    </div>
-  );
+		dispatch({
+			type: "movebackward",
+			payload: {
+				cardWidth,
+				numberOfCards,
+			},
+		});
+	};
+
+	const getPrevPosition = (prevNumberOfCards: number) => {
+		let prevPosition = 0;
+
+		if (state.activeIndex <= prevNumberOfCards) {
+			prevPosition = 0;
+		} else {
+			const nTime = state.activeIndex - prevNumberOfCards;
+			prevPosition = 0 - cardWidth * nTime;
+		}
+
+		return prevPosition;
+	};
+
+	const Cards = () => {
+		const { children, appBar, disableToggler, size, cardType } = props;
+
+		const wrap = appBar || !disableToggler ? "nowrap" : "wrap";
+
+		const direction = cardType && cardType === "list" ? "column" : "row";
+
+		let enhancedChildren: JSX.Element[] | undefined | null;
+
+		if (cardType && cardType === "list") {
+			enhancedChildren = Children.map(children, (child, i) => (
+				<Grid item key={i}>
+					{child}
+				</Grid>
+			));
+		} else {
+			enhancedChildren = Children.map(children, (child, i) => (
+				<Grid item key={i} className={classes.cardWrapper}>
+					{React.isValidElement(child) &&
+						React.cloneElement(child, {
+							classes: { img: classes.cardImage },
+							size: size,
+						})}
+				</Grid>
+			));
+		}
+
+		return (
+			<Grid container spacing={1} wrap={wrap} direction={direction}>
+				{enhancedChildren}
+			</Grid>
+		);
+	};
+
+	const buttonRight = (
+		<IconButton onClick={nextGroup} disabled={state.activeIndex === nChildren}>
+			<ChevronRightIcon />
+		</IconButton>
+	);
+
+	const buttonLeft = (
+		<IconButton
+			onClick={previousGroup}
+			disabled={state.activeIndex === SIZES[viewport][CARD_SIZE]}
+		>
+			<ChevronLeftIcon />
+		</IconButton>
+	);
+
+	const CardEnhancement = () => {
+		const { appBar, appBarProps, disableToggler } = props;
+		const numberOfCards = SIZES[viewport][CARD_SIZE];
+
+		if (!disableToggler && !appBar) {
+			return (
+				<div style={{ position: "relative" }}>
+					{Cards()}
+					{nChildren > numberOfCards && (
+						<Paper className={clsx(classes.btn, classes.leftBtn)} elevation={5}>
+							{buttonRight}
+						</Paper>
+					)}
+					{nChildren > numberOfCards && (
+						<Paper className={clsx(classes.btn, classes.rightBtn)} elevation={5}>
+							{buttonLeft}
+						</Paper>
+					)}
+				</div>
+			);
+		} else if (appBar) {
+			return (
+				<Grid container direction="column">
+					<Grid item xs={12}>
+						<AppBar position="static" color="secondary">
+							<Toolbar>
+								<Typography variant="h6">{appBarProps && appBarProps.text}</Typography>
+								<div style={{ flexGrow: 1 }} />
+								<div style={{ paddingRight: theme.spacing(1) }}>
+									{appBarProps && appBarProps.link && (
+										<Link href={appBarProps.link}>
+											<Typography variant="subtitle1">View all</Typography>
+										</Link>
+									)}
+								</div>
+
+								{appBarProps && !appBarProps.disableToggler && (
+									<div style={{ display: "inline-flex", flexDirection: "row" }}>
+										{buttonLeft}
+										{buttonRight}
+									</div>
+								)}
+							</Toolbar>
+						</AppBar>
+					</Grid>
+					<Grid item>{Cards()}</Grid>
+				</Grid>
+			);
+		} else {
+			return Cards();
+		}
+	};
+
+	return (
+		<div
+			style={{ overflow: "hidden", maxWidth: state.parentElWidth }}
+			ref={wrapperRef}
+		>
+			{CardEnhancement()}
+		</div>
+	);
 };
 
 CardGroup.defaultProps = {
-  size: "md",
-  disableToggler: false,
-  appBar: false,
-  appBarProps: {
-    text: "",
-    disableToggler: false,
-    link: "/",
-  },
+	size: "md",
+	disableToggler: false,
+	appBar: false,
+	appBarProps: {
+		text: "",
+		disableToggler: false,
+		link: "/",
+	},
 };
 
 export default CardGroup;

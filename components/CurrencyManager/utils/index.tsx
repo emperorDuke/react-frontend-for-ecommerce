@@ -1,11 +1,13 @@
-import * as React from "react";
-import { CurrencyTypes, CurrencyManagerProps } from "../@types";
+import React from "react";
+import { Currency } from "../@types";
 
-export const sortCurrencySymbol = (currencyType: CurrencyManagerProps["currencyType"]) => {
-  switch (currencyType) {
-    case CurrencyTypes.NAIRA:
-      return <>&#8358; </>;
-    default:
-      return <>&#8358; </>;;
-  }
+export const currencySymbol = (currencyType?: Currency) => {
+  const nairaIcon = <>&#8358;</>;
+  
+	switch (currencyType) {
+		case Currency.NAIRA:
+			return nairaIcon;
+		default:
+			return nairaIcon;
+	}
 };

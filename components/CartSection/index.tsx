@@ -26,8 +26,6 @@ export default function CartSection() {
   const router = useRouter();
   const product = useProduct();
 
-  const [localCart, setLocalCart] = useState(cart);
-
   useEffect(() => {
     if (!isLoggedIn) {
       const localStorageCart = localStorage.getItem(CART_STORAGE_KEY);
@@ -36,17 +34,13 @@ export default function CartSection() {
     }
   }, []);
 
-  useDidUpdateEffect(() => {
-    setLocalCart(cart);
-  }, [cart]);
-
-  const handleDelete = useCallback((params: Pick<CartType, "index" | "id">) => {
+  const handleDelete = useCallback((params: Pick<CartType, "_index" | "id">) => {
     dispatch(removeItem(params));
   }, []);
 
   const handleQtyChange = useCallback(
     (qty: number, index?: number) => {
-      const item = localCart.find((cart) => cart.index === index);
+      const item = cart.find((cartItem) => cartItem._index === index);
       if (item) {
         const _product = product.get(item.product);
         item["quantity"] = qty;
@@ -57,7 +51,7 @@ export default function CartSection() {
         dispatch(updateCart(item));
       }
     },
-    [localCart]
+    [cart]
   );
 
   return (
@@ -70,7 +64,7 @@ export default function CartSection() {
               <Cart
                 onChange={handleQtyChange}
                 onDelete={handleDelete}
-                items={localCart}
+                cart={cart}
               />
             </Grid>
             <Grid item xs>

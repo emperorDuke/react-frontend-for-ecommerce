@@ -186,7 +186,7 @@ function CheckOut() {
           </Grid>
 
           <Grid item xs>
-            <OrderSummary />
+            {/* <OrderSummary /> */}
           </Grid>
         </Grid>
 

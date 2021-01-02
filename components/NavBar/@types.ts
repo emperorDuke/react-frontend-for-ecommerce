@@ -1,4 +1,4 @@
-import { CategoryTypes } from "../../../redux/actionCreators/CategoryActions/@types";
+import { CategoryTypes } from "../../redux/actionCreators/CategoryActions/@types";
 
 
 export interface SideBarProps {

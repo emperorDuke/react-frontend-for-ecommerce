@@ -15,7 +15,7 @@ const Slide = forwardRef<HTMLDivElement, SlideProps>((props, ref) => {
   );
 
   const handleClick = (event?: React.MouseEvent<HTMLDivElement>) => {
-    if (props.onClick && event && !thumbnailComponent) {
+    if (props.onClick && event) {
       props.onClick(event);
     }
 

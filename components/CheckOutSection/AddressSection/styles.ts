@@ -10,14 +10,6 @@ export const useStyles = makeStyles((theme: Theme) =>
     textColor: {
       color: theme.palette.grey[500],
     },
-    tooltip: {
-      ...theme.typography.caption,
-      textTransform: "capitalize",
-    },
-    addressWrapper: {
-      maxHeight: theme.spacing(35),
-      overflowY: "auto",
-    },
     defaultAddressWrapper: {
       borderRadius: theme.shape.borderRadius,
       padding: theme.spacing(2),

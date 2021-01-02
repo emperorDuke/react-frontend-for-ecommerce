@@ -15,22 +15,29 @@ function PaymentMethod() {
       <Typography>Payment method</Typography>
       <Divider />
       <Grid container direction="column">
-        <Grid item>
-          <FormControlLabel
-            control={<Radio />}
-            value={paymentType}
-            onChange={() => setPaymentType("Pay now")}
-            label={<Typography variant="subtitle1">Pay now</Typography>}
-          />
+        <Grid item container alignItems="center" spacing={1}>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Radio checked={paymentType === "Pay now"} />}
+              value={paymentType}
+              onChange={() => setPaymentType("Pay now")}
+              label={<Typography variant="subtitle1">Pay now</Typography>}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <img src="/static/cards.png" alt="cards" />
+          </Grid>
         </Grid>
         <Grid item>
           <Grid container>
             <Grid item>
               <FormControlLabel
-                control={<Radio />}
+                control={<Radio checked={paymentType === "Pay on Delivery"} />}
                 value={paymentType}
                 onChange={() => setPaymentType("Pay on Delivery")}
-                label={<Typography variant="subtitle1">Pay on delivery</Typography>}
+                label={
+                  <Typography variant="subtitle1">Pay on delivery</Typography>
+                }
               />
             </Grid>
           </Grid>

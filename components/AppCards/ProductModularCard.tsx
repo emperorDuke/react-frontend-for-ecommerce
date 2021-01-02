@@ -5,7 +5,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import Img from "../Img";
 import Link from "../Link";
 import CurrencyManager from "../CurrencyManager";
@@ -59,10 +58,7 @@ const ModularCard: React.ComponentType<PropsType> = (product) => {
                   >
                     <Grid item>
                       <Typography variant="subtitle1">
-                        <CurrencyManager
-                          price={product.discount}
-                          customSize={2}
-                        />
+                        <CurrencyManager price={product.discount} />
                       </Typography>
                     </Grid>
                     <Grid item>

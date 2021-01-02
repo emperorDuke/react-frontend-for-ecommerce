@@ -60,7 +60,7 @@ export default function ProductDetails(props: PropsType) {
     setVariants(tempVariants);
   };
 
-  const AttributesAndvariants = () => (
+  const AttributesAndvariants = (
     <React.Fragment>
       {props.attributes.map((attribute) => (
         <Grid
@@ -91,10 +91,7 @@ export default function ProductDetails(props: PropsType) {
             </Grid>
           </Grid>
           <Grid item xs={12}>
-            <Slider
-              type="thumbnail"
-              className={classes.thumnbnail}
-            >
+            <Slider type="thumbnail" className={classes.thumnbnail}>
               {attribute.variants.map((variant) => (
                 <Slide onClick={handleVariantChange(variant)} key={variant.id}>
                   {variant.attachment ? (
@@ -206,7 +203,7 @@ export default function ProductDetails(props: PropsType) {
         <Grid item xs={12}>
           <div className={classes.greyWrapper}>
             <Grid container spacing={1} direction="column">
-              <AttributesAndvariants />
+              {AttributesAndvariants}
               <Grid item container direction="column" spacing={1}>
                 <Grid item>
                   <Typography variant="subtitle2">Quantity:</Typography>
